@@ -5,6 +5,8 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+def key = System.getenv("JKS_PASSWORD")
+
 android {
     namespace = "me.hanh.ywallet"
     compileSdk = 34
@@ -30,11 +32,18 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        release {
+            keyAlias "zwallet"
+            keyPassword key
+            storeFile = rootProject.file("../zwallet.jks")
+            storePassword key
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.release
         }
     }
 }
