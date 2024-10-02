@@ -1,5 +1,6 @@
-name: ywallet
-description: "A new Flutter project."
+name: YWallet
+description: Z/Ycash Wallet
+
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,42 +17,109 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.7.0+534
 
 environment:
-  sdk: ^3.5.3
+  sdk: ">=3.0.0 <4.0.0"
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
-
+  warp:
+    path: ../dart-warp
+  logger: ^2.0.2+1
+  go_router: ^14.2.8
+  flutter_mobx: ^2.0.2
+  qr_flutter:
+    git:
+      url: https://github.com/hhanh00/qr.flutter.git
+      ref: 4bdb1126e553b474b80c8c91e9f9e43baf1e9c4e
+  http: ^1.2.2
+  intl: ^0.19.0
+  path: ^1.8.0
+  easy_debounce: ^2.0.3
+  gap: ^3.0.1
+  material_design_icons_flutter: ^7.0.7296
+  rflutter_alert: ^2.0.7
+  tuple: ^2.0.1
+  local_auth: ^2.1.2
+  shared_preferences: ^2.0.7
+  shared_preferences_android:
+  shared_preferences_ios:
+  window_manager: ^0.4.2
+  flutter_markdown: ^0.7.3+2
+  velocity_x: ^4.2.1
+  decimal: ^3.0.2
+  binary: ^4.0.0
+  flutter_form_builder: ^9.1.1
+  form_builder_validators: ^11.0.0
+  settings_ui: ^2.0.2
+  url_launcher: ^6.0.10
+  flex_color_scheme: ^7.3.1
+  another_flushbar: ^1.12.30
+  timeago: ^3.5.0
+  graphic: ^2.2.1
+  loading_animation_widget: ^1.2.0
+  get_it: ^7.6.4
+  rxdart: ^0.28.0
+  bubble: ^1.2.1
+  share_plus: ^10.0.2
+  path_provider: ^2.0.3
+  file_picker: ^8.1.2
+  cross_file: ^0.3.3
+  mustache_template: ^2.0.0
+  flutter_palette: ^1.1.0+1
+  mobile_scanner: ^5.2.3
+  sensors_plus: ^6.0.1
+  connectivity_plus: ^6.0.5
+  app_links: ^6.3.2
+  quick_actions: ^1.0.8
+  csv: ^6.0.0
+  badges: ^3.1.2
+  network_info_plus : ^6.0.1
+  flutter_localizations:
+    sdk: flutter
+  workmanager: ^0.5.2
+  awesome_notifications_core: ^0.9.0
+  awesome_notifications: ^0.9.0
+  font_awesome_flutter: ^10.5.0
+  getwidget: ^4.0.0
+  reflectable: ^4.0.5
+  freezed: ^2.4.6
+  freezed_annotation: any
+  carousel_slider: ^5.0.0
+  protobuf: ^3.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  flutter_svg: ^2.0.9
+  hex: ^0.2.0
+  awesome_dialog: ^3.2.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  flutter_gen: ^5.3.1
+  build_runner: ^2.1.2
+  build_version:
+    git: https://github.com/hhanh00/build_version_git.git
+  mobx_codegen: ^2.0.3
+  json_serializable: ^6.1.5
+  flutter_launcher_icons: ^0.14.1
+  intl_utils: ^2.8.1
+  msix: ^3.16.7
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+flutter_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
-# The following section is specific to Flutter packages.
+# The following section is specific to Flutter.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -59,9 +127,23 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/sapling-spend.params
+    - assets/sapling-output.params
+    - assets/welcome.png
+    - assets/self-custody.png
+    - assets/icon.png
+    - assets/about.md
+    - assets/wallet.svg
+    - assets/contacts.svg
+    - assets/multipay.svg
+    - assets/ycash.png
+    - assets/zcash.png
+    - assets/success.mp3
+    - assets/fail.mp3
+    - assets/ding.mp3
+    - assets/ledger.png
+    - assets/stealthex.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -87,4 +169,15 @@ flutter:
   #         weight: 700
   #
   # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+  # see https://flutter.dev/custom-fonts/#from-packages
+flutter_intl:
+  enabled: true
+
+msix_config:
+  display_name: Ywallet
+  publisher_display_name: Parallax Scroll
+  identity_name: 38664ParallaxScroll.Ywallet
+  publisher: CN=DF596492-B1AD-4B42-9ECB-4E6208B6D8CD
+  #logo_path: assets\icon.png
+  store: true
+  capabilities: internetClient
