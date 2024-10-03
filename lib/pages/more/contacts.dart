@@ -10,7 +10,6 @@ import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
 
 import '../../accounts.dart';
-import '../../appsettings.dart';
 import '../../generated/intl/messages.dart';
 import '../../store.dart';
 import '../scan.dart';

@@ -73,12 +73,11 @@ class _NewImportAccountState extends State<NewImportAccountPage>
                 Image.asset('assets/icon.png', height: 128),
                 Gap(16),
                 FormBuilderTextField(
-                  name: 'name',
-                  decoration: InputDecoration(labelText: s.accountName),
-                  controller: nameController,
-                  enableSuggestions: true,
-                  validator: FormBuilderValidators.required()
-                ),
+                    name: 'name',
+                    decoration: InputDecoration(labelText: s.accountName),
+                    controller: nameController,
+                    enableSuggestions: true,
+                    validator: FormBuilderValidators.required()),
                 FormBuilderRadioGroup<int>(
                   decoration: InputDecoration(labelText: s.crypto),
                   orientation: OptionsOrientation.vertical,
@@ -117,8 +116,11 @@ class _NewImportAccountState extends State<NewImportAccountPage>
                       keyboardType: TextInputType.number,
                     ),
                     Gap(8),
-                    HeightPicker(syncStatus.syncedHeight, label: Text(s.birthHeight),
-                    onChanged: (h) => _birthHeight = h,)
+                    HeightPicker(
+                      syncStatus.syncedHeight,
+                      label: Text(s.birthHeight),
+                      onChanged: (h) => _birthHeight = h,
+                    )
                   ]),
                 // TODO: Ledger
                 // if (_restore && coins[coin].supportsLedger && !isMobile())
@@ -142,10 +144,10 @@ class _NewImportAccountState extends State<NewImportAccountPage>
     if (form.saveAndValidate()) {
       await load(() async {
         final index = int.parse(accountIndexController.text);
-        if (_key.isEmpty)
-          _key = await warp.generateSeed();
+        if (_key.isEmpty) _key = await warp.generateSeed();
         final latestHeight = await SyncStatus.getLatestHeight(coin);
-        final birthHeight = _birthHeight ?? latestHeight ?? syncStatus.syncedHeight;
+        final birthHeight =
+            _birthHeight ?? latestHeight ?? syncStatus.syncedHeight;
         final account = await warp.createAccount(
             coin, nameController.text, _key, index, birthHeight);
         if (account < 0)
@@ -155,13 +157,16 @@ class _NewImportAccountState extends State<NewImportAccountPage>
           await aa.save();
           final accounts = warp.listAccounts(coin);
           if (accounts.length == 1) {
-            // First account of a coin is synced
-            await warp.resetChain(coin, birthHeight);
-          } 
+            try {
+              // First account of a coin is synced
+              await warp.resetChain(coin, birthHeight);
+            } on String catch (msg) {
+              await showSnackBar(msg);
+            }
+          }
           if (widget.first) {
             GoRouter.of(context).go('/account');
-          }
-          else
+          } else
             GoRouter.of(context).pop();
         }
       });

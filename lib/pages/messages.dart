@@ -249,6 +249,8 @@ class _MessageItemState extends State<MessageItemPage> {
           Gap(8),
           Panel(s.recipient, text: message.recipient),
           Gap(8),
+          Panel(s.contactName, text: message.contact ?? ''),
+          Gap(8),
           Panel(s.subject, text: message.subject),
           Gap(8),
           Panel(s.body, text: message.body, maxLines: 20),

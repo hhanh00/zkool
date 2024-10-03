@@ -67,6 +67,7 @@ class _OnWindow extends WindowListener {
   }
 }
 
+// TODO: FIX this is not working
 void initNotifications() {
   AwesomeNotifications().initialize(
       'resource://drawable/res_notification',
