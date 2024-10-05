@@ -11,7 +11,6 @@ import 'package:velocity_x/velocity_x.dart';
 
 import '../../coin/coins.dart';
 import '../../generated/intl/messages.dart';
-import '../../src/version.dart';
 import '../../appsettings.dart';
 import '../utils.dart';
 
@@ -25,8 +24,6 @@ class AboutPage extends StatelessWidget {
     final t = Theme.of(context);
     final template = Template(contentTemplate);
     var content = template.renderString({'APP': APP_NAME});
-    final id = commitId.substring(0, 8);
-    final versionString = "${s.version}: $packageVersion/$id";
     return Scaffold(
         appBar: AppBar(title: Text(s.about)),
         body: SingleChildScrollView(
@@ -37,10 +34,6 @@ class AboutPage extends StatelessWidget {
                 MarkdownBody(data: content),
                 Gap(16),
                 SelectableText(appStore.dbDir, style: t.textTheme.labelSmall),
-                Gap(8),
-                TextButton(
-                    child: Text(versionString),
-                    onPressed: () => openGithub(commitId)),
               ],
             ),
           ),

@@ -1784,6 +1784,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'End Warp Height'**
   String get endWarpHeight;
+
+  /// No description provided for @updateTransparent.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Transparent Address'**
+  String get updateTransparent;
+
+  /// No description provided for @updateTransparentQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to change the primary transparent address?'**
+  String get updateTransparentQuestion;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

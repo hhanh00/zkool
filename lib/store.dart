@@ -81,6 +81,9 @@ abstract class _SyncStatus with Store {
   bool paused = false;
 
   @observable
+  int reloadSeqno = 0;
+
+  @observable
   int downloadedSize = 0;
 
   @observable
@@ -93,11 +96,17 @@ abstract class _SyncStatus with Store {
     latestHeight;
     syncing;
     paused;
+    reloadSeqno;
     return DateTime.now().microsecondsSinceEpoch;
   }
 
   @computed
   int get expirationHeight => confirmHeight + 100;
+
+  @action
+  void reload() {
+    reloadSeqno += 1;
+  }
 
   bool get isSynced {
     final sh = syncedHeight;

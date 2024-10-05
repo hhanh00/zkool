@@ -870,4 +870,10 @@ class SPt extends S {
 
   @override
   String get endWarpHeight => 'End Warp Height';
+
+  @override
+  String get updateTransparent => 'Update Transparent Address';
+
+  @override
+  String get updateTransparentQuestion => 'Do you want to change the primary transparent address?';
 }

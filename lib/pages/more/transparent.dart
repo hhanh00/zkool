@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -37,6 +38,7 @@ class TransparentAddressesState extends State<TransparentAddressesPage> {
         itemBuilder: (context, i) {
           final a = addresses[i];
           return ListTile(
+            onTap: () => onPress(i),
             leading: Text(a.addrIndex.toString()),
             title: SelectableText(a.address!),
           );
@@ -47,15 +49,28 @@ class TransparentAddressesState extends State<TransparentAddressesPage> {
     );
   }
 
+  onPress(int i) async {
+    final confirmed = await showConfirmDialog(context, s.updateTransparent, s.updateTransparentQuestion);
+    if (confirmed) {
+      warp.updatePrimaryTransparentAddress(aa.coin, aa.id, i);
+      await aa.reload();
+    }
+  }
+
   add() async {
     final confirm =
         await showConfirmDialog(context, s.add, s.addAddressConfirm);
     if (!confirm) return;
-    warp.newTransparentAddress(aa.coin, aa.id);
-    setState(() {
-      addresses = warp.listTransparentAddresses(aa.coin, aa.id);
-      runInAction(() => aaSequence.seqno = DateTime.now().microsecondsSinceEpoch);
-    });
+    try {
+      warp.newTransparentAddress(aa.coin, aa.id);
+      setState(() {
+        addresses = warp.listTransparentAddresses(aa.coin, aa.id);
+        runInAction(
+            () => aaSequence.seqno = DateTime.now().microsecondsSinceEpoch);
+      });
+    } on String catch (msg) {
+      await showMessageBox(context, s.error, msg, type: DialogType.error);
+    }
   }
 
   scan() async {
@@ -84,8 +99,7 @@ class ListUTXOState extends State<ListUTXOPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(s.utxo), actions: [
-      ]),
+      appBar: AppBar(title: Text(s.utxo), actions: []),
       body: ListView.separated(
         itemBuilder: (context, i) {
           final utxo = utxos[i];

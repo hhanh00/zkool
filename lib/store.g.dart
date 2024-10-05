@@ -248,6 +248,22 @@ mixin _$SyncStatus on _SyncStatus, Store {
     });
   }
 
+  late final _$reloadSeqnoAtom =
+      Atom(name: '_SyncStatus.reloadSeqno', context: context);
+
+  @override
+  int get reloadSeqno {
+    _$reloadSeqnoAtom.reportRead();
+    return super.reloadSeqno;
+  }
+
+  @override
+  set reloadSeqno(int value) {
+    _$reloadSeqnoAtom.reportWrite(value, super.reloadSeqno, () {
+      super.reloadSeqno = value;
+    });
+  }
+
   late final _$downloadedSizeAtom =
       Atom(name: '_SyncStatus.downloadedSize', context: context);
 
@@ -309,6 +325,17 @@ mixin _$SyncStatus on _SyncStatus, Store {
       ActionController(name: '_SyncStatus', context: context);
 
   @override
+  void reload() {
+    final _$actionInfo =
+        _$_SyncStatusActionController.startAction(name: '_SyncStatus.reload');
+    try {
+      return super.reload();
+    } finally {
+      _$_SyncStatusActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void reset() {
     final _$actionInfo =
         _$_SyncStatusActionController.startAction(name: '_SyncStatus.reset');
@@ -350,6 +377,7 @@ latestHeight: ${latestHeight},
 timestamp: ${timestamp},
 syncing: ${syncing},
 paused: ${paused},
+reloadSeqno: ${reloadSeqno},
 downloadedSize: ${downloadedSize},
 trialDecryptionCount: ${trialDecryptionCount},
 changed: ${changed},

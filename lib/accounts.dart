@@ -129,7 +129,7 @@ abstract class _ActiveAccount with Store {
     if (id == 0) return;
     try {
       diversifiedAddress =
-          warp.getAccountAddress(coin, id, now(), coinSettings.uaType | 8);
+          warp.getAccountAddress(coin, id, now(), (coinSettings.uaType & 6) | 8);
     } catch (e) {}
   }
 

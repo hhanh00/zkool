@@ -279,5 +279,7 @@
 	"scanTransparentAddresses": "Scan Transparent Addresses",
 	"contactsSaved": "Contacts Saved",
 	"warpURL": "Warp URL",
-	"endWarpHeight": "End Warp Height"
+	"endWarpHeight": "End Warp Height",
+	"updateTransparent": "Update Transparent Address",
+	"updateTransparentQuestion": "Do you want to change the primary transparent address?"
 }
