@@ -55,6 +55,7 @@ class _HomeState extends State<HomePageInner> {
           child: Observer(
             builder: (context) {
               syncStatus.changed;
+              aaSequence.seqno;
               final balance = warp.getBalance(aa.coin, aa.id, MAXHEIGHT);
 
               return Column(

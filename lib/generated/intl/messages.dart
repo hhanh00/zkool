@@ -1796,6 +1796,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Do you want to change the primary transparent address?'**
   String get updateTransparentQuestion;
+
+  /// No description provided for @transparentExtendedPubKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Extended T. Public Key'**
+  String get transparentExtendedPubKey;
+
+  /// No description provided for @transparentExtendedPrivKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Extended T. Secret Key'**
+  String get transparentExtendedPrivKey;
+
+  /// No description provided for @transparentAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Transparent Address'**
+  String get transparentAddress;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

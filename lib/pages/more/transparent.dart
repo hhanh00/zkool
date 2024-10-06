@@ -160,6 +160,8 @@ class ScanTransparentAddressesState extends State<ScanTransparentAddressesPage>
     final gapLimit = int.parse(gapLimitController.text);
     load(() async {
       await warp.scanTransparentAddresses(aa.coin, aa.id, gapLimit);
+      await warp.transparentSync(aa.coin, aa.id, syncStatus.syncedHeight);
+      await aa.reload();
       GoRouter.of(context).pop();
     });
   }

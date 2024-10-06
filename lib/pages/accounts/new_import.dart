@@ -140,6 +140,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
   }
 
   _onOK() async {
+    const defaultGapLimit = 10;
     final form = formKey.currentState!;
     if (form.saveAndValidate()) {
       await load(() async {
@@ -153,6 +154,13 @@ class _NewImportAccountState extends State<NewImportAccountPage>
         if (account < 0)
           form.fields['name']!.invalidate(s.thisAccountAlreadyExists);
         else {
+          try {
+            await warp.scanTransparentAddresses(coin, account, defaultGapLimit);
+            await warp.transparentSync(coin, account, syncStatus.syncedHeight);
+          }
+          on String catch (msg) {
+              await showSnackBar(msg); // non fatal
+          }
           await setActiveAccount(coin, account);
           await aa.save();
           final accounts = warp.listAccounts(coin);
@@ -161,7 +169,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
               // First account of a coin is synced
               await warp.resetChain(coin, birthHeight);
             } on String catch (msg) {
-              await showSnackBar(msg);
+              await showSnackBar(msg); // non fatal
             }
           }
           if (widget.first) {

@@ -876,4 +876,13 @@ class SPt extends S {
 
   @override
   String get updateTransparentQuestion => 'Do you want to change the primary transparent address?';
+
+  @override
+  String get transparentExtendedPubKey => 'Extended T. Public Key';
+
+  @override
+  String get transparentExtendedPrivKey => 'Extended T. Secret Key';
+
+  @override
+  String get transparentAddress => 'Transparent Address';
 }

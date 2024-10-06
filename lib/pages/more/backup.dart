@@ -22,6 +22,14 @@ class BackupPage extends StatefulWidget {
       primary = backup.uvk!;
     else if (backup.fvk != null)
       primary = backup.fvk!;
+    else if (backup.txsk != null)
+      primary = backup.txsk!;
+    else if (backup.tsk != null)
+      primary = backup.tsk!;
+    else if (backup.tvk != null)
+      primary = backup.tvk!;
+    else if (backup.taddr != null)
+      primary = backup.taddr!;
     else
       throw 'Account has no key';
   }
@@ -66,9 +74,27 @@ class _BackupState extends State<BackupPage> {
           style: style));
       style = small;
     }
+    if (widget.backup.txsk != null) {
+      cards.add(BackupPanel(
+          name, s.transparentExtendedPrivKey, widget.backup.txsk!, Icon(Icons.key),
+          style: style));
+      style = small;
+    }
     if (widget.backup.tsk != null) {
       cards.add(BackupPanel(
           name, s.transparentKey, widget.backup.tsk!, Icon(Icons.key),
+          style: style));
+      style = small;
+    }
+    if (widget.backup.tvk != null) {
+      cards.add(BackupPanel(
+          name, s.transparentExtendedPubKey, widget.backup.tvk!, Icon(Icons.visibility),
+          style: style));
+      style = small;
+    }
+    if (widget.backup.taddr != null) {
+      cards.add(BackupPanel(
+          name, s.transparentAddress, widget.backup.taddr!, Icon(Icons.visibility_outlined),
           style: style));
       style = small;
     }

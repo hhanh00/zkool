@@ -123,7 +123,7 @@ class _SplashState extends State<SplashPage> {
       final cs = await CoinSettingsExtension.load(c.coin);
       final url = resolveURL(c, cs);
       warp.configure(coin,
-          url: url, warp: c.warpUrl, warpEndHeight: c.warpHeight);
+          url: url, warp: c.warpUrl, warpEndHeight: cs.warpHeight);
     }
   }
 
