@@ -143,6 +143,7 @@ abstract class _SyncStatus with Store {
   }
 
   Future<void> syncToHeight(int coin, int endHeight, ETA eta) async {
+    logger.d("--> $endHeight");
     var height = warp.getSyncHeight(coin);
     while (height < endHeight) {
       if (aa.coin != coin)
@@ -183,7 +184,7 @@ abstract class _SyncStatus with Store {
       eta.checkpoint(syncedHeight, DateTime.now());
       final preBalance = warp.getBalance(coin, account, lh);
       // This may take a long time
-      await syncToHeight(coin, lh - appSettings.anchorOffset + 1, eta);
+      await syncToHeight(coin, confirmHeight, eta);
       await syncToHeight(coin, lh, eta);
       eta.end();
 

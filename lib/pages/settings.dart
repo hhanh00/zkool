@@ -105,7 +105,8 @@ class _SettingsState extends State<SettingsPage>
     if (validate()) {
       final prefs = GetIt.I.get<SharedPreferences>();
       await appSettings.save(prefs);
-      coinKey.currentState?.let((c) => coinSettings.save(aa.coin));
+      logger.d("${coinSettings.warpUrl}");
+      await coinSettings.save(aa.coin);
       app.appSettings = app.AppSettingsExtension.load(prefs);
       app.coinSettings = await app.CoinSettingsExtension.load(aa.coin);
       final serverUrl = resolveURL(coins[aa.coin], app.coinSettings);

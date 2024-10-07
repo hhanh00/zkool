@@ -1,3 +1,4 @@
+import 'package:YWallet/appsettings.dart';
 import 'package:YWallet/init.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:file_picker/file_picker.dart';
@@ -13,6 +14,7 @@ import 'package:warp/warp.dart';
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 
+import '../../accounts.dart';
 import '../../coin/coins.dart';
 import '../../generated/intl/messages.dart';
 import '../../store.dart';
@@ -34,9 +36,10 @@ class _BatchBackupState extends State<BatchBackupPage> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     return Scaffold(
-      appBar: AppBar(
-          title: Text(s.backupAllAccounts),
-          actions: [IconButton(onPressed: key, icon: Icon(Icons.key))]),
+      appBar: AppBar(title: Text(s.backupAllAccounts), actions: [
+        IconButton(onPressed: key, icon: Icon(Icons.key)),
+        IconButton(onPressed: download, icon: Icon(Icons.download)),
+      ]),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
@@ -158,6 +161,15 @@ class _BatchBackupState extends State<BatchBackupPage> {
       } on String catch (e) {
         restoreFormKey.currentState!.fields['restore']!.invalidate(e);
       }
+    }
+  }
+
+  download() async {
+    final filename = await FilePicker.platform
+        .saveFile(dialogTitle: 'save blockchain', fileName: 'blockchain.dat');
+    if (filename != null) {
+      await WarpSync.downloadWarpFile(aa.coin, coinSettings.warpUrl,
+      coinSettings.warpHeight, filename);
     }
   }
 }

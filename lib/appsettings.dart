@@ -47,7 +47,7 @@ extension AppSettingsExtension on AppSettings {
   }
 
   int chartRangeDays() => 365;
-  int get anchorOffset => m.max(confirmations, 1) - 1;
+  int get anchorOffset => m.max(confirmations, 1);
 }
 
 extension CoinSettingsExtension on CoinSettings {
@@ -73,9 +73,9 @@ extension CoinSettingsExtension on CoinSettings {
     return cs;
   }
 
-  void save(int coin) {
+  Future<void> save(int coin) async {
     final settings = writeToBuffer();
-    warp.setAccountProperty(coin, 0, 'settings', settings);
+    await warp.setAccountProperty(coin, 0, 'settings', settings);
   }
 
   String resolveBlockExplorer(int coin) {
