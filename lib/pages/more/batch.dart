@@ -38,7 +38,6 @@ class _BatchBackupState extends State<BatchBackupPage> {
     return Scaffold(
       appBar: AppBar(title: Text(s.backupAllAccounts), actions: [
         IconButton(onPressed: key, icon: Icon(Icons.key)),
-        IconButton(onPressed: download, icon: Icon(Icons.download)),
       ]),
       body: SingleChildScrollView(
         child: Padding(
@@ -161,15 +160,6 @@ class _BatchBackupState extends State<BatchBackupPage> {
       } on String catch (e) {
         restoreFormKey.currentState!.fields['restore']!.invalidate(e);
       }
-    }
-  }
-
-  download() async {
-    final filename = await FilePicker.platform
-        .saveFile(dialogTitle: 'save blockchain', fileName: 'blockchain.dat');
-    if (filename != null) {
-      await WarpSync.downloadWarpFile(aa.coin, coinSettings.warpUrl,
-      coinSettings.warpHeight, filename);
     }
   }
 }

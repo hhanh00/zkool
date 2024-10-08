@@ -1,12 +1,15 @@
 import 'package:YWallet/pages/widgets.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:tuple/tuple.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:warp/warp.dart';
 
 import '../../accounts.dart';
+import '../../appsettings.dart';
 import '../../generated/intl/messages.dart';
 import '../../store.dart';
 import '../utils.dart';
@@ -16,7 +19,7 @@ class RescanPage extends StatefulWidget {
   State<StatefulWidget> createState() => RescanState();
 }
 
-class RescanState extends State<RescanPage> {
+class RescanState extends State<RescanPage> with WithLoadingAnimation {
   late S s = S.of(context);
   final formKey = GlobalKey<FormBuilderState>();
   late int height;
@@ -36,10 +39,12 @@ class RescanState extends State<RescanPage> {
         appBar: AppBar(
           title: Text(s.rescan),
           actions: [
+            IconButton(onPressed: download, icon: Icon(Icons.download)),
+            IconButton(onPressed: scanFromFile, icon: Icon(Icons.run_circle_outlined)),
             IconButton(onPressed: rescan, icon: Icon(Icons.check)),
           ],
         ),
-        body: Padding(
+        body: wrapWithLoading(Padding(
             padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
             child: FormBuilder(
                 key: formKey,
@@ -49,7 +54,7 @@ class RescanState extends State<RescanPage> {
                     label: Text(s.rescanFrom),
                     onChanged: (h) => height = h!,
                   )
-                ]))));
+                ])))));
   }
 
   rescan() async {
@@ -59,6 +64,25 @@ class RescanState extends State<RescanPage> {
       aa.reset(height);
       Future(() => syncStatus.rescan(height));
       GoRouter.of(context).pop();
+    }
+  }
+
+  download() async {
+    final filename = await FilePicker.platform
+        .saveFile(dialogTitle: 'save blockchain', fileName: 'blockchain.dat');
+    if (filename != null) {
+      await WarpSync.downloadWarpFile(aa.coin, coinSettings.warpUrl,
+      coinSettings.warpHeight, filename);
+    }
+  }
+
+  scanFromFile() async {
+    final files = await FilePicker.platform
+        .pickFiles(dialogTitle: 'load blockchain', type: FileType.any);
+    if (files != null) {
+      await load(() async {
+        await WarpSync.syncFromFile(aa.coin, files.paths.first!);
+      });
     }
   }
 }
