@@ -284,5 +284,6 @@
 	"updateTransparentQuestion": "Do you want to change the primary transparent address?",
 	"transparentExtendedPubKey": "Extended T. Public Key",
 	"transparentExtendedPrivKey": "Extended T. Secret Key",
-	"transparentAddress": "Transparent Address"
+	"transparentAddress": "Transparent Address",
+	"texNotSupported": "Only Transparent Accounts support TEX"
 }

@@ -1,11 +1,13 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:binary/binary.dart';
-import 'package:collection/collection.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:decimal/decimal.dart';
 import 'package:file_picker/file_picker.dart';
@@ -28,10 +30,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:warp/data_fb_generated.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:warp/warp.dart';
+import 'package:flat_buffers/flat_buffers.dart' as fb;
 import 'package:path/path.dart' as p;
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
-import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import '../accounts.dart';
 import '../appsettings.dart';
@@ -80,8 +82,7 @@ Future<void> showMessageBox(BuildContext context, String title, String content,
     desc: content,
     btnOkOnPress: () {},
     btnOkText: s.ok,
-  )
-    ..show();
+  ).show();
 }
 
 mixin WithLoadingAnimation<T extends StatefulWidget> on State<T> {
@@ -120,23 +121,30 @@ void openTxInExplorer(String txId) async {
 String? addressOrUriValidator(String? v) {
   final s = S.of(rootNavigatorKey.currentContext!);
   if (v == null || v.isEmpty) return s.addressIsEmpty;
-  if (warp.isValidAddressOrUri(aa.coin, v) == 0) return s.invalidAddress;
+  if (warp.isValidAddressOrUri(aa.coin, v) == AddressType.invalidAddress)
+    return s.invalidAddress;
   return null;
 }
 
-String? addressValidator(String? v) {
+String? addressValidator(String? v) => addressValidatorTex(v, false);
+
+String? addressValidatorTex(String? v, bool allowTex) {
   final s = S.of(rootNavigatorKey.currentContext!);
   if (v == null || v.isEmpty) return s.addressIsEmpty;
-  print('++');
   final check = warp.isValidAddressOrUri(aa.coin, v);
-  if (check == 0) return s.invalidAddress;
+  if (check == AddressType.invalidAddress) return s.invalidAddress;
+  if (check == AddressType.address) {
+    final a = warp.decodeAddress(aa.coin, v);
+    if (a.tex && !allowTex) return s.texNotSupported;
+  }
   return null;
 }
 
 String? paymentURIValidator(String? v) {
   final s = S.of(rootNavigatorKey.currentContext!);
   if (v == null || v.isEmpty) return s.required;
-  if (warp.isValidAddressOrUri(aa.coin, v) != 2) return s.invalidPaymentURI;
+  if (warp.isValidAddressOrUri(aa.coin, v) != AddressType.paymentURI)
+    return s.invalidPaymentURI;
   return null;
 }
 
@@ -220,7 +228,7 @@ Future<bool> authenticate(BuildContext context, String reason) async {
   final localAuth = LocalAuthentication();
   try {
     final bool didAuthenticate = await localAuth.authenticate(
-          localizedReason: reason, options: AuthenticationOptions());
+        localizedReason: reason, options: AuthenticationOptions());
     if (didAuthenticate) {
       return true;
     }
@@ -505,8 +513,8 @@ class ZMessage extends HasHeight {
       this.read);
 
   ZMessage withRead(bool v) {
-    return ZMessage(id, txId, incoming, fromAddress, sender, recipient, contact, subject,
-        body, timestamp, height, v);
+    return ZMessage(id, txId, incoming, fromAddress, sender, recipient, contact,
+        subject, body, timestamp, height, v);
   }
 
   String fromto() => incoming
@@ -729,6 +737,12 @@ extension RecipientExtension on RecipientT {
       pools: 7,
       memo: UserMemoT(replyTo: false, subject: '', body: appSettings.memo),
     );
+  }
+}
+
+extension UserMemoExtension on UserMemoT {
+  static UserMemoT empty() {
+    return UserMemoT(body: '');
   }
 }
 

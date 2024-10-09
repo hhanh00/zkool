@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:get_it/get_it.dart';
+import 'package:warp/warp.dart';
 
+import 'coin/coins.dart';
 import 'generated/intl/messages.dart';
 import 'pages/more/cold.dart';
 import 'pages/more/transparent.dart';
@@ -62,9 +64,12 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: '/account',
-              builder: (context, state) => HomePage(),
+              builder: (context, state) {
+                final coin0 = state.uri.queryParameters['coin'];
+                final coin = coin0?.let((c) => int.parse(c));
+                return HomePage(coin: coin);
+              },
               redirect: (context, state) {
-                print('/account ${aa.id}');
                 if (aa.id == 0) return '/welcome';
                 return null;
               },
@@ -126,10 +131,26 @@ final router = GoRouter(
                 GoRoute(
                   path: 'send',
                   builder: (context, state) {
-                    final p = state.extra as PaymentRequestT?;
+                    final uriComponent = state.uri.queryParameters['uri'];
+                    final PaymentRequestT? p;
+                    if (uriComponent != null) {
+                      final uri = Uri.decodeComponent(uriComponent);
+                      final coin =
+                          coins.firstWhere((c) => uri.startsWith(c.currency));
+                      p = warp.parsePaymentURI(
+                          coin.coin,
+                          uri,
+                          syncStatus.confirmHeight,
+                          syncStatus.expirationHeight);
+                    } else {
+                      p = state.extra as PaymentRequestT?;
+                    }
+                    final coin0 = state.uri.queryParameters['coin'];
+                    final coin = coin0?.let((c) => int.parse(c));
                     return SendPage(
                       p,
                       single: true,
+                      coin: coin,
                     );
                   },
                   routes: [

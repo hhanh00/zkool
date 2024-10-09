@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:quick_actions/quick_actions.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warp/warp.dart';
@@ -14,6 +11,7 @@ import 'package:workmanager/workmanager.dart';
 
 import '../../accounts.dart';
 import '../init.dart';
+import '../main.dart';
 import 'settings.dart';
 import 'utils.dart';
 import '../appsettings.dart';
@@ -38,9 +36,8 @@ class _SplashState extends State<SplashPage> {
         GetIt.I.registerSingleton<S>(S.of(context));
         if (!appSettings.hasMemo()) appSettings.memo = s.sendFrom(APP_NAME);
         _initProver();
+        installQuickActions();
         // await _setupMempool();
-        final applinkUri = await _registerURLHandler();
-        final quickAction = await _registerQuickActions();
         await _initWallets();
         await _restoreActive();
         // _initForegroundTask();
@@ -51,12 +48,9 @@ class _SplashState extends State<SplashPage> {
           await authBarrier(context);
         }
         appStore.initialized = true;
-        if (applinkUri != null)
-          handleUri(applinkUri);
-        else if (quickAction != null)
-          handleQuickAction(context, quickAction);
-        else
-          GoRouter.of(context).go('/account');
+        final startURL = launchURL;
+        launchURL = null;
+        GoRouter.of(context).go(startURL ?? '/account');
       });
     });
   }
@@ -66,45 +60,13 @@ class _SplashState extends State<SplashPage> {
     return LoadProgress(key: progressKey);
   }
 
-  Future<Uri?> _registerURLHandler() async {
-    _setProgress(0.3, 'Register Payment URI handlers');
-    return await registerURLHandler();
 
-    // TODO
-    // if (Platform.isWindows) {
-    //   for (var c in coins) {
-    //     registerProtocolHandler(c.currency, arguments: ['%s']);
-    //   }
-    // }
-  }
-
-  Future<String?> _registerQuickActions() async {
-    _setProgress(0.4, 'Register App Launcher actions');
-    String? launchPage;
-    if (isMobile()) {
-      final quickActions = QuickActions();
-      await quickActions.initialize((quick_action) {
-        launchPage = quick_action;
-      });
-      Future.microtask(() {
-        final s = S.of(this.context);
-        List<ShortcutItem> shortcuts = [];
-        for (var c in coins) {
-          final ticker = c.ticker;
-          shortcuts.add(ShortcutItem(
-              type: '${c.coin}.receive',
-              localizedTitle: s.receive(ticker),
-              icon: 'receive'));
-          shortcuts.add(ShortcutItem(
-              type: '${c.coin}.send',
-              localizedTitle: s.sendCointicker(ticker),
-              icon: 'send'));
-        }
-        quickActions.setShortcutItems(shortcuts);
-      });
-    }
-    return launchPage;
-  }
+  // TODO
+  // if (Platform.isWindows) {
+  //   for (var c in coins) {
+  //     registerProtocolHandler(c.currency, arguments: ['%s']);
+  //   }
+  // }
 
   void _initProver() async {
     _setProgress(0.1, 'Initialize ZK Prover');
@@ -230,19 +192,6 @@ Future<void> handleUri(Uri uri) async {
   //   final context = rootNavigatorKey.currentContext!;
   //   GoRouter.of(context).go('/account/quick_send', extra: sc);
   // }
-}
-
-Future<Uri?> registerURLHandler() async {
-  if (Platform.isLinux) return null;
-  final _appLinks = AppLinks();
-
-  subUniLinks = _appLinks.uriLinkStream.listen((uri) {
-    logger.d(uri);
-    handleUri(uri);
-  });
-
-  final uri = await _appLinks.getInitialLink();
-  return uri;
 }
 
 void handleQuickAction(BuildContext context, String quickAction) {

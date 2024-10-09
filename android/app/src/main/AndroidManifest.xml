@@ -30,9 +30,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                        android:scheme="ycash"/>
+                        android:scheme="ycash" android:host="ywallet" />
                 <data
-                        android:scheme="zcash"/>
+                        android:scheme="zcash" android:host="ywallet" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

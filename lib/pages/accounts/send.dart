@@ -15,10 +15,11 @@ import '../input_widgets.dart';
 import '../utils.dart';
 
 class SendPage extends StatefulWidget {
+  final int? coin;
   final bool single;
   final PaymentRequestT? payment;
 
-  SendPage(this.payment, {this.single = true});
+  SendPage(this.payment, {this.coin, this.single = true});
 
   @override
   State<StatefulWidget> createState() => SendPageState();
@@ -32,6 +33,7 @@ class SendPageState extends State<SendPage> {
   late final BalanceT balance;
   late String fromAddress;
   late int fromRecvAvailable;
+  late bool transparentOnly;
 
   bool custom = appSettings.customSend;
 
@@ -51,14 +53,31 @@ class SendPageState extends State<SendPage> {
     final recipient = payment.recipients!.first;
     address = recipient.address!;
     amount = recipient.amount;
-    memo = recipient.memo!;
-    if (warp.isValidAddressOrUri(aa.coin, address) == 1)
+    memo = recipient.memo ?? UserMemoExtension.empty();
+    final check = warp.isValidAddressOrUri(aa.coin, address);
+    if (check == AddressType.address)
       toRecvAvailable = warp.decodeAddress(aa.coin, address).mask;
     feeIncluded = widget.payment?.senderPayFees ?? true;
 
     balance = warp.getBalance(aa.coin, aa.id, syncStatus.confirmHeight);
     fromAddress = warp.getAccountAddress(aa.coin, aa.id, now(), 7);
     fromRecvAvailable = warp.decodeAddress(aa.coin, fromAddress).mask;
+    transparentOnly = fromRecvAvailable == 1;
+  }
+
+  @override
+  void didUpdateWidget(covariant SendPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final c = widget.coin;
+    if (c != null && c != aa.coin) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final account = warp.listAccounts(c).firstOrNull;
+        if (account != null) {
+          await setActiveAccount(account.coin, account.id);
+          setState(() {});
+        }
+      });
+    }
   }
 
   @override
@@ -91,7 +110,7 @@ class SendPageState extends State<SendPage> {
                     name: 'address',
                     label: Text(s.address),
                     extraButtons: extraAddressButtons,
-                    validator: addressValidator,
+                    validator: (v) => addressValidatorTex(v, transparentOnly),
                     onChanged: onAddressChanged,
                     onSaved: (v) => v?.let((v) => address = v)),
                 Gap(8),
@@ -155,7 +174,8 @@ class SendPageState extends State<SendPage> {
 
   onAddressChanged(String? address) {
     if (address == null) return;
-    if (warp.isValidAddressOrUri(aa.coin, address) == 2) {
+    final check = warp.isValidAddressOrUri(aa.coin, address);
+    if (check == AddressType.paymentURI) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final p = warp.parsePaymentURI(aa.coin, address,
             syncStatus.syncedHeight, syncStatus.expirationHeight);
@@ -167,7 +187,7 @@ class SendPageState extends State<SendPage> {
     }
     setState(() {
       toRecvAvailable = 0;
-      if (warp.isValidAddressOrUri(aa.coin, address) == 1)
+      if (warp.isValidAddressOrUri(aa.coin, address) == AddressType.address)
         toRecvAvailable = warp.decodeAddress(aa.coin, address).mask;
     });
   }

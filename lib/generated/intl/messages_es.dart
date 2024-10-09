@@ -885,4 +885,7 @@ class SEs extends S {
 
   @override
   String get transparentAddress => 'Transparent Address';
+
+  @override
+  String get texNotSupported => 'Only Transparent Accounts support TEX';
 }

@@ -145,7 +145,8 @@ class _NewImportAccountState extends State<NewImportAccountPage>
     if (form.saveAndValidate()) {
       await load(() async {
         final index = int.parse(accountIndexController.text);
-        if (_key.isEmpty) _key = await warp.generateSeed();
+        final bool isNew = _key.isEmpty;
+        if (isNew) _key = await warp.generateSeed();
         final latestHeight = await SyncStatus.getLatestHeight(coin);
         final birthHeight =
             _birthHeight ?? latestHeight ?? syncStatus.syncedHeight;
@@ -154,12 +155,15 @@ class _NewImportAccountState extends State<NewImportAccountPage>
         if (account < 0)
           form.fields['name']!.invalidate(s.thisAccountAlreadyExists);
         else {
-          try {
-            await warp.scanTransparentAddresses(coin, account, defaultGapLimit);
-            await warp.transparentSync(coin, account, syncStatus.syncedHeight);
-          }
-          on String catch (msg) {
+          if (!isNew) {
+            try {
+              await warp.scanTransparentAddresses(
+                  coin, account, defaultGapLimit);
+              await warp.transparentSync(
+                  coin, account, syncStatus.syncedHeight);
+            } on String catch (msg) {
               await showSnackBar(msg); // non fatal
+            }
           }
           await setActiveAccount(coin, account);
           await aa.save();

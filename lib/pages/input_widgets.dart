@@ -336,7 +336,8 @@ class AmountPickerState extends State<AmountPicker> {
 
   String? validAmount(int? v) {
     final S s = S.of(context);
-    if (v! <= 0) return s.amountMustBePositive;
+    if (v == null) return null;
+    if (v <= 0) return s.amountMustBePositive;
     return null;
   }
 }

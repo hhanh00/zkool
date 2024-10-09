@@ -1814,6 +1814,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Transparent Address'**
   String get transparentAddress;
+
+  /// No description provided for @texNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Only Transparent Accounts support TEX'**
+  String get texNotSupported;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

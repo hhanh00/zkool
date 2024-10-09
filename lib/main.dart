@@ -1,19 +1,27 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:app_links/app_links.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:quick_actions/quick_actions.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warp/warp.dart';
 import 'package:path/path.dart' as path;
 
 import 'appsettings.dart';
+import 'coin/coins.dart';
+import 'generated/intl/messages.dart';
 import 'main.reflectable.dart';
 import './pages/utils.dart';
 
 import 'init.dart';
+import 'router.dart';
+import 'store.dart';
 
 const ZECUNIT = 100000000.0;
 // ignore: non_constant_identifier_names
@@ -21,9 +29,14 @@ var ZECUNIT_DECIMAL = Decimal.parse('100000000');
 const mZECUNIT = 100000;
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+final appLinks = AppLinks();
+final QuickActions quickActions = const QuickActions();
+String? launchURL;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  registerURLHandler();
+  registerQuickActions();
   print('setup');
   warp.setup();
   final prefs = await SharedPreferences.getInstance();
@@ -65,3 +78,48 @@ Future<void> recoverDb() async {
 
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
+
+// TODO: SETUP for iOS/Mac/Linux/Win
+void registerURLHandler() {
+  appLinks.uriLinkStream.listen((Uri uri) {
+    logger.d(uri);
+    final quickActionURL = 
+      '/account/send?uri=${Uri.encodeComponent(uri.toString())}';
+    if (appStore.initialized) {
+      router.go(quickActionURL);
+    } else {
+      launchURL = quickActionURL;
+    }
+  });
+}
+
+Future<void> registerQuickActions() async {
+  if (!isMobile()) return;
+  final quickActions = QuickActions();
+  await quickActions.initialize((quickActionURL) {
+    logger.d(quickActionURL);
+    if (appStore.initialized) {
+      router.go(quickActionURL);
+    } else {
+      launchURL = quickActionURL;
+    }
+  });
+}
+
+void installQuickActions() {
+  if (!isMobile()) return;
+  List<ShortcutItem> shortcuts = [];
+  final s = GetIt.I.get<S>();
+  for (var c in coins) {
+    final ticker = c.ticker;
+    shortcuts.add(ShortcutItem(
+        type: '/account?coin=${c.coin}',
+        localizedTitle: s.receive(ticker),
+        icon: 'receive'));
+    shortcuts.add(ShortcutItem(
+        type: '/account/send?coin=${c.coin}',
+        localizedTitle: s.sendCointicker(ticker),
+        icon: 'send'));
+  }
+  quickActions.setShortcutItems(shortcuts);
+}

@@ -103,7 +103,8 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
   @override
   Widget toListTile(BuildContext context, int index, Zip32KeysT item,
       {void Function(void Function())? setState}) {
-    final address = shielded ? item.zaddress! : item.taddress!;
+    logger.d(item);
+    final address = shielded ? item.zaddress : item.taddress!;
     final key = shielded ? item.zsk! : item.tsk!;
     final derPath = path(index);
     final selected = selection == index;
@@ -120,7 +121,7 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
                     Gap(8),
                     Panel(s.derpath, text: derPath),
                     Gap(8),
-                    Panel(s.address, text: address),
+                    Panel(s.address, text: address ?? s.na),
                     Gap(8),
                     Panel(s.secretKey, text: key),
                     Gap(8),
@@ -134,7 +135,7 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
                     ),
                   ],
                 )
-              : ListTile(leading: Text(idx.toString()), title: Text(address))),
+              : ListTile(leading: Text(idx.toString()), title: Text(address ?? s.na))),
     );
   }
 

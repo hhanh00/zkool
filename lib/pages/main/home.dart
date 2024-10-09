@@ -15,17 +15,22 @@ import 'sync_status.dart';
 import 'qr_address.dart';
 
 class HomePage extends StatelessWidget {
+  final int? coin;
+  HomePage({super.key, this.coin});
+
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
       final key = ValueKey(aaSequence.seqno);
-      return HomePageInner(key: key);
+      return HomePageInner(key: key, coin: coin);
     });
   }
 }
 
 class HomePageInner extends StatefulWidget {
-  HomePageInner({super.key});
+  final int? coin;
+  HomePageInner({super.key, this.coin});
+
   @override
   State<StatefulWidget> createState() => _HomeState();
 }
@@ -38,6 +43,21 @@ class _HomeState extends State<HomePageInner> {
   void initState() {
     super.initState();
     syncStatus.updateBCHeight();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomePageInner oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final c = widget.coin;
+    if (c != null && c != aa.coin) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final account = warp.listAccounts(c).firstOrNull;
+        if (account != null) {
+          await setActiveAccount(account.coin, account.id);
+          setState(() {});
+        }
+      });
+    }
   }
 
   @override
