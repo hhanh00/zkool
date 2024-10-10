@@ -12,7 +12,7 @@ PODS:
   - local_auth_darwin (0.0.1):
     - Flutter
     - FlutterMacOS
-  - mobile_scanner (5.2.3):
+  - mobile_scanner (6.0.0):
     - FlutterMacOS
   - network_info_plus (0.0.1):
     - FlutterMacOS
@@ -89,7 +89,7 @@ SPEC CHECKSUMS:
   connectivity_plus: ddd7f30999e1faaef5967c23d5b6d503d10434db
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   local_auth_darwin: 66e40372f1c29f383a314c738c7446e2f7fdadc3
-  mobile_scanner: 0a05256215b047af27b9495db3b77640055e8824
+  mobile_scanner: c720a9f315bb08bfe1c95f776687a980e6913d63
   network_info_plus: aeb9c4ed699cae128bc94b9d0f04f2389a414cbb
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   rive_common: cf5ab646aa576b2d742d0e2d528126fbf032c856

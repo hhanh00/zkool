@@ -129,7 +129,7 @@ class AnimatedQRExportState extends State<AnimatedQRExportPage> {
           title: Text(widget.title),
           actions: [IconButton(onPressed: export, icon: Icon(Icons.save))]),
       body: packets.isNotEmpty
-          ? AnimatedQR(widget.title, s.scanQrCode, packets)
+          ? AnimatedQR(widget.title, s.scanQrCode, packets, widget.data.length)
           : SizedBox.shrink(),
     );
   }

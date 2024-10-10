@@ -150,6 +150,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  buffer:
+    dependency: "direct main"
+    description:
+      name: buffer
+      sha256: "389da2ec2c16283c8787e0adaede82b1842102f8c8aae2f49003a766c5c6b3d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.3"
   build:
     dependency: transitive
     description:
@@ -913,10 +921,10 @@ packages:
     dependency: "direct main"
     description:
       name: mobile_scanner
-      sha256: d234581c090526676fd8fab4ada92f35c6746e3fb4f05a399665d75a399fb760
+      sha256: "145500ef1cdaa569c26d626336048fd0b0a9d00014e69af67baf632295fd8b40"
       url: "https://pub.dev"
     source: hosted
-    version: "5.2.3"
+    version: "6.0.0"
   mobx:
     dependency: transitive
     description:

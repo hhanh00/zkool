@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:flat_buffers/flat_buffers.dart' as fb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -300,8 +302,9 @@ class AnimatedQR extends StatefulWidget {
   final String title;
   final String caption;
   final List<PacketT> chunks;
+  final int length;
 
-  AnimatedQR(this.title, this.caption, this.chunks);
+  AnimatedQR(this.title, this.caption, this.chunks, this.length);
 
   @override
   State<StatefulWidget> createState() => _AnimatedQRState();
@@ -333,7 +336,10 @@ class _AnimatedQRState extends State<AnimatedQR> {
     final idx = index % widget.chunks.length;
     final qrSize = getScreenSize(context) * 0.8;
     final packet = widget.chunks[idx];
-    final data = base64Encode(packet.data!);
+    final builder = fb.Builder();
+    int root = packet.pack(builder);
+    builder.finish(root);
+    final data = base64Encode(builder.buffer);
     return Center(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,

@@ -377,9 +377,9 @@ class NoteItemState extends State<NoteItem> {
 
   _onSelected() {
     setState(() {
+      aa.notes.exclude(widget.note);
       excluded = !excluded;
       widget.note.excluded = excluded;
-      aa.notes.exclude(widget.note);
     });
   }
 }

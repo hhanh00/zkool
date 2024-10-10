@@ -69,7 +69,7 @@ dependencies:
   cross_file: ^0.3.3
   mustache_template: ^2.0.0
   flutter_palette: ^1.1.0+1
-  mobile_scanner: ^5.2.3
+  mobile_scanner: ^6.0.0
   sensors_plus: ^6.0.1
   connectivity_plus: ^6.0.5
   app_links: ^6.3.2
@@ -89,6 +89,7 @@ dependencies:
   freezed_annotation: any
   carousel_slider: ^5.0.0
   protobuf: ^3.1.0
+  buffer: ^1.2.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

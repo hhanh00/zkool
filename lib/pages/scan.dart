@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -8,6 +9,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
+import 'package:flat_buffers/flat_buffers.dart' as fb;
 
 import '../accounts.dart';
 import '../generated/intl/messages.dart';
@@ -128,11 +130,11 @@ class _MultiQRReaderState extends State<MultiQRReader> {
       if (text == null) return;
       if (!packets.contains(text)) {
         final data = base64Decode(text);
-        final packet = PacketT(data: data);
+        final bc = fb.BufferContext.fromBytes(data);
+        final packet = Packet.reader.read(bc, 0).unpack();
         packets.add(packet);
-        final res = await warp.mergeData(aa.coin, packets.toList());
-        final decoded = res.data;
-        if (decoded != null) {
+        final decoded = await warp.mergeData(aa.coin, packets.toList());
+        if (decoded.isNotEmpty) {
           widget.onChanged?.call(decoded);
         }
       }
