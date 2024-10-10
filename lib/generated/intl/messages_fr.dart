@@ -888,4 +888,7 @@ class SFr extends S {
 
   @override
   String get texNotSupported => 'Only Transparent Accounts support TEX';
+
+  @override
+  String get incAccount => 'Increment Account Index';
 }

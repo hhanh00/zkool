@@ -323,7 +323,13 @@ final router = GoRouter(
                   ),
                   GoRoute(
                     path: 'keytool',
-                    builder: (context, state) => KeyToolPage(),
+                    builder: (context, state) => KeyToolFormPage(),
+                    routes: [
+                      GoRoute(
+                        path: 'results',
+                        builder: (context, state) => KeyToolPage(state.extra as List<Zip32KeysT>),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'signed',

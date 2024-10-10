@@ -116,8 +116,8 @@ class _SettingsState extends State<SettingsPage>
           warpEndHeight: app.coinSettings.warpHeight);
       aaSequence.settingsSeqno = DateTime.now().millisecondsSinceEpoch;
       Future(() async {
-        await marketPrice.update();
         aa.currency = appSettings.currency;
+        marketPrice.updateNow();
       });
       GoRouter.of(context).pop();
     }

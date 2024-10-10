@@ -1,5 +1,3 @@
-import 'package:YWallet/appsettings.dart';
-import 'package:YWallet/init.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +12,7 @@ import 'package:warp/warp.dart';
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 
-import '../../accounts.dart';
+import '../../init.dart';
 import '../../coin/coins.dart';
 import '../../generated/intl/messages.dart';
 import '../../store.dart';

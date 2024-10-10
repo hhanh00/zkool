@@ -1,6 +1,6 @@
+import 'package:YWallet/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:warp/data_fb_generated.dart';
 
 import '../appsettings.dart';
@@ -215,7 +215,7 @@ class AmountPickerState extends State<AmountPicker> {
   final fController = TextEditingController();
   int disabledListeners = 0;
   double amountPercent = 0.0;
-  double? fx;
+  double? fx = marketPrice.price;
   FormFieldState<int>? _field;
 
   @override
@@ -223,13 +223,6 @@ class AmountPickerState extends State<AmountPicker> {
     super.initState();
     zController.addListener(onZChanged);
     fController.addListener(onFChanged);
-    Future(() async {
-      final coin = coins[aa.coin];
-      final _fx = await getFxRate(coin.currency, appSettings.currency);
-      setState(() {
-        fx = _fx;
-      });
-    });
   }
 
   @override

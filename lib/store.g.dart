@@ -402,14 +402,6 @@ mixin _$MarketPrice on _MarketPrice, Store {
     });
   }
 
-  late final _$updateAsyncAction =
-      AsyncAction('_MarketPrice.update', context: context);
-
-  @override
-  Future<void> update() {
-    return _$updateAsyncAction.run(() => super.update());
-  }
-
   @override
   String toString() {
     return '''

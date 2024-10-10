@@ -15,14 +15,96 @@ import '../../tablelist.dart';
 import '../../pages/utils.dart';
 import '../widgets.dart';
 
+class KeyToolFormPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => KeyToolFormState();
+}
+
+class KeyToolFormState extends State<KeyToolFormPage>
+    with WithLoadingAnimation {
+  late final S s = S.of(context);
+  final formKey = GlobalKey<FormBuilderState>();
+  final accountController = TextEditingController(text: '0');
+  bool incAccount = false;
+  final addressController = TextEditingController(text: '0');
+
+  @override
+  Widget build(BuildContext context) {
+    return wrapWithLoading(Scaffold(
+      appBar: AppBar(
+        title: Text(s.keyTool),
+        actions: [
+          IconButton(onPressed: calculate, icon: Icon(Icons.calculate)),
+        ],
+      ),
+      body: FormBuilder(
+        key: formKey,
+        child: Column(
+          children: [
+            FormBuilderTextField(
+              name: 'account',
+              decoration: InputDecoration(label: Text(s.accountIndex)),
+              controller: accountController,
+              validator: FormBuilderValidators.compose([
+                FormBuilderValidators.required(),
+                FormBuilderValidators.integer(),
+              ]),
+            ),
+            FormBuilderSwitch(
+              name: 'incAccount',
+              title: Text(s.incAccount),
+              initialValue: incAccount,
+              onChanged: (v) => setState(() => incAccount = v!),
+            ),
+            if (!incAccount)
+              FormBuilderTextField(
+                name: 'address',
+                decoration: InputDecoration(label: Text(s.addressIndex)),
+                controller: addressController,
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(),
+                  FormBuilderValidators.integer(),
+                ]),
+              ),
+          ],
+        ),
+      ),
+    ));
+  }
+
+  calculate() async {
+    final form = formKey.currentState!;
+    if (form.saveAndValidate()) {
+      final account = int.parse(accountController.text);
+      final addressIndex = int.parse(addressController.text);
+
+      await load(() async {
+        // calculate list of Zip32Keys
+        List<Zip32KeysT> keys = [];
+        for (var i = 0; i < 100; i++) {
+          if (incAccount)
+            keys.add(await warp.deriveZip32Keys(
+                aa.coin, aa.id, account + i, 0, true));
+          else
+            keys.add(await warp.deriveZip32Keys(
+                aa.coin, aa.id, account, addressIndex + i, false));
+        }
+        GoRouter.of(context).push('/more/keytool/results', extra: keys);
+      });
+    }
+  }
+}
+
 class KeyToolPage extends StatefulWidget {
+  final List<Zip32KeysT> keys;
+  KeyToolPage(this.keys, {super.key});
+
   @override
   State<StatefulWidget> createState() => _KeyToolState();
 }
 
 class _KeyToolState extends State<KeyToolPage> with WithLoadingAnimation {
   late final seed = aa.seed!;
-  List<Zip32KeysT> keys = [];
   final formKey = GlobalKey<FormBuilderState>();
   bool shielded = false;
   int account = 0;
@@ -31,14 +113,19 @@ class _KeyToolState extends State<KeyToolPage> with WithLoadingAnimation {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final keys = widget.keys;
     return Scaffold(
-        appBar: AppBar(title: Text(s.keyTool), actions: [
-          IconButton(onPressed: refresh, icon: Icon(Icons.refresh))
-        ]),
+        appBar: AppBar(
+          title: Text(s.keyTool),
+          actions: [
+            Switch(
+                value: shielded,
+                onChanged: (v) => setState(() => shielded = v))
+          ],
+        ),
         body: wrapWithLoading(Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: TableListPage(
-              key: UniqueKey(),
               view: 2,
               items: keys,
               metadata: TableListKeyMetadata(
@@ -48,29 +135,6 @@ class _KeyToolState extends State<KeyToolPage> with WithLoadingAnimation {
                   addressIndex: addrIndex,
                   formKey: formKey),
             ))));
-  }
-
-  void refresh() {
-    final form = formKey.currentState;
-    if (form != null && form.validate()) {
-      form.save();
-      account = int.parse(form.fields['account']!.value);
-      addrIndex = int.parse(form.fields['address']?.value);
-      shielded = form.fields['shielded']?.value as bool;
-
-      final coin = aa.coin;
-      final id = aa.id;
-      keys.clear();
-      load(() => _computeKeys(coin, id, account, addrIndex));
-    }
-    setState(() {});
-  }
-
-  Future<void> _computeKeys(int coin, int account, int aindex, int addrIndex) async {
-    for (int a = 0; a < 100; a++) {
-      final kp = await warp.deriveZip32Keys(coin, account, aindex, addrIndex + a);
-      keys.add(kp);
-    }
   }
 }
 
@@ -106,7 +170,7 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
     logger.d(item);
     final address = shielded ? item.zaddress : item.taddress!;
     final key = shielded ? item.zsk! : item.tsk!;
-    final derPath = path(index);
+    final derPath = path(item);
     final selected = selection == index;
     final idx = shielded ? accountIndex + index : addressIndex + index;
 
@@ -135,7 +199,8 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
                     ),
                   ],
                 )
-              : ListTile(leading: Text(idx.toString()), title: Text(address ?? s.na))),
+              : ListTile(
+                  leading: Text(idx.toString()), title: Text(address ?? s.na))),
     );
   }
 
@@ -147,49 +212,16 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
 
     return DataRow.byIndex(index: index, cells: [
       DataCell(Text(idx.toString())),
-      DataCell(Text(path(index))),
+      DataCell(Text(path(item))),
       DataCell(Text(address)),
       DataCell(Text(key)),
     ]);
   }
 
-  String path(index) {
+  String path(Zip32KeysT item) {
     return shielded
-        ? "m/32'/$coinIndex'/${accountIndex + index}'"
-        : "m/44'/$coinIndex'/$accountIndex'/0/${addressIndex + index}";
-  }
-
-  @override
-  Widget? header(BuildContext context) {
-    return FormBuilder(
-        key: formKey,
-        child: Column(
-          children: [
-            FormBuilderTextField(
-              name: 'account',
-              decoration: InputDecoration(label: Text(s.accountIndex)),
-              initialValue: accountIndex.toString(),
-              validator: FormBuilderValidators.compose([
-                FormBuilderValidators.required(),
-                FormBuilderValidators.integer(),
-              ]),
-            ),
-            FormBuilderTextField(
-              name: 'address',
-              decoration: InputDecoration(label: Text(s.addressIndex)),
-              initialValue: addressIndex.toString(),
-              validator: FormBuilderValidators.compose([
-                FormBuilderValidators.required(),
-                FormBuilderValidators.integer(),
-              ]),
-            ),
-            FormBuilderSwitch(
-              name: 'shielded',
-              title: Text(s.shielded),
-              initialValue: shielded,
-            ),
-          ],
-        ));
+        ? "m/32'/$coinIndex'/${item.aindex}'/0/[${item.addrIndex}]"
+        : "m/44'/$coinIndex'/${item.aindex}'/0/${item.addrIndex}";
   }
 
   @override
@@ -203,6 +235,9 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
 
   @override
   SortConfig2? sortBy(String field) => null;
+
+  @override
+  Widget? header(BuildContext context) => null;
 }
 
 void addSubAccount(BuildContext context, String seed, int index) {

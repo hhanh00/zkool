@@ -285,5 +285,6 @@
 	"transparentExtendedPubKey": "Extended T. Public Key",
 	"transparentExtendedPrivKey": "Extended T. Secret Key",
 	"transparentAddress": "Transparent Address",
-	"texNotSupported": "Only Transparent Accounts support TEX"
+	"texNotSupported": "Only Transparent Accounts support TEX",
+	"incAccount": "Increment Account Index"
 }

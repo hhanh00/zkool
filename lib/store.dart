@@ -146,8 +146,7 @@ abstract class _SyncStatus with Store {
     logger.d("--> $endHeight");
     var height = warp.getSyncHeight(coin);
     while (height < endHeight) {
-      if (aa.coin != coin)
-        break;
+      if (aa.coin != coin) break;
       await WarpSync.synchronize(aa.coin, endHeight);
       height = warp.getSyncHeight(aa.coin);
       eta.checkpoint(height, DateTime.now());
@@ -193,23 +192,20 @@ abstract class _SyncStatus with Store {
       }
       contacts.fetchContacts();
       await aa.update(syncedHeight);
-      marketPrice.update();
       if (aa.coin == coin && aa.id == account) {
         final lh = syncStatus.latestHeight!;
         final postBalance = warp.getBalance(coin, account, lh);
         final s = GetIt.I.get<S>();
         final ticker = coins[aa.coin].ticker;
         if (preBalance.total < postBalance.total) {
-          final amount =
-              amountToString(postBalance.total - preBalance.total);
+          final amount = amountToString(postBalance.total - preBalance.total);
           showLocalNotification(
             id: lh,
             title: s.incomingFunds,
             body: s.received(amount, ticker),
           );
-        } else {
-          final amount =
-              amountToString(preBalance.total - postBalance.total);
+        } else if (preBalance.total > postBalance.total) {
+          final amount = amountToString(preBalance.total - postBalance.total);
           showLocalNotification(
             id: lh,
             title: s.paymentMade,
@@ -328,16 +324,50 @@ var marketPrice = MarketPrice();
 class MarketPrice = _MarketPrice with _$MarketPrice;
 
 abstract class _MarketPrice with Store {
+  int? coin;
+  String? currency;
+  String? fiat;
+
   @observable
   double? price;
 
-  @action
-  Future<void> update() async {
-    final c = coins[aa.coin];
-    price = await getFxRate(c.currency, appSettings.currency);
+  void updateNow() {
+    _update();
   }
 
-  int? lastChartUpdateTime;
+  Future<void> _update() async {
+    final c = coins[aa.coin];
+    if (coin != aa.coin || currency != c.currency || fiat != appSettings.currency) {
+      coin = aa.coin;
+      currency = c.currency;
+      fiat = appSettings.currency;
+      runInAction(() => price = null);
+    }
+    if (currency != null && fiat != null) {
+      final p = await getFxRate(currency!, fiat!);
+      runInAction(() => price = p);
+    }
+  }
+
+  void run() {
+    int interval = 0;
+    bool failed = false;
+    void tryUpdatePrice() async {
+      try {
+        await _update();
+        failed = false;
+        interval = 60;
+      } on Exception {
+        if (failed)
+          interval = min((interval * 1.2).toInt(), 300);
+        else
+          interval = 10;
+        failed = true;
+      }
+      Timer(Duration(seconds: interval), tryUpdatePrice);
+    }
+    Future(tryUpdatePrice);
+  }
 }
 
 var contacts = ContactStore();
@@ -350,7 +380,9 @@ abstract class _ContactStore with Store {
 
   void fetchContacts() async {
     final cs = await warp.listContacts(aa.coin);
-    runInAction(() { contacts = cs; });
+    runInAction(() {
+      contacts = cs;
+    });
   }
 
   void add(ContactCardT c) {

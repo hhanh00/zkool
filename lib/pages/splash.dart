@@ -47,6 +47,7 @@ class _SplashState extends State<SplashPage> {
         if (protectOpen) {
           await authBarrier(context);
         }
+        marketPrice.run();
         appStore.initialized = true;
         final startURL = launchURL;
         launchURL = null;

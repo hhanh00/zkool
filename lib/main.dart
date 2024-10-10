@@ -7,6 +7,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,6 +36,7 @@ String? launchURL;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await requestNotificationPermissions();
   registerURLHandler();
   registerQuickActions();
   print('setup');
@@ -83,8 +85,8 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
 void registerURLHandler() {
   appLinks.uriLinkStream.listen((Uri uri) {
     logger.d(uri);
-    final quickActionURL = 
-      '/account/send?uri=${Uri.encodeComponent(uri.toString())}';
+    final quickActionURL =
+        '/account/send?uri=${Uri.encodeComponent(uri.toString())}';
     if (appStore.initialized) {
       router.go(quickActionURL);
     } else {
@@ -122,4 +124,13 @@ void installQuickActions() {
         icon: 'send'));
   }
   quickActions.setShortcutItems(shortcuts);
+}
+
+Future<void> requestNotificationPermissions() async {
+  if (!isMobile()) return;
+  await Permission.notification.isDenied.then((value) {
+    if (value) {
+      Permission.notification.request();
+    }
+  });
 }

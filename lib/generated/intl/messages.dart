@@ -1820,6 +1820,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Only Transparent Accounts support TEX'**
   String get texNotSupported;
+
+  /// No description provided for @incAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Increment Account Index'**
+  String get incAccount;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -20,12 +20,6 @@ class BalanceWidget extends StatefulWidget {
 class BalanceState extends State<BalanceWidget> {
   late final accountBalance = widget.balance;
 
-  @override
-  void initState() {
-    super.initState();
-    Future(marketPrice.update);
-  }
-
   String _formatFiat(double x) =>
       decimalFormat(x, 2, symbol: appSettings.currency);
 
@@ -45,6 +39,7 @@ class BalanceState extends State<BalanceWidget> {
       aa.height;
       aa.currency;
       appStore.flat;
+      marketPrice.price;
 
       final hideBalance = hide(appStore.flat);
       if (hideBalance) return SizedBox();
