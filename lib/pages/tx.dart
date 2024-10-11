@@ -5,7 +5,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collection/collection.dart';
-import 'package:hex/hex.dart';
 import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
 

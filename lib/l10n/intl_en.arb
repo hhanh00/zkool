@@ -107,6 +107,7 @@
 	"invalidKey": "Invalid Key",
 	"invalidPassword": "Invalid Password",
 	"invalidPaymentURI": "Invalid Payment URI",
+	"invalidURI": "Invalid URI",
 	"key": "Seed, Secret Key or View Key (optional)",
 	"keyTool": "Key Tool",
 	"keygen": "Backup Keygen",

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 import 'package:flutter/material.dart';

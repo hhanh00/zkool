@@ -52,7 +52,8 @@ extension AppSettingsExtension on AppSettings {
 
 extension CoinSettingsExtension on CoinSettings {
   void defaults(int coin) {
-    int defaultUAType = coins[coin].defaultUAType;
+    final c = coins[coin];
+    int defaultUAType = c.defaultUAType;
     if (!hasLwd()) lwd = ServerURL(index: 0);
     if (!hasUaType()) uaType = defaultUAType;
     if (!hasReplyUa()) replyUa = defaultUAType;
@@ -60,6 +61,12 @@ extension CoinSettingsExtension on CoinSettings {
     if (!hasReceipientPools()) receipientPools = 7;
     if (!hasWarpUrl()) warpUrl = coins[coin].warpUrl ?? '';
     if (!hasWarpHeight()) warpHeight = coins[coin].warpHeight;
+    if (serversAvailable.isEmpty) {
+      for (var s in c.lwd) {
+        serversAvailable.add(Server(name: s.name, url: s.url));
+        serversSelected.add(s.url);
+      }
+    }
   }
 
   static Future<CoinSettings> load(int coin) async {

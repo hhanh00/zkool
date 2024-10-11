@@ -1,12 +1,15 @@
 import 'package:YWallet/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:get_it/get_it.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:warp/data_fb_generated.dart';
 
 import '../appsettings.dart';
 import '../accounts.dart';
 import '../coin/coins.dart';
 import '../generated/intl/messages.dart';
+import '../settings.pb.dart';
 import 'scan.dart';
 import 'utils.dart';
 
@@ -404,4 +407,121 @@ class MemoInputState extends State<MemoInput> {
               : SizedBox.shrink();
         });
   }
+}
+
+class ServerListPicker extends StatefulWidget {
+  final String name;
+  final Servers initialValue;
+  final void Function(Servers?)? onSaved;
+
+  ServerListPicker(this.initialValue,
+      {super.key, required this.name, this.onSaved});
+
+  @override
+  State<StatefulWidget> createState() => ServerListPickerState();
+}
+
+class ServerListPickerState extends State<ServerListPicker> {
+  late final S s = S.of(context);
+  final formKey = GlobalKey<FormBuilderState>();
+  final selectKey = GlobalKey<FormFieldState>();
+  late final List<Server> available = widget.initialValue.available.toList();
+  late List<String> selected = widget.initialValue.selected.toList();
+
+  final customController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context);
+    final items = available.map((s) => MultiSelectItem(s.url, s.name)).toList();
+
+    return FormBuilderField<Servers>(
+      name: widget.name,
+      onSaved: widget.onSaved,
+      builder: (field) {
+        return FormBuilder(
+          key: formKey,
+          child: Column(
+            children: [
+              FormBuilderTextField(
+                name: '_custom',
+                decoration: InputDecoration(label: Text(s.custom)),
+                controller: customController,
+                validator: checkURI,
+                onSubmitted: addOption,
+              ),
+              FormBuilderField<List<String?>>(
+                name: 'chips',
+                onChanged: (value) {
+                  selected = value!.map((v) => v!).toList();
+                  final servers = widget.initialValue
+                      .copyWith(available: available, selected: selected);
+                  logger.i('chips changed');
+                  field.didChange(servers);
+                },
+                builder: (field) => MultiSelectChipField<String?>(
+                  key: selectKey,
+                  items: items,
+                  initialValue: selected,
+                  itemBuilder: (item, state) => GestureDetector(
+                    onLongPress: () => removeOption(item.value),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child: InputChip(
+                        label: Text(item.label),
+                        selected: state.value!.contains(item.value),
+                        selectedColor: t.colorScheme.inversePrimary,
+                        onPressed: () {
+                          field.didChange(state.value!.contains(item.value)
+                              ? state.value!
+                                  .where((e) => e != item.value)
+                                  .toList()
+                              : [...?state.value, item.value]);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  addOption(String? v) {
+    final custom = v!;
+    final form = formKey.currentState!;
+    if (form.validate()) {
+      if (!available.any((s) => s.url == custom)) {
+        setState(() {
+          available.add(Server(name: custom, url: custom));
+          selected.add(custom);
+          customController.clear();
+          form.fields['chips']!.didChange(selected);
+        });
+      }
+    }
+  }
+
+  removeOption(String? v) {
+    final form = formKey.currentState!;
+    final c = coins[widget.initialValue.coin];
+    if (c.lwd.any((s) => s.url == v!)) return;
+    setState(() {
+      available.removeWhere((a) => a.url == v!);
+      selected.remove(v!);
+      form.fields['chips']!.didChange(selected);
+    });
+  }
+}
+
+String? checkURI(String? v) {
+  if (v == null) return null;
+  final S s = GetIt.I.get<S>();
+  final uri = Uri.tryParse(v);
+  if (uri == null) return s.invalidURI;
+  if (!uri.isAbsolute) return s.invalidURI;
+  return null;
 }

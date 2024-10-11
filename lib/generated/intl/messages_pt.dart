@@ -337,6 +337,9 @@ class SPt extends S {
   String get invalidPaymentURI => 'Pagamento URI inválido';
 
   @override
+  String get invalidURI => 'Invalid URI';
+
+  @override
   String get key => 'Seed, Segredo ou Chave de Visualização (opcional)';
 
   @override

@@ -337,6 +337,9 @@ class SEn extends S {
   String get invalidPaymentURI => 'Invalid Payment URI';
 
   @override
+  String get invalidURI => 'Invalid URI';
+
+  @override
   String get key => 'Seed, Secret Key or View Key (optional)';
 
   @override

@@ -12,6 +12,7 @@ import 'pages/utils.dart';
 import 'accounts.dart';
 import 'coin/coins.dart';
 import 'generated/intl/messages.dart';
+import 'settings.pb.dart';
 
 part 'store.g.dart';
 part 'store.freezed.dart';
@@ -537,4 +538,13 @@ class Vote with _$Vote {
     required List<int> ids,
     int? candidate,
   }) = _Vote;
+}
+
+@freezed
+class Servers with _$Servers {
+  const factory Servers({
+    required int coin,
+    required List<Server> available,
+    required List<String> selected,
+  }) = _Servers;
 }

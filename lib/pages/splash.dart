@@ -12,7 +12,6 @@ import 'package:workmanager/workmanager.dart';
 import '../../accounts.dart';
 import '../init.dart';
 import '../main.dart';
-import 'settings.dart';
 import 'utils.dart';
 import '../appsettings.dart';
 import '../coin/coins.dart';
@@ -84,9 +83,8 @@ class _SplashState extends State<SplashPage> {
       logger.i("Db path: $path");
       warp.setDbPathPassword(coin, path, appStore.dbPassword);
       final cs = await CoinSettingsExtension.load(c.coin);
-      final url = resolveURL(c, cs);
       warp.configure(coin,
-          url: url, warp: c.warpUrl, warpEndHeight: cs.warpHeight);
+          servers: cs.serversSelected, warp: cs.warpUrl, warpEndHeight: cs.warpHeight);
     }
   }
 
@@ -181,18 +179,6 @@ Future<bool> setActiveAccountOf(int coin) async {
   if (id == 0) return false;
   await setActiveAccount(coin, id);
   return true;
-}
-
-Future<void> handleUri(Uri uri) async {
-  final scheme = uri.scheme;
-  final coinDef = coins.firstWhere((c) => c.currency == scheme);
-  final coin = coinDef.coin;
-  // TODO
-  // if (await setActiveAccountOf(coin)) {
-  //   SendContext? sc = SendContext.fromPaymentURI(uri.toString());
-  //   final context = rootNavigatorKey.currentContext!;
-  //   GoRouter.of(context).go('/account/quick_send', extra: sc);
-  // }
 }
 
 void handleQuickAction(BuildContext context, String quickAction) {

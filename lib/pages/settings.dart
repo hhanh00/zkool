@@ -21,6 +21,7 @@ import '../generated/intl/messages.dart';
 import '../appsettings.dart' as app;
 import '../settings.pb.dart';
 import '../store.dart';
+import 'input_widgets.dart';
 import 'utils.dart';
 
 late List<String> currencies;
@@ -105,13 +106,13 @@ class _SettingsState extends State<SettingsPage>
     if (validate()) {
       final prefs = GetIt.I.get<SharedPreferences>();
       await appSettings.save(prefs);
-      logger.d("${coinSettings.warpUrl}");
+      logger.d("${coinSettings.serversSelected}");
       await coinSettings.save(aa.coin);
       app.appSettings = app.AppSettingsExtension.load(prefs);
       app.coinSettings = await app.CoinSettingsExtension.load(aa.coin);
-      final serverUrl = resolveURL(coins[aa.coin], app.coinSettings);
+      final servers = app.coinSettings.serversSelected;
       warp.configure(aa.coin,
-          url: serverUrl,
+          servers: servers,
           warp: app.coinSettings.warpUrl,
           warpEndHeight: app.coinSettings.warpHeight);
       aaSequence.settingsSeqno = DateTime.now().millisecondsSinceEpoch;
@@ -473,16 +474,17 @@ class _CoinState extends State<CoinTab> with AutomaticKeepAliveClientMixin {
     final s = S.of(context);
     final t = Theme.of(context);
     final c = coins[widget.coin];
-    final servers = c.lwd
-        .asMap()
-        .entries
-        .map(
-          (kv) => FormBuilderFieldOption(
-              value: kv.key,
-              child: Text(kv.value.name +
-                  (pings[kv.key]?.let((v) => ' [$v ms]') ?? ''))),
-        )
-        .toList();
+    // TODO: Ping?
+    // final servers = c.lwd
+    //     .asMap()
+    //     .entries
+    //     .map(
+    //       (kv) => FormBuilderFieldOption(
+    //           value: kv.key,
+    //           child: Text(kv.value.name +
+    //               (pings[kv.key]?.let((v) => ' [$v ms]') ?? ''))),
+    //     )
+    //     .toList();
     final explorers = c.blockExplorers
         .asMap()
         .entries
@@ -521,27 +523,22 @@ class _CoinState extends State<CoinTab> with AutomaticKeepAliveClientMixin {
                   widget.coinSettings.fee = Int64(stringToAmount(v!)),
               keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
-          FormBuilderRadioGroup<int>(
-            name: 'server',
-            orientation: OptionsOrientation.vertical,
-            decoration: InputDecoration(label: Text(s.server)),
-            initialValue: widget.coinSettings.lwd.index,
-            onChanged: (v) => widget.coinSettings.lwd.index = v!,
-            options: [
-              ...servers,
-              FormBuilderFieldOption(
-                  value: -1,
-                  child: FormBuilderTextField(
-                    name: 'server_custom',
-                    initialValue: widget.coinSettings.lwd.customURL,
-                    onChanged: (v) => widget.coinSettings.lwd.customURL = v!,
-                    style: t.textTheme.bodyMedium,
-                  )),
-            ],
+          ServerListPicker(
+            Servers(
+              coin: widget.coin,
+              available: widget.coinSettings.serversAvailable,
+              selected: widget.coinSettings.serversSelected,
+            ),
+            name: 'servers',
+            onSaved: (v) {
+              if (v == null) return;
+              widget.coinSettings.serversAvailable..clear()..addAll(v.available);
+              widget.coinSettings.serversSelected..clear()..addAll(v.selected);
+            },
           ),
           Gap(8),
-          ElevatedButton(onPressed: ping, child: Text(s.ping)),
-          Gap(8),
+          // ElevatedButton(onPressed: ping, child: Text(s.ping)),
+          // Gap(8),
           FormBuilderTextField(
             name: 'warp_url',
             decoration: InputDecoration(label: Text(s.warpURL)),
@@ -607,7 +604,7 @@ class _CoinState extends State<CoinTab> with AutomaticKeepAliveClientMixin {
   }
 
   bool validate() {
-    return formKey.currentState!.validate();
+    return formKey.currentState!.saveAndValidate();
   }
 
   void ping() {

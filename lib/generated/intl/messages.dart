@@ -747,6 +747,12 @@ abstract class S {
   /// **'Invalid Payment URI'**
   String get invalidPaymentURI;
 
+  /// No description provided for @invalidURI.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid URI'**
+  String get invalidURI;
+
   /// No description provided for @key.
   ///
   /// In en, this message translates to:

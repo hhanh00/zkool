@@ -337,6 +337,9 @@ class SEs extends S {
   String get invalidPaymentURI => 'URI de pago inválido';
 
   @override
+  String get invalidURI => 'Invalid URI';
+
+  @override
   String get key => 'Semilla, Clave secreta o Clave de visualización (opcional)';
 
   @override

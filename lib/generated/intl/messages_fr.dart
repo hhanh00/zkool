@@ -337,6 +337,9 @@ class SFr extends S {
   String get invalidPaymentURI => 'Paiement URI invalide';
 
   @override
+  String get invalidURI => 'Invalid URI';
+
+  @override
   String get key => 'Graine, clé secrète ou clé de vue (optionnel)';
 
   @override

@@ -297,6 +297,14 @@ mixin _$SyncStatus on _SyncStatus, Store {
     });
   }
 
+  late final _$_updateAsyncAction =
+      AsyncAction('_SyncStatus._update', context: context);
+
+  @override
+  Future<void> _update() {
+    return _$_updateAsyncAction.run(() => super._update());
+  }
+
   late final _$updateBCHeightAsyncAction =
       AsyncAction('_SyncStatus.updateBCHeight', context: context);
 

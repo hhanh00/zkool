@@ -460,6 +460,8 @@ class CoinSettings extends $pb.GeneratedMessage {
     $core.int? receipientPools,
     $core.String? warpUrl,
     $core.int? warpHeight,
+    $core.Iterable<Server>? serversAvailable,
+    $core.Iterable<$core.String>? serversSelected,
   }) {
     final $result = create();
     if (account != null) {
@@ -498,6 +500,12 @@ class CoinSettings extends $pb.GeneratedMessage {
     if (warpHeight != null) {
       $result.warpHeight = warpHeight;
     }
+    if (serversAvailable != null) {
+      $result.serversAvailable.addAll(serversAvailable);
+    }
+    if (serversSelected != null) {
+      $result.serversSelected.addAll(serversSelected);
+    }
     return $result;
   }
   CoinSettings._() : super();
@@ -517,6 +525,8 @@ class CoinSettings extends $pb.GeneratedMessage {
     ..a<$core.int>(11, _omitFieldNames ? '' : 'receipientPools', $pb.PbFieldType.OU3)
     ..aOS(12, _omitFieldNames ? '' : 'warpUrl')
     ..a<$core.int>(13, _omitFieldNames ? '' : 'warpHeight', $pb.PbFieldType.OU3)
+    ..pc<Server>(14, _omitFieldNames ? '' : 'serversAvailable', $pb.PbFieldType.PM, subBuilder: Server.create)
+    ..pPS(15, _omitFieldNames ? '' : 'serversSelected')
     ..hasRequiredFields = false
   ;
 
@@ -652,6 +662,76 @@ class CoinSettings extends $pb.GeneratedMessage {
   $core.bool hasWarpHeight() => $_has(11);
   @$pb.TagNumber(13)
   void clearWarpHeight() => clearField(13);
+
+  @$pb.TagNumber(14)
+  $core.List<Server> get serversAvailable => $_getList(12);
+
+  @$pb.TagNumber(15)
+  $core.List<$core.String> get serversSelected => $_getList(13);
+}
+
+class Server extends $pb.GeneratedMessage {
+  factory Server({
+    $core.String? name,
+    $core.String? url,
+  }) {
+    final $result = create();
+    if (name != null) {
+      $result.name = name;
+    }
+    if (url != null) {
+      $result.url = url;
+    }
+    return $result;
+  }
+  Server._() : super();
+  factory Server.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Server.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Server', package: const $pb.PackageName(_omitMessageNames ? '' : 'pb'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'name')
+    ..aOS(2, _omitFieldNames ? '' : 'url')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Server clone() => Server()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Server copyWith(void Function(Server) updates) => super.copyWith((message) => updates(message as Server)) as Server;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Server create() => Server._();
+  Server createEmptyInstance() => create();
+  static $pb.PbList<Server> createRepeated() => $pb.PbList<Server>();
+  @$core.pragma('dart2js:noInline')
+  static Server getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Server>(create);
+  static Server? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get name => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set name($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearName() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get url => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set url($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasUrl() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearUrl() => clearField(2);
 }
 
 class ServerURL extends $pb.GeneratedMessage {

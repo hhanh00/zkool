@@ -9,6 +9,7 @@ import '../../generated/intl/messages.dart';
 import '../../appsettings.dart';
 import '../../store.dart';
 import '../../accounts.dart';
+import '../input_widgets.dart';
 import '../utils.dart';
 import 'balance.dart';
 import 'sync_status.dart';
@@ -86,7 +87,8 @@ class _HomeState extends State<HomePageInner> {
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Column(children: [
                         AddressCarousel(
-                          onAddressModeChanged: (_, m) => setState(() => mask = m),
+                          onAddressModeChanged: (_, m) =>
+                              setState(() => mask = m),
                           onQRPressed: () {
                             GoRouter.of(context).push('/account/payment_uri');
                           },

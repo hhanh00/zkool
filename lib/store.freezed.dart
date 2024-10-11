@@ -1925,3 +1925,184 @@ abstract class _Vote implements Vote {
   _$$VoteImplCopyWith<_$VoteImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+/// @nodoc
+mixin _$Servers {
+  int get coin => throw _privateConstructorUsedError;
+  List<Server> get available => throw _privateConstructorUsedError;
+  List<String> get selected => throw _privateConstructorUsedError;
+
+  /// Create a copy of Servers
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ServersCopyWith<Servers> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ServersCopyWith<$Res> {
+  factory $ServersCopyWith(Servers value, $Res Function(Servers) then) =
+      _$ServersCopyWithImpl<$Res, Servers>;
+  @useResult
+  $Res call({int coin, List<Server> available, List<String> selected});
+}
+
+/// @nodoc
+class _$ServersCopyWithImpl<$Res, $Val extends Servers>
+    implements $ServersCopyWith<$Res> {
+  _$ServersCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Servers
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? coin = null,
+    Object? available = null,
+    Object? selected = null,
+  }) {
+    return _then(_value.copyWith(
+      coin: null == coin
+          ? _value.coin
+          : coin // ignore: cast_nullable_to_non_nullable
+              as int,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as List<Server>,
+      selected: null == selected
+          ? _value.selected
+          : selected // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ServersImplCopyWith<$Res> implements $ServersCopyWith<$Res> {
+  factory _$$ServersImplCopyWith(
+          _$ServersImpl value, $Res Function(_$ServersImpl) then) =
+      __$$ServersImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int coin, List<Server> available, List<String> selected});
+}
+
+/// @nodoc
+class __$$ServersImplCopyWithImpl<$Res>
+    extends _$ServersCopyWithImpl<$Res, _$ServersImpl>
+    implements _$$ServersImplCopyWith<$Res> {
+  __$$ServersImplCopyWithImpl(
+      _$ServersImpl _value, $Res Function(_$ServersImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Servers
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? coin = null,
+    Object? available = null,
+    Object? selected = null,
+  }) {
+    return _then(_$ServersImpl(
+      coin: null == coin
+          ? _value.coin
+          : coin // ignore: cast_nullable_to_non_nullable
+              as int,
+      available: null == available
+          ? _value._available
+          : available // ignore: cast_nullable_to_non_nullable
+              as List<Server>,
+      selected: null == selected
+          ? _value._selected
+          : selected // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ServersImpl implements _Servers {
+  const _$ServersImpl(
+      {required this.coin,
+      required final List<Server> available,
+      required final List<String> selected})
+      : _available = available,
+        _selected = selected;
+
+  @override
+  final int coin;
+  final List<Server> _available;
+  @override
+  List<Server> get available {
+    if (_available is EqualUnmodifiableListView) return _available;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_available);
+  }
+
+  final List<String> _selected;
+  @override
+  List<String> get selected {
+    if (_selected is EqualUnmodifiableListView) return _selected;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_selected);
+  }
+
+  @override
+  String toString() {
+    return 'Servers(coin: $coin, available: $available, selected: $selected)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ServersImpl &&
+            (identical(other.coin, coin) || other.coin == coin) &&
+            const DeepCollectionEquality()
+                .equals(other._available, _available) &&
+            const DeepCollectionEquality().equals(other._selected, _selected));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      coin,
+      const DeepCollectionEquality().hash(_available),
+      const DeepCollectionEquality().hash(_selected));
+
+  /// Create a copy of Servers
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ServersImplCopyWith<_$ServersImpl> get copyWith =>
+      __$$ServersImplCopyWithImpl<_$ServersImpl>(this, _$identity);
+}
+
+abstract class _Servers implements Servers {
+  const factory _Servers(
+      {required final int coin,
+      required final List<Server> available,
+      required final List<String> selected}) = _$ServersImpl;
+
+  @override
+  int get coin;
+  @override
+  List<Server> get available;
+  @override
+  List<String> get selected;
+
+  /// Create a copy of Servers
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ServersImplCopyWith<_$ServersImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
