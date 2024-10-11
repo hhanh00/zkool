@@ -32,30 +32,9 @@ abstract class _AppStore with Store {
 
 Timer? syncTimer;
 
-Future<void> startAutoSync() async {
-  if (syncTimer == null) {
-    await syncStatus.updateBCHeight();
-    await syncStatus.sync(false, auto: true);
-    syncTimer = Timer.periodic(Duration(seconds: 15), (timer) {
-      syncStatus.sync(false, auto: true);
-      aa.updateDivisified();
-    });
-  }
-}
-
 var syncStatus = SyncStatus();
 
-class SyncStatus extends _SyncStatus with _$SyncStatus {
-  static Future<int?> getLatestHeight(int coin) async {
-    try {
-      final latestHeight = await warp.getBCHeight(coin);
-      return latestHeight;
-    } on String catch (e) {
-      logger.d(e);
-      return null;
-    }
-  }
-}
+class SyncStatus = _SyncStatus with _$SyncStatus;
 
 abstract class _SyncStatus with Store {
   int startSyncedHeight = 0;
@@ -128,22 +107,56 @@ abstract class _SyncStatus with Store {
     paused = false;
   }
 
+  bool updating = false;
+  bool failed = false;
+  int syncInterval = 0;
+
+  @action
+  Future<void> _update() async {
+    if (updating) return;
+    try {
+      updating = true;
+      logger.i('updateBCHeight ?');
+      await updateBCHeight();
+      logger.i('updateBCHeight !');
+      await sync(false, auto: true);
+      aa.updateDivisified();
+      failed = false;
+      syncInterval = 15; // normal interval
+      if (!connected)
+        aa.update(latestHeight!);
+      connected = true;
+    } catch (e) {
+      if (!failed) {
+        syncInterval = 5; // first retry
+        failed = true;
+      }
+      else {
+        syncInterval = (syncInterval * 1.2).toInt(); // exp backoff
+      }
+      if (syncInterval > 10)
+        connected = false; // notify when we tried a few times
+      logger.d('Retry in $syncInterval seconds');
+    }
+    finally {
+      updating = false;
+    }
+    Timer(Duration(seconds: syncInterval), _update);
+  }
+
+  void runAutoSync() {
+    Timer(Duration(seconds: syncInterval), _update);
+  }
+
   @action
   Future<void> updateBCHeight() async {
-    try {
-      final lh = latestHeight;
-      latestHeight = await warp.getBCHeight(aa.coin);
-      if (lh == null && latestHeight != null) aa.update(latestHeight!);
-      connected = true;
-    } on String catch (e) {
-      logger.d(e);
-      connected = false;
-    }
+    logger.i('updateBCHeight', stackTrace: StackTrace.current);
+    final lh = await warp.getBCHeight(aa.coin);
+    latestHeight = lh;
     syncedHeight = warp.getSyncHeight(aa.coin);
   }
 
   Future<void> syncToHeight(int coin, int endHeight, ETA eta) async {
-    logger.d("--> $endHeight");
     var height = warp.getSyncHeight(coin);
     while (height < endHeight) {
       if (aa.coin != coin) break;
@@ -337,7 +350,9 @@ abstract class _MarketPrice with Store {
 
   Future<void> _update() async {
     final c = coins[aa.coin];
-    if (coin != aa.coin || currency != c.currency || fiat != appSettings.currency) {
+    if (coin != aa.coin ||
+        currency != c.currency ||
+        fiat != appSettings.currency) {
       coin = aa.coin;
       currency = c.currency;
       fiat = appSettings.currency;
@@ -366,6 +381,7 @@ abstract class _MarketPrice with Store {
       }
       Timer(Duration(seconds: interval), tryUpdatePrice);
     }
+
     Future(tryUpdatePrice);
   }
 }

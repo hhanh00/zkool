@@ -180,8 +180,9 @@ class SegmentedPickerState extends State<SegmentedPicker> {
       },
     );
 
-    return widget.decoration != null ?
-      InputDecorator(decoration: widget.decoration!, child: f) : f;
+    return widget.decoration != null
+        ? InputDecorator(decoration: widget.decoration!, child: f)
+        : f;
   }
 }
 
@@ -239,7 +240,8 @@ class AmountPickerState extends State<AmountPicker> {
           return Column(children: [
             FormBuilderTextField(
               name: '_amount_crypto',
-              decoration: InputDecoration(label: Text(coin.ticker), errorText: field.errorText),
+              decoration: InputDecoration(
+                  label: Text(coin.ticker), errorText: field.errorText),
               controller: zController,
             ),
             if (widget.showFiat)
@@ -270,8 +272,8 @@ class AmountPickerState extends State<AmountPicker> {
       disabledListeners |= 1;
       final zAmount = double.tryParse(zController.text);
       // Do not update a field that was handled
-      if (zAmount != null) {
-        if (disabledListeners & 2 == 0 && fx != null) {
+      if (zAmount != null && disabledListeners & 2 == 0) {
+        if (fx != null) {
           final fAmount = zAmount * fx!;
           fController.text = zecToString(fAmount);
         } else

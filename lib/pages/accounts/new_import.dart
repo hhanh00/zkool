@@ -60,6 +60,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
       appBar: AppBar(
         title: Text(s.newAccount),
         actions: [
+          IconButton(onPressed: _onSettings, icon: Icon(Icons.settings)),
           IconButton(onPressed: _onOK, icon: Icon(Icons.add)),
         ],
       ),
@@ -147,7 +148,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
         final index = int.parse(accountIndexController.text);
         final bool isNew = _key.isEmpty;
         if (isNew) _key = await warp.generateSeed();
-        final latestHeight = await SyncStatus.getLatestHeight(coin);
+        final latestHeight = await warp.getBCHeightOrNull(coin);
         final birthHeight =
             _birthHeight ?? latestHeight ?? syncStatus.syncedHeight;
         final account = await warp.createAccount(
@@ -189,6 +190,10 @@ class _NewImportAccountState extends State<NewImportAccountPage>
     if (v == null || v.isEmpty) return null;
     if (!warp.isValidKey(coin, v)) return s.invalidKey;
     return null;
+  }
+
+  _onSettings() {
+    GoRouter.of(context).push('/settings');
   }
 
   // _importLedger() async {

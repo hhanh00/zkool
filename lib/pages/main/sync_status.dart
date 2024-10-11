@@ -16,10 +16,7 @@ class SyncStatusState extends State<SyncStatusWidget> {
   @override
   void initState() {
     super.initState();
-    Future(() async {
-      await syncStatus.updateBCHeight();
-      await startAutoSync();
-    });
+    syncStatus.runAutoSync();
   }
 
   String getSyncText(int syncedHeight) {
