@@ -250,7 +250,7 @@ class SEn extends S {
   String get disclaimer_1 => 'I understand I am responsible for securing my seed phrase';
 
   @override
-  String get disclaimer_2 => 'I understand YWallet cannot recover my seed phrase';
+  String get disclaimer_2 => 'I understand ZKool cannot recover my seed phrase';
 
   @override
   String get disclaimer_3 => 'I understand whoever knows my seed phrase can get my funds';
@@ -785,7 +785,7 @@ class SEn extends S {
   String get views => 'Views';
 
   @override
-  String get welcomeToYwallet => 'Welcome to YWallet';
+  String get welcomeToZkool => 'Welcome to ZKool';
 
   @override
   String get wifi => 'WiFi';

@@ -1,4 +1,3 @@
-import 'package:YWallet/store.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -8,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
 
+import '../../store.dart';
 import '../../accounts.dart';
 import '../../appsettings.dart';
 import '../../generated/intl/messages.dart';

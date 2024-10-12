@@ -117,9 +117,7 @@ abstract class _SyncStatus with Store {
     if (updating) return;
     try {
       updating = true;
-      logger.i('updateBCHeight ?');
       await updateBCHeight();
-      logger.i('updateBCHeight !');
       await sync(false, auto: true);
       aa.updateDivisified();
       failed = false;
@@ -151,7 +149,6 @@ abstract class _SyncStatus with Store {
 
   @action
   Future<void> updateBCHeight() async {
-    logger.i('updateBCHeight', stackTrace: StackTrace.current);
     final lh = await warp.getBCHeight(aa.coin);
     latestHeight = lh;
     syncedHeight = warp.getSyncHeight(aa.coin);
@@ -173,7 +170,6 @@ abstract class _SyncStatus with Store {
 
   @action
   Future<void> sync(bool rescan, {bool auto = false}) async {
-    logger.d('R/A/P/S $rescan $auto $paused $syncing');
     if (paused) return;
     if (syncing) return;
     try {

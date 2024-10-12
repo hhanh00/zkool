@@ -18,7 +18,7 @@ class WelcomePage extends StatelessWidget {
           children: [
             Image.asset('assets/welcome.png', width: size.width, height: size.height - 310, fit: BoxFit.fill),
             Gap(8),
-            Text(s.welcomeToYwallet, style: t.textTheme.headlineSmall!),
+            Text(s.welcomeToZkool, style: t.textTheme.headlineSmall!),
             Gap(8),
             Text(s.thePrivateWalletMessenger, style: t.textTheme.titleMedium!),
             Gap(16),

@@ -785,7 +785,7 @@ class SFr extends S {
   String get views => 'Vues';
 
   @override
-  String get welcomeToYwallet => 'Bienvenue sur YWallet';
+  String get welcomeToZkool => 'Welcome to ZKool';
 
   @override
   String get wifi => 'Wi-Fi';

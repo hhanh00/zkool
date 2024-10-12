@@ -35,29 +35,21 @@ String? launchURL;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await requestNotificationPermissions();
-  registerURLHandler();
-  registerQuickActions();
-  print('setup');
-  warp.setup();
   final prefs = await SharedPreferences.getInstance();
   GetIt.I.registerSingleton(prefs);
-  print('initializeReflectable');
+  warp.setup();
+  registerURLHandler();
+  await registerQuickActions();
   initializeReflectable();
-  print('restoreSettings');
-  await restoreSettings();
-  print('restoreWindow');
   await restoreWindow();
-  print('initNotifications');
   initNotifications();
   await initDbPath();
-  print('recoverDb');
   await recoverDb();
-  print('runApp');
+  await restoreAppSettings();
   runApp(App());
 }
 
-Future<void> restoreSettings() async {
+Future<void> restoreAppSettings() async {
   final prefs = GetIt.I.get<SharedPreferences>();
   appSettings = AppSettingsExtension.load(prefs);
 }

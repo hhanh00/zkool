@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:YWallet/appsettings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:settings_ui/settings_ui.dart';
 
+import '../../appsettings.dart';
 import '../../accounts.dart';
 import '../../coin/coins.dart';
 import '../../generated/intl/messages.dart';

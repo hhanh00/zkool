@@ -1,4 +1,3 @@
-import 'package:YWallet/pages/widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -11,6 +10,7 @@ import '../../accounts.dart';
 import '../../appsettings.dart';
 import '../../generated/intl/messages.dart';
 import '../../store.dart';
+import '../widgets.dart';
 import '../utils.dart';
 
 class RescanPage extends StatefulWidget {

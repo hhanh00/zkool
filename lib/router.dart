@@ -5,6 +5,7 @@ import 'package:warp/warp.dart';
 
 import 'coin/coins.dart';
 import 'generated/intl/messages.dart';
+import 'init.dart';
 import 'pages/more/cold.dart';
 import 'pages/more/transparent.dart';
 import 'pages/more/vote.dart';
@@ -327,7 +328,8 @@ final router = GoRouter(
                     routes: [
                       GoRoute(
                         path: 'results',
-                        builder: (context, state) => KeyToolPage(state.extra as List<Zip32KeysT>),
+                        builder: (context, state) =>
+                            KeyToolPage(state.extra as List<Zip32KeysT>),
                       ),
                     ],
                   ),
@@ -369,7 +371,14 @@ final router = GoRouter(
         ),
       ],
     ),
-    GoRoute(path: '/decrypt_db', builder: (context, state) => DbLoginPage()),
+    GoRoute(
+      path: '/decrypt_db',
+      builder: (context, state) => DbLoginPage(),
+      redirect: (context, state) {
+        if (!isDbEncrypted()) return '/splash';
+        return null;
+      },
+    ),
     GoRoute(path: '/disclaimer', builder: (context, state) => DisclaimerPage()),
     GoRoute(
       path: '/splash',
@@ -425,6 +434,18 @@ final router = GoRouter(
         })
   ],
 );
+
+bool isDbEncrypted() {
+  if (!isMobile()) {
+    // db encryption is only for desktop
+    final currentDb = getDbFile(0, appStore.dbDir, appStore.dbVersion)?.item2;
+    if (currentDb != null) {
+      // fresh install are not encrypted
+      if (!warp.checkDbPassword(currentDb, '')) return true; // encrypted
+    }
+  }
+  return false;
+}
 
 class ScaffoldBar extends StatefulWidget {
   final StatefulNavigationShell shell;

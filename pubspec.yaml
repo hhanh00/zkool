@@ -1,5 +1,5 @@
-name: YWallet
-description: Z/Ycash Wallet
+name: ZKool
+description: Zcash Wallet
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.7.0+534
+version: 1.0.0+2
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -176,7 +176,7 @@ flutter_intl:
   enabled: true
 
 msix_config:
-  display_name: Ywallet
+  display_name: ZKool
   publisher_display_name: Parallax Scroll
   identity_name: 38664ParallaxScroll.Ywallet
   publisher: CN=DF596492-B1AD-4B42-9ECB-4E6208B6D8CD

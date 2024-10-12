@@ -1,4 +1,3 @@
-import 'package:YWallet/pages/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +5,7 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
 
+import '../../utils.dart';
 import '../../../accounts.dart';
 import '../../../generated/intl/messages.dart';
 import '../../widgets.dart';

@@ -37,7 +37,7 @@ class _SplashState extends State<SplashPage> {
         _initProver();
         installQuickActions();
         // await _setupMempool();
-        await _initWallets();
+        await initCoinDb();
         await _restoreActive();
         // _initForegroundTask();
         _initBackgroundSync();
@@ -46,6 +46,7 @@ class _SplashState extends State<SplashPage> {
         if (protectOpen) {
           await authBarrier(context);
         }
+        await requestNotificationPermissions();
         marketPrice.run();
         appStore.initialized = true;
         final startURL = launchURL;
@@ -59,7 +60,6 @@ class _SplashState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return LoadProgress(key: progressKey);
   }
-
 
   // TODO
   // if (Platform.isWindows) {
@@ -75,7 +75,7 @@ class _SplashState extends State<SplashPage> {
     warp.initProver(spend.buffer.asUint8List(), output.buffer.asUint8List());
   }
 
-  Future<void> _initWallets() async {
+  Future<void> initCoinDb() async {
     for (var c in coins) {
       final coin = c.coin;
       _setProgress(0.5 + 0.1 * coin, 'Initializing ${c.ticker}');
@@ -84,8 +84,11 @@ class _SplashState extends State<SplashPage> {
       warp.setDbPathPassword(coin, path, appStore.dbPassword);
       final cs = await CoinSettingsExtension.load(c.coin);
       warp.configure(coin,
-          servers: cs.serversSelected, warp: cs.warpUrl, warpEndHeight: cs.warpHeight);
+          servers: cs.serversSelected,
+          warp: cs.warpUrl,
+          warpEndHeight: cs.warpHeight);
     }
+    coinSettings = CoinSettingsExtension.load(0);
   }
 
   Future<void> _restoreActive() async {
@@ -96,9 +99,7 @@ class _SplashState extends State<SplashPage> {
     if (a != null) {
       await setActiveAccount(a.coin, a.id);
       await aa.update(MAXHEIGHT);
-    }
-    else
-      coinSettings = CoinSettingsExtension.load(0);
+    } 
   }
 
   _initAccel() {

@@ -1,4 +1,3 @@
-import 'package:YWallet/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -9,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+import '../../store.dart';
 import '../../generated/intl/messages.dart';
 import '../../appsettings.dart';
 import '../utils.dart';

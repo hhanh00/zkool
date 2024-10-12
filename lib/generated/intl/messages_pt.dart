@@ -785,7 +785,7 @@ class SPt extends S {
   String get views => 'Visualizações';
 
   @override
-  String get welcomeToYwallet => 'Bem-vindo ao YWallet';
+  String get welcomeToZkool => 'Welcome to ZKool';
 
   @override
   String get wifi => 'Wi-Fi';

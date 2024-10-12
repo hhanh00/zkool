@@ -1,4 +1,3 @@
-import 'package:YWallet/pages/widgets.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +13,7 @@ import '../../generated/intl/messages.dart';
 import '../../store.dart';
 import '../scan.dart';
 import '../utils.dart';
+import '../widgets.dart';
 
 class ContactsPage extends StatefulWidget {
   final bool main;

@@ -576,7 +576,7 @@ abstract class S {
   /// No description provided for @disclaimer_2.
   ///
   /// In en, this message translates to:
-  /// **'I understand YWallet cannot recover my seed phrase'**
+  /// **'I understand ZKool cannot recover my seed phrase'**
   String get disclaimer_2;
 
   /// No description provided for @disclaimer_3.
@@ -1611,11 +1611,11 @@ abstract class S {
   /// **'Views'**
   String get views;
 
-  /// No description provided for @welcomeToYwallet.
+  /// No description provided for @welcomeToZkool.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to YWallet'**
-  String get welcomeToYwallet;
+  /// **'Welcome to ZKool'**
+  String get welcomeToZkool;
 
   /// No description provided for @wifi.
   ///

@@ -1,10 +1,10 @@
-import 'package:YWallet/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get_it/get_it.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:warp/data_fb_generated.dart';
 
+import '../store.dart';
 import '../appsettings.dart';
 import '../accounts.dart';
 import '../coin/coins.dart';
