@@ -456,7 +456,6 @@ class ServerListPickerState extends State<ServerListPicker> {
                   selected = value!.map((v) => v!).toList();
                   final servers = widget.initialValue
                       .copyWith(available: available, selected: selected);
-                  logger.i('chips changed');
                   field.didChange(servers);
                 },
                 builder: (field) => MultiSelectChipField<String?>(

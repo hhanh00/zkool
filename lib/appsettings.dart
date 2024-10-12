@@ -69,10 +69,10 @@ extension CoinSettingsExtension on CoinSettings {
     }
   }
 
-  static Future<CoinSettings> load(int coin) async {
+  static CoinSettings load(int coin) {
     Uint8List p;
     try {
-      p = await warp.getAccountProperty(coin, 0, 'settings');
+      p = warp.getAccountProperty(coin, 0, 'settings');
     } on String {
       p = Uint8List(0);
     }
@@ -82,7 +82,7 @@ extension CoinSettingsExtension on CoinSettings {
 
   Future<void> save(int coin) async {
     final settings = writeToBuffer();
-    await warp.setAccountProperty(coin, 0, 'settings', settings);
+    warp.setAccountProperty(coin, 0, 'settings', settings);
   }
 
   String resolveBlockExplorer(int coin) {

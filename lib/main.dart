@@ -20,6 +20,7 @@ import './pages/utils.dart';
 
 import 'init.dart';
 import 'router.dart';
+import 'settings.pb.dart';
 import 'store.dart';
 
 const ZECUNIT = 100000000.0;

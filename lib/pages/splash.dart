@@ -97,6 +97,8 @@ class _SplashState extends State<SplashPage> {
       await setActiveAccount(a.coin, a.id);
       await aa.update(MAXHEIGHT);
     }
+    else
+      coinSettings = CoinSettingsExtension.load(0);
   }
 
   _initAccel() {
