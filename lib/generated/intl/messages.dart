@@ -1832,6 +1832,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Increment Account Index'**
   String get incAccount;
+
+  /// No description provided for @transparentOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Transparent Only'**
+  String get transparentOnly;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

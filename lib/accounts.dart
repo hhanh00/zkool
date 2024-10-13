@@ -15,8 +15,7 @@ import 'store.dart';
 
 part 'accounts.g.dart';
 
-final ActiveAccount nullAccount =
-    ActiveAccount(0, 0, "", null, false, false);
+final ActiveAccount nullAccount = ActiveAccount(0, 0, "", null, false, false);
 
 ActiveAccount aa = nullAccount;
 
@@ -44,8 +43,8 @@ Future<void> setActiveAccount(int coin, int id) async {
 }
 
 class ActiveAccount extends _ActiveAccount with _$ActiveAccount {
-  ActiveAccount(super.coin, super.id, super.name, super.seed,
-      super.external, super.saved);
+  ActiveAccount(super.coin, super.id, super.name, super.seed, super.external,
+      super.saved);
 
   static Future<ActiveAccount?> fromPrefs(SharedPreferences prefs) async {
     final coin = prefs.getInt('coin') ?? 0;
@@ -91,12 +90,16 @@ abstract class _ActiveAccount with Store {
   final String? seed;
   final bool external;
   final bool saved;
+  late final AccountSigningCapabilitiesT? _caps;
 
-  _ActiveAccount(this.coin, this.id, this.name, this.seed,
-      this.external, this.saved)
+  _ActiveAccount(
+      this.coin, this.id, this.name, this.seed, this.external, this.saved)
       : notes = Notes(coin, id),
         txs = Txs(coin, id),
-        messages = Messages(coin, id);
+        messages = Messages(coin, id) {
+    if (id != 0)
+      _caps = warp.getAccountCapabilities(coin, id);
+  }
 
   @observable
   String diversifiedAddress = '';
@@ -126,10 +129,10 @@ abstract class _ActiveAccount with Store {
 
   @action
   void updateDivisified() {
-    if (id == 0) return;
+    if (id == 0 || (_caps != null && _caps.sapling == 0 && _caps.orchard == 0)) return;
     try {
-      diversifiedAddress =
-          warp.getAccountAddress(coin, id, now(), (coinSettings.uaType & 6) | 8);
+      diversifiedAddress = warp.getAccountAddress(
+          coin, id, now(), (coinSettings.uaType & 6) | 8);
     } catch (e) {}
   }
 

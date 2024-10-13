@@ -287,5 +287,6 @@
 	"transparentExtendedPrivKey": "Extended T. Secret Key",
 	"transparentAddress": "Transparent Address",
 	"texNotSupported": "Only Transparent Accounts support TEX",
-	"incAccount": "Increment Account Index"
+	"incAccount": "Increment Account Index",
+	"transparentOnly": "Transparent Only"
 }

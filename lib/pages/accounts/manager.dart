@@ -71,8 +71,10 @@ class _AccountManagerState extends State<AccountManagerPage> {
     final a = accounts[selected!];
     final count = accounts.length;
     if (count > 1 && a.coin == aa.coin && a.id == aa.id) {
-      await showMessageBox(context, s.error, s.cannotDeleteActive, type: DialogType.error);
-      return;
+      final other = accounts.firstWhere(
+          (a) => a.coin != aa.coin || a.id != aa.id,
+          orElse: () => AccountNameT());
+      setActiveAccount(other.coin, other.id);
     }
 
     final confirmed = await showConfirmDialog(
@@ -82,7 +84,6 @@ class _AccountManagerState extends State<AccountManagerPage> {
       _refresh();
       contacts.fetchContacts();
       if (accounts.isEmpty) {
-        await setActiveAccount(0, 0);
         GoRouter.of(context).go('/account');
       } else {
         selected = null;

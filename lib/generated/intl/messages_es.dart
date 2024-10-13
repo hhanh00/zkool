@@ -894,4 +894,7 @@ class SEs extends S {
 
   @override
   String get incAccount => 'Increment Account Index';
+
+  @override
+  String get transparentOnly => 'Transparent Only';
 }

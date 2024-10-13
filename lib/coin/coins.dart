@@ -7,5 +7,5 @@ CoinBase ycash = YcashCoin();
 CoinBase zcash = ZcashCoin();
 CoinBase zcashtest = ZcashTestCoin();
 
-final coins = [zcash]; // , ycash TODO
+final coins = [zcashtest]; // , ycash TODO
 
