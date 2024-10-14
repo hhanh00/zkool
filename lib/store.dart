@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
 
@@ -184,6 +185,7 @@ abstract class _SyncStatus with Store {
       if (isSynced) return;
       syncing = true;
       isRescan = rescan;
+      WakelockPlus.enable();
       _updateSyncedHeight();
       startSyncedHeight = syncedHeight;
 
@@ -229,6 +231,7 @@ abstract class _SyncStatus with Store {
     } finally {
       syncing = false;
       eta.end();
+      WakelockPlus.disable();
     }
   }
 
