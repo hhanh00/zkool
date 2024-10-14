@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warp/warp.dart';
-import 'package:workmanager/workmanager.dart';
 
 import '../../accounts.dart';
 import '../init.dart';
@@ -113,23 +112,23 @@ class _SplashState extends State<SplashPage> {
 
   _initBackgroundSync() {
     if (!isMobile()) return;
-    logger.d('${appSettings.backgroundSync}');
 
-    Workmanager().initialize(
-      backgroundSyncDispatcher,
-    );
-    if (appSettings.backgroundSync != 0)
-      Workmanager().registerPeriodicTask(
-        'sync',
-        'background-sync',
-        constraints: Constraints(
-          networkType: appSettings.backgroundSync == 1
-              ? NetworkType.unmetered
-              : NetworkType.connected,
-        ),
-      );
-    else
-      Workmanager().cancelAll();
+    // TODO Background sync
+    // Workmanager().initialize(
+    //   backgroundSyncDispatcher,
+    // );
+    // if (appSettings.backgroundSync != 0)
+    //   Workmanager().registerPeriodicTask(
+    //     'sync',
+    //     'background-sync',
+    //     constraints: Constraints(
+    //       networkType: appSettings.backgroundSync == 1
+    //           ? NetworkType.unmetered
+    //           : NetworkType.connected,
+    //     ),
+    //   );
+    // else
+    //   Workmanager().cancelAll();
   }
 }
 
@@ -197,12 +196,12 @@ void handleQuickAction(BuildContext context, String quickAction) {
   }
 }
 
-@pragma('vm:entry-point')
-void backgroundSyncDispatcher() {
-  if (!appStore.initialized) return;
-  Workmanager().executeTask((task, inputData) async {
-    logger.i("Native called background task: $task");
-    await syncStatus.sync(false, auto: true);
-    return true;
-  });
-}
+// @pragma('vm:entry-point')
+// void backgroundSyncDispatcher() {
+//   if (!appStore.initialized) return;
+//   Workmanager().executeTask((task, inputData) async {
+//     logger.i("Native called background task: $task");
+//     await syncStatus.sync(false, auto: true);
+//     return true;
+//   });
+// }
