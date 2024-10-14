@@ -316,7 +316,7 @@ class _AnimatedQRState extends State<AnimatedQR> {
   @override
   void initState() {
     super.initState();
-    _timer = new Timer.periodic(Duration(seconds: 3), (Timer timer) {
+    _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
       setState(() {
         index += 1;
       });

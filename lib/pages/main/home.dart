@@ -9,7 +9,6 @@ import '../../generated/intl/messages.dart';
 import '../../appsettings.dart';
 import '../../store.dart';
 import '../../accounts.dart';
-import '../input_widgets.dart';
 import '../utils.dart';
 import 'balance.dart';
 import 'sync_status.dart';

@@ -69,8 +69,7 @@ class _AccountManagerState extends State<AccountManagerPage> {
 
   delete() async {
     final a = accounts[selected!];
-    final count = accounts.length;
-    if (count > 1 && a.coin == aa.coin && a.id == aa.id) {
+    if (a.coin == aa.coin && a.id == aa.id) {
       final other = accounts.firstWhere(
           (a) => a.coin != aa.coin || a.id != aa.id,
           orElse: () => AccountNameT());
@@ -84,7 +83,7 @@ class _AccountManagerState extends State<AccountManagerPage> {
       _refresh();
       contacts.fetchContacts();
       if (accounts.isEmpty) {
-        GoRouter.of(context).go('/account');
+        GoRouter.of(context).go('/welcome');
       } else {
         selected = null;
         setState(() {});
@@ -107,9 +106,8 @@ class _AccountManagerState extends State<AccountManagerPage> {
   }
 
   _refresh() {
-    setState(() {
-      accounts = getAllAccounts();
-    });
+    accounts = getAllAccounts();
+    setState(() {});
   }
 }
 

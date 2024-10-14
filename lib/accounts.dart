@@ -30,16 +30,15 @@ abstract class _AASequence with Store {
   int settingsSeqno = 0;
 }
 
+@action
 Future<void> setActiveAccount(int coin, int id) async {
+  aa = ActiveAccount.fromId(coin, id);
   coinSettings = await CoinSettingsExtension.load(coin);
-  runInAction(() {
-    aa = ActiveAccount.fromId(coin, id);
-    coinSettings.account = id;
-    coinSettings.save(coin);
-    aa.updateDivisified();
-    aa.update(MAXHEIGHT);
-    aaSequence.seqno = DateTime.now().microsecondsSinceEpoch;
-  });
+  coinSettings.account = id;
+  coinSettings.save(coin);
+  aa.updateDivisified();
+  aa.update(MAXHEIGHT);
+  aaSequence.seqno = DateTime.now().microsecondsSinceEpoch;
 }
 
 class ActiveAccount extends _ActiveAccount with _$ActiveAccount {
