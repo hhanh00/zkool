@@ -1838,6 +1838,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Transparent Only'**
   String get transparentOnly;
+
+  /// No description provided for @mempoolMonitor.
+  ///
+  /// In en, this message translates to:
+  /// **'Mempool Monitoring'**
+  String get mempoolMonitor;
+
+  /// No description provided for @mempoolRestart.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the Mempool settings takes effect after restart'**
+  String get mempoolRestart;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

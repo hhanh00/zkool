@@ -36,6 +36,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsState extends State<SettingsPage>
     with SingleTickerProviderStateMixin {
+  late final S s = S.of(context);
   late final tabController = TabController(length: 5, vsync: this);
   final generalKey = GlobalKey<_GeneralState>();
   final privacyKey = GlobalKey<_PrivacyState>();
@@ -63,7 +64,6 @@ class _SettingsState extends State<SettingsPage>
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
     final c = coins[widget.coin];
     return Scaffold(
       appBar: AppBar(
@@ -105,8 +105,10 @@ class _SettingsState extends State<SettingsPage>
   _ok() async {
     if (validate()) {
       final prefs = GetIt.I.get<SharedPreferences>();
+      if (coinSettings.mempool != app.coinSettings.mempool) {
+        await showMessageBox(context, s.mempoolMonitor, s.mempoolRestart);
+      }
       await appSettings.save(prefs);
-      logger.d("${coinSettings.serversSelected}");
       await coinSettings.save(aa.coin);
       app.appSettings = app.AppSettingsExtension.load(prefs);
       app.coinSettings = await app.CoinSettingsExtension.load(aa.coin);
@@ -555,6 +557,14 @@ class _CoinState extends State<CoinTab> with AutomaticKeepAliveClientMixin {
             validator: FormBuilderValidators.integer(),
             onChanged: (v) => widget.coinSettings.warpHeight = int.parse(v!),
             onSaved: (v) => widget.coinSettings.warpHeight = int.parse(v!),
+          ),
+          Gap(8),
+          FormBuilderSwitch(
+            name: 'mempool',
+            title: Text(s.mempoolMonitor),
+            initialValue: widget.coinSettings.mempool,
+            onChanged: (v) =>
+                setState(() => widget.coinSettings.mempool = v!),
           ),
           Gap(8),
           FormBuilderRadioGroup<int>(

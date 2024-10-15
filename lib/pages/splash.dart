@@ -93,7 +93,9 @@ class _SplashState extends State<SplashPage> {
 
   void runMempool() {
     for (var c in coins) {
-      warp.mempoolRun(c.coin);
+      final cs = CoinSettingsExtension.load(c.coin);
+      if (cs.mempool)
+        warp.mempoolRun(c.coin);
     }
   }
 

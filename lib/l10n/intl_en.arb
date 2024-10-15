@@ -288,5 +288,7 @@
 	"transparentAddress": "Transparent Address",
 	"texNotSupported": "Only Transparent Accounts support TEX",
 	"incAccount": "Increment Account Index",
-	"transparentOnly": "Transparent Only"
+	"transparentOnly": "Transparent Only",
+	"mempoolMonitor": "Mempool Monitoring",
+	"mempoolRestart": "Changing the Mempool settings takes effect after restart"
 }

@@ -897,4 +897,10 @@ class SEn extends S {
 
   @override
   String get transparentOnly => 'Transparent Only';
+
+  @override
+  String get mempoolMonitor => 'Mempool Monitoring';
+
+  @override
+  String get mempoolRestart => 'Changing the Mempool settings takes effect after restart';
 }

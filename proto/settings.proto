@@ -47,6 +47,7 @@ message CoinSettings {
     uint32 warp_height = 13;
     repeated Server servers_available = 14;
     repeated string servers_selected = 15;
+    bool mempool = 16;
 }
 
 message Server {

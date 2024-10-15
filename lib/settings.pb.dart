@@ -462,6 +462,7 @@ class CoinSettings extends $pb.GeneratedMessage {
     $core.int? warpHeight,
     $core.Iterable<Server>? serversAvailable,
     $core.Iterable<$core.String>? serversSelected,
+    $core.bool? mempool,
   }) {
     final $result = create();
     if (account != null) {
@@ -506,6 +507,9 @@ class CoinSettings extends $pb.GeneratedMessage {
     if (serversSelected != null) {
       $result.serversSelected.addAll(serversSelected);
     }
+    if (mempool != null) {
+      $result.mempool = mempool;
+    }
     return $result;
   }
   CoinSettings._() : super();
@@ -527,6 +531,7 @@ class CoinSettings extends $pb.GeneratedMessage {
     ..a<$core.int>(13, _omitFieldNames ? '' : 'warpHeight', $pb.PbFieldType.OU3)
     ..pc<Server>(14, _omitFieldNames ? '' : 'serversAvailable', $pb.PbFieldType.PM, subBuilder: Server.create)
     ..pPS(15, _omitFieldNames ? '' : 'serversSelected')
+    ..aOB(16, _omitFieldNames ? '' : 'mempool')
     ..hasRequiredFields = false
   ;
 
@@ -668,6 +673,15 @@ class CoinSettings extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(15)
   $core.List<$core.String> get serversSelected => $_getList(13);
+
+  @$pb.TagNumber(16)
+  $core.bool get mempool => $_getBF(14);
+  @$pb.TagNumber(16)
+  set mempool($core.bool v) { $_setBool(14, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasMempool() => $_has(14);
+  @$pb.TagNumber(16)
+  void clearMempool() => clearField(16);
 }
 
 class Server extends $pb.GeneratedMessage {
