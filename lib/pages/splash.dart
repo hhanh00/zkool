@@ -37,6 +37,7 @@ class _SplashState extends State<SplashPage> {
         installQuickActions();
         // await _setupMempool();
         await initCoinDb();
+        runMempool();
         await _restoreActive();
         // _initForegroundTask();
         _initBackgroundSync();
@@ -88,6 +89,12 @@ class _SplashState extends State<SplashPage> {
           warpEndHeight: cs.warpHeight);
     }
     coinSettings = CoinSettingsExtension.load(0);
+  }
+
+  void runMempool() {
+    for (var c in coins) {
+      warp.mempoolRun(c.coin);
+    }
   }
 
   Future<void> _restoreActive() async {

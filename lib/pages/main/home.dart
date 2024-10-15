@@ -98,6 +98,8 @@ class _HomeState extends State<HomePageInner> {
                           balance,
                           mask & 7,
                         ),
+                        Gap(8),
+                        UnconfirmedBalance(),
                         Gap(16),
                         if (!aa.saved)
                           OutlinedButton(

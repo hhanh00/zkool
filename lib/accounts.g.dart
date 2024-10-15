@@ -66,6 +66,22 @@ mixin _$ActiveAccount on _ActiveAccount, Store {
     });
   }
 
+  late final _$unconfirmedBalanceAtom =
+      Atom(name: '_ActiveAccount.unconfirmedBalance', context: context);
+
+  @override
+  int get unconfirmedBalance {
+    _$unconfirmedBalanceAtom.reportRead();
+    return super.unconfirmedBalance;
+  }
+
+  @override
+  set unconfirmedBalance(int value) {
+    _$unconfirmedBalanceAtom.reportWrite(value, super.unconfirmedBalance, () {
+      super.unconfirmedBalance = value;
+    });
+  }
+
   late final _$heightAtom =
       Atom(name: '_ActiveAccount.height', context: context);
 
@@ -124,9 +140,21 @@ mixin _$ActiveAccount on _ActiveAccount, Store {
   }
 
   @override
+  void updateUnconfirmedBalance() {
+    final _$actionInfo = _$_ActiveAccountActionController.startAction(
+        name: '_ActiveAccount.updateUnconfirmedBalance');
+    try {
+      return super.updateUnconfirmedBalance();
+    } finally {
+      _$_ActiveAccountActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 diversifiedAddress: ${diversifiedAddress},
+unconfirmedBalance: ${unconfirmedBalance},
 height: ${height},
 currency: ${currency}
     ''';

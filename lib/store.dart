@@ -115,6 +115,8 @@ abstract class _SyncStatus with Store {
 
   @action
   Future<void> _update() async {
+    aa.updateUnconfirmedBalance();
+
     if (updating) return;
     try {
       updating = true;

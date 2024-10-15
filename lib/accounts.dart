@@ -36,6 +36,7 @@ Future<void> setActiveAccount(int coin, int id) async {
   coinSettings = await CoinSettingsExtension.load(coin);
   coinSettings.account = id;
   coinSettings.save(coin);
+  warp.mempoolSetAccount(coin, id);
   aa.updateDivisified();
   aa.update(MAXHEIGHT);
   aaSequence.seqno = DateTime.now().microsecondsSinceEpoch;
@@ -104,6 +105,9 @@ abstract class _ActiveAccount with Store {
   String diversifiedAddress = '';
 
   @observable
+  int unconfirmedBalance = 0;
+
+  @observable
   int height = 0;
 
   @observable
@@ -133,6 +137,13 @@ abstract class _ActiveAccount with Store {
       diversifiedAddress = warp.getAccountAddress(
           coin, id, now(), (coinSettings.uaType & 6) | 8);
     } catch (e) {}
+  }
+
+  @action
+  void updateUnconfirmedBalance() {
+    final b = warp.getUnconfirmedBalance(coin, id);
+    if (b != unconfirmedBalance)
+      unconfirmedBalance = b;
   }
 
   Future<void> update(int newHeight) async {

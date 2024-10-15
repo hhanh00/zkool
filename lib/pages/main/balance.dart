@@ -41,7 +41,7 @@ class BalanceState extends State<BalanceWidget> {
       appStore.flat;
       marketPrice.price;
 
-      final hideBalance = hide(appStore.flat);
+      final hideBalance = isHidden(appStore.flat);
       if (hideBalance) return SizedBox();
 
       final c = coins[aa.coin];
@@ -87,18 +87,49 @@ class BalanceState extends State<BalanceWidget> {
     });
   }
 
-  bool hide(bool flat) {
-    switch (appSettings.autoHide) {
-      case 0:
-        return true;
-      case 1:
-        return flat;
-      default:
-        return false;
-    }
-  }
-
   int get balance => accountBalance.masked(widget.mode);
   int get totalBalance => accountBalance.total;
   int get otherBalance => totalBalance - balance;
+}
+
+class UnconfirmedBalance extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Observer(builder: (context) {
+      appStore.flat;
+      final amount = aa.unconfirmedBalance;
+
+      final hideBalance = isHidden(appStore.flat);
+      if (amount == 0 || hideBalance) return SizedBox.shrink();
+
+      final t = Theme.of(context);
+      final color =
+          amount > 0 ? t.colorScheme.primary : t.colorScheme.secondary;
+      final sign = amount > 0 ? '+' : '-';
+      final amplitude = amount.abs();
+      final hi = decimalFormat((amplitude ~/ 100000) / 1000.0, 3);
+      final lo = (amplitude % 100000).toString().padLeft(5, '0');
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        textBaseline: TextBaseline.alphabetic,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        children: [
+          Text(sign, style: t.textTheme.titleLarge!.copyWith(color: color)),
+          Text(hi, style: t.textTheme.titleLarge!.copyWith(color: color)),
+          Text(lo, style: t.textTheme.labelMedium!.copyWith(color: color)),
+        ],
+      );
+    });
+  }
+}
+
+bool isHidden(bool flat) {
+  switch (appSettings.autoHide) {
+    case 0:
+      return true;
+    case 1:
+      return flat;
+    default:
+      return false;
+  }
 }
