@@ -159,7 +159,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
         final birthHeight =
             _birthHeight ?? latestHeight ?? syncStatus.syncedHeight;
         final account = await warp.createAccount(
-            coin, nameController.text, _key, index, birthHeight, _transparentOnly);
+            coin, nameController.text, _key, index, birthHeight, _transparentOnly, isNew);
         if (account < 0)
           form.fields['name']!.invalidate(s.thisAccountAlreadyExists);
         else {

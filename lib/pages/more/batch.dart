@@ -112,7 +112,7 @@ class _BatchBackupState extends State<BatchBackupPage> {
   save() async {
     final s = S.of(context);
     final outFilePath = isMobile()
-        ? await getTemporaryPath('YWallet.age')
+        ? await getTemporaryPath('ZKool.age')
         : await FilePicker.platform.saveFile(dialogTitle: s.fullBackup);
     if (outFilePath != null) {
       final dbDir = appStore.dbDir;
