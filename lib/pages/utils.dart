@@ -59,18 +59,6 @@ final DateFormat txDateFormat = DateFormat("MM-dd HH:mm");
 final DateFormat msgDateFormat = DateFormat("MM-dd HH:mm");
 final DateFormat msgDateFormatFull = DateFormat("yy-MM-dd HH:mm:ss");
 
-int decimalDigits(bool fullPrec) => fullPrec ? MAX_PRECISION : 3;
-String decimalFormat(double x, int decimalDigits, {String symbol = ''}) {
-  return NumberFormat.currency(
-    locale: Platform.localeName,
-    decimalDigits: decimalDigits,
-    symbol: symbol,
-  ).format(x).trimRight();
-}
-
-String decimalToString(double x) =>
-    decimalFormat(x, decimalDigits(appSettings.fullPrec));
-
 Future<void> showMessageBox(BuildContext context, String title, String content,
     {DialogType type = DialogType.info, String? label}) async {
   final s = S.of(context);
@@ -339,16 +327,29 @@ Future<bool> showConfirmDialog(
   return confirmation;
 }
 
-Decimal parseNumber(String? sn) {
-  if (sn == null || sn.isEmpty) return Decimal.zero;
+double? tryParseNumber(String? sn) {
+  if (sn == null || sn.isEmpty) return 0;
+  final s = GetIt.I.get<S>();
   // There is no API to parse directly from intl string
-  final v = NumberFormat.currency(locale: Platform.localeName).parse(sn);
-  return Decimal.parse(v.toStringAsFixed(8));
+  return NumberFormat.currency(locale: s.localeName).tryParse(sn)?.toDouble();
 }
 
+int decimalDigits(bool fullPrec) => fullPrec ? MAX_PRECISION : 3;
+String decimalFormat(double x, int decimalDigits, {String symbol = ''}) {
+  final s = GetIt.I.get<S>();
+  return NumberFormat.currency(
+    locale: s.localeName,
+    decimalDigits: decimalDigits,
+    symbol: symbol,
+  ).format(x).trimRight();
+}
+
+String decimalToString(double x) =>
+    decimalFormat(x, decimalDigits(appSettings.fullPrec));
+
 int stringToAmount(String? s) {
-  final v = parseNumber(s);
-  return (ZECUNIT_DECIMAL * v).toBigInt().toInt();
+  final v = tryParseNumber(s)!;
+  return (ZECUNIT * v).toInt();
 }
 
 String amountToString(int amount, {int? digits}) =>

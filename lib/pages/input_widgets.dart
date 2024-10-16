@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:warp/data_fb_generated.dart';
 
@@ -273,7 +274,7 @@ class AmountPickerState extends State<AmountPicker> {
     if (disabledListeners & 1 != 0) return;
     try {
       disabledListeners |= 1;
-      final zAmount = double.tryParse(zController.text);
+      final zAmount = tryParseNumber(zController.text);
       // Do not update a field that was handled
       if (zAmount != null && disabledListeners & 2 == 0) {
         if (fx != null) {
@@ -294,7 +295,7 @@ class AmountPickerState extends State<AmountPicker> {
     try {
       disabledListeners |= 2;
       if (disabledListeners & 1 == 0 && fx != null && fx != 0) {
-        final fAmount = double.tryParse(fController.text);
+        final fAmount = tryParseNumber(fController.text);
         if (fAmount != null) {
           final zAmount = fAmount / fx!;
           zController.text = zecToString(zAmount);
@@ -317,7 +318,7 @@ class AmountPickerState extends State<AmountPicker> {
 
   setSlider() {
     amountPercent = 0;
-    final zAmount = double.tryParse(zController.text);
+    final zAmount = tryParseNumber(zController.text);
     if (zAmount != null) {
       final max = widget.maxAmount;
       if (max != null) {
