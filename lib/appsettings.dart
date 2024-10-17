@@ -67,6 +67,7 @@ extension CoinSettingsExtension on CoinSettings {
         serversSelected.add(s.url);
       }
     }
+    if (!hasUseUniqueChange()) useUniqueChange = true;
   }
 
   static CoinSettings load(int coin) {

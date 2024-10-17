@@ -903,4 +903,7 @@ class SPt extends S {
 
   @override
   String get mempoolRestart => 'Changing the Mempool settings takes effect after restart';
+
+  @override
+  String get useUniqueChange => 'Use Unique Change T. Addresses';
 }

@@ -560,6 +560,14 @@ class _CoinState extends State<CoinTab> with AutomaticKeepAliveClientMixin {
           ),
           Gap(8),
           FormBuilderSwitch(
+            name: 'use_unique_change',
+            title: Text(s.useUniqueChange),
+            initialValue: widget.coinSettings.useUniqueChange,
+            onChanged: (v) =>
+                setState(() => widget.coinSettings.useUniqueChange = v!),
+          ),
+          Gap(8),
+          FormBuilderSwitch(
             name: 'mempool',
             title: Text(s.mempoolMonitor),
             initialValue: widget.coinSettings.mempool,

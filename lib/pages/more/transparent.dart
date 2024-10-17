@@ -62,7 +62,7 @@ class TransparentAddressesState extends State<TransparentAddressesPage> {
         await showConfirmDialog(context, s.add, s.addAddressConfirm);
     if (!confirm) return;
     try {
-      warp.newTransparentAddress(aa.coin, aa.id);
+      warp.newTransparentAddress(aa.coin, aa.id, 0);
       setState(() {
         addresses = warp.listTransparentAddresses(aa.coin, aa.id);
         runInAction(
@@ -159,7 +159,8 @@ class ScanTransparentAddressesState extends State<ScanTransparentAddressesPage>
     if (!form.saveAndValidate()) return;
     final gapLimit = int.parse(gapLimitController.text);
     load(() async {
-      await warp.scanTransparentAddresses(aa.coin, aa.id, gapLimit);
+      await warp.scanTransparentAddresses(aa.coin, aa.id, 0, gapLimit);
+      await warp.scanTransparentAddresses(aa.coin, aa.id, 1, gapLimit);
       await warp.transparentSync(aa.coin, aa.id, syncStatus.syncedHeight);
       await aa.reload();
       GoRouter.of(context).pop();

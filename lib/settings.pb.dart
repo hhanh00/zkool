@@ -44,6 +44,7 @@ class AppSettings extends $pb.GeneratedMessage {
     $core.int? backgroundSync,
     $core.String? language,
     $core.bool? swapDisclaimerAccepted,
+    $core.String? buildNumber,
   }) {
     final $result = create();
     if (confirmations != null) {
@@ -130,6 +131,9 @@ class AppSettings extends $pb.GeneratedMessage {
     if (swapDisclaimerAccepted != null) {
       $result.swapDisclaimerAccepted = swapDisclaimerAccepted;
     }
+    if (buildNumber != null) {
+      $result.buildNumber = buildNumber;
+    }
     return $result;
   }
   AppSettings._() : super();
@@ -165,6 +169,7 @@ class AppSettings extends $pb.GeneratedMessage {
     ..a<$core.int>(30, _omitFieldNames ? '' : 'backgroundSync', $pb.PbFieldType.OU3)
     ..aOS(31, _omitFieldNames ? '' : 'language')
     ..aOB(32, _omitFieldNames ? '' : 'swapDisclaimerAccepted', protoName: 'swapDisclaimerAccepted')
+    ..aOS(33, _omitFieldNames ? '' : 'buildNumber', protoName: 'buildNumber')
     ..hasRequiredFields = false
   ;
 
@@ -444,6 +449,15 @@ class AppSettings extends $pb.GeneratedMessage {
   $core.bool hasSwapDisclaimerAccepted() => $_has(27);
   @$pb.TagNumber(32)
   void clearSwapDisclaimerAccepted() => clearField(32);
+
+  @$pb.TagNumber(33)
+  $core.String get buildNumber => $_getSZ(28);
+  @$pb.TagNumber(33)
+  set buildNumber($core.String v) { $_setString(28, v); }
+  @$pb.TagNumber(33)
+  $core.bool hasBuildNumber() => $_has(28);
+  @$pb.TagNumber(33)
+  void clearBuildNumber() => clearField(33);
 }
 
 class CoinSettings extends $pb.GeneratedMessage {
@@ -463,6 +477,7 @@ class CoinSettings extends $pb.GeneratedMessage {
     $core.Iterable<Server>? serversAvailable,
     $core.Iterable<$core.String>? serversSelected,
     $core.bool? mempool,
+    $core.bool? useUniqueChange,
   }) {
     final $result = create();
     if (account != null) {
@@ -510,6 +525,9 @@ class CoinSettings extends $pb.GeneratedMessage {
     if (mempool != null) {
       $result.mempool = mempool;
     }
+    if (useUniqueChange != null) {
+      $result.useUniqueChange = useUniqueChange;
+    }
     return $result;
   }
   CoinSettings._() : super();
@@ -532,6 +550,7 @@ class CoinSettings extends $pb.GeneratedMessage {
     ..pc<Server>(14, _omitFieldNames ? '' : 'serversAvailable', $pb.PbFieldType.PM, subBuilder: Server.create)
     ..pPS(15, _omitFieldNames ? '' : 'serversSelected')
     ..aOB(16, _omitFieldNames ? '' : 'mempool')
+    ..aOB(17, _omitFieldNames ? '' : 'useUniqueChange', protoName: 'useUniqueChange')
     ..hasRequiredFields = false
   ;
 
@@ -682,6 +701,15 @@ class CoinSettings extends $pb.GeneratedMessage {
   $core.bool hasMempool() => $_has(14);
   @$pb.TagNumber(16)
   void clearMempool() => clearField(16);
+
+  @$pb.TagNumber(17)
+  $core.bool get useUniqueChange => $_getBF(15);
+  @$pb.TagNumber(17)
+  set useUniqueChange($core.bool v) { $_setBool(15, v); }
+  @$pb.TagNumber(17)
+  $core.bool hasUseUniqueChange() => $_has(15);
+  @$pb.TagNumber(17)
+  void clearUseUniqueChange() => clearField(17);
 }
 
 class Server extends $pb.GeneratedMessage {

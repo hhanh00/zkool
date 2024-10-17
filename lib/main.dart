@@ -5,6 +5,7 @@ import 'package:app_links/app_links.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:rxdart/rxdart.dart';
@@ -42,15 +43,29 @@ void main() async {
   initializeReflectable();
   await restoreWindow();
   initNotifications();
-  await initDbPath();
-  await recoverDb();
   await restoreAppSettings();
+  await initDbPath();
+  await deleteOldDb();
+  await recoverDb();
   runApp(App());
 }
 
 Future<void> restoreAppSettings() async {
   final prefs = GetIt.I.get<SharedPreferences>();
   appSettings = AppSettingsExtension.load(prefs);
+}
+
+Future<void> deleteOldDb() async {
+  final packageInfo = await PackageInfo.fromPlatform();
+  final buildNumber = packageInfo.buildNumber;
+  if (buildNumber != appSettings.buildNumber) {
+    final prefs = GetIt.I.get<SharedPreferences>();
+    final dbDir = Directory(appStore.dbDir);
+    dbDir.deleteSync(recursive: true);
+    dbDir.createSync();
+    appSettings.buildNumber = buildNumber;
+    await appSettings.save(prefs);
+  }
 }
 
 Future<void> recoverDb() async {

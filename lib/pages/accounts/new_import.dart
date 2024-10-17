@@ -158,8 +158,8 @@ class _NewImportAccountState extends State<NewImportAccountPage>
         final latestHeight = await warp.getBCHeightOrNull(coin);
         final birthHeight =
             _birthHeight ?? latestHeight ?? syncStatus.syncedHeight;
-        final account = await warp.createAccount(
-            coin, nameController.text, _key, index, birthHeight, _transparentOnly, isNew);
+        final account = await warp.createAccount(coin, nameController.text,
+            _key, index, birthHeight, _transparentOnly, isNew);
         if (account < 0)
           form.fields['name']!.invalidate(s.thisAccountAlreadyExists);
         else {
@@ -169,11 +169,12 @@ class _NewImportAccountState extends State<NewImportAccountPage>
               if (caps.transparent & 4 != 0) {
                 // has ext transparent key
                 await warp.scanTransparentAddresses(
-                    coin, account, defaultGapLimit);
+                    coin, account, 0, defaultGapLimit);
+                await warp.scanTransparentAddresses(
+                    coin, account, 1, defaultGapLimit);
               }
               if (latestHeight != null)
-                await warp.transparentSync(
-                    coin, account, latestHeight);
+                await warp.transparentSync(coin, account, latestHeight);
             } on String catch (msg) {
               await showSnackBar(msg); // non fatal
             }

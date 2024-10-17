@@ -10,6 +10,7 @@ import '../../accounts.dart';
 import '../../appsettings.dart';
 import '../../generated/intl/messages.dart';
 import '../../store.dart';
+import '../more/batch.dart';
 import '../widgets.dart';
 import '../utils.dart';
 
@@ -39,7 +40,8 @@ class RescanState extends State<RescanPage> with WithLoadingAnimation {
           title: Text(s.rescan),
           actions: [
             IconButton(onPressed: download, icon: Icon(Icons.download)),
-            IconButton(onPressed: scanFromFile, icon: Icon(Icons.run_circle_outlined)),
+            IconButton(
+                onPressed: scanFromFile, icon: Icon(Icons.run_circle_outlined)),
             IconButton(onPressed: rescan, icon: Icon(Icons.check)),
           ],
         ),
@@ -67,11 +69,15 @@ class RescanState extends State<RescanPage> with WithLoadingAnimation {
   }
 
   download() async {
-    final filename = await FilePicker.platform
-        .saveFile(dialogTitle: 'save blockchain', fileName: 'blockchain.dat');
+    final filename = isMobile()
+        ? await getTemporaryPath('blockchain.dat')
+        : await FilePicker.platform.saveFile(
+            dialogTitle: 'save blockchain', fileName: 'blockchain.dat');
+    logger.i("0");
     if (filename != null) {
-      await WarpSync.downloadWarpFile(aa.coin, coinSettings.warpUrl,
-      coinSettings.warpHeight, filename);
+      logger.i("1");
+      await WarpSync.downloadWarpFile(
+          aa.coin, coinSettings.warpUrl, coinSettings.warpHeight, filename);
     }
   }
 
@@ -106,7 +112,8 @@ class RewindState extends State<RewindPage> {
   Future<List<Tuple2<int, DateTime>>> initialize() async {
     final checkpoints = await warp.listCheckpoints(aa.coin);
     return checkpoints
-        .map((cp) => Tuple2(cp.height, toDate(cp.timestamp, dateOnly: true))).toList();
+        .map((cp) => Tuple2(cp.height, toDate(cp.timestamp, dateOnly: true)))
+        .toList();
   }
 
   @override

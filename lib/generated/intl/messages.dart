@@ -1850,6 +1850,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Changing the Mempool settings takes effect after restart'**
   String get mempoolRestart;
+
+  /// No description provided for @useUniqueChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Unique Change T. Addresses'**
+  String get useUniqueChange;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
