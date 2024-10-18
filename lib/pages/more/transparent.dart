@@ -26,33 +26,37 @@ class TransparentAddressesPage extends StatefulWidget {
 class TransparentAddressesState extends State<TransparentAddressesPage> {
   late final S s = S.of(context);
   late List<TransparentAddressT> addresses = widget.addresses;
+  bool external = true;
 
   @override
   Widget build(BuildContext context) {
+    final addrs = addresses.where((a) => a.$external == (external ? 0 : 1)).toList();
     return Scaffold(
       appBar: AppBar(title: Text(s.addresses), actions: [
+        Switch(value: external, onChanged: (v) => setState(() => external = v)),
         IconButton(onPressed: add, icon: Icon(Icons.add)),
         IconButton(onPressed: scan, icon: Icon(Icons.radar)),
       ]),
       body: ListView.separated(
         itemBuilder: (context, i) {
-          final a = addresses[i];
+          final a = addrs[i];
           return ListTile(
-            onTap: () => onPress(i),
+            onTap: external ? () => onPress(a) : null,
             leading: Text(a.addrIndex.toString()),
-            title: SelectableText(a.address!),
+            trailing: Text(amountToString(a.amount)),
+            title: Text(a.address!),
           );
         },
         separatorBuilder: (context, i) => Divider(),
-        itemCount: addresses.length,
+        itemCount: addrs.length,
       ),
     );
   }
 
-  onPress(int i) async {
+  onPress(TransparentAddressT a) async {
     final confirmed = await showConfirmDialog(context, s.updateTransparent, s.updateTransparentQuestion);
     if (confirmed) {
-      warp.updatePrimaryTransparentAddress(aa.coin, aa.id, i);
+      warp.changeAccountAddrIndex(aa.coin, aa.id, a.addrIndex);
       await aa.reload();
     }
   }
