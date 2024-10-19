@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collection/collection.dart';
 import 'package:warp/data_fb_generated.dart';
@@ -169,6 +170,7 @@ class TransactionState extends State<TransactionPage> {
   @override
   void initState() {
     super.initState();
+    final s = GetIt.I.get<S>();
     idx = widget.txIndex;
     details = warp.getTransactionDetails(aa.coin, tx.fullTxId);
     logger.i(details);
@@ -195,7 +197,7 @@ class TransactionState extends State<TransactionPage> {
       sin.value;
       return ListTile(
         leading: Icon(Icons.arrow_left),
-        title: Text(sin.address ?? ''),
+        title: Text(sin.address ?? (sin.orchard ? s.orchard : s.sapling)),
         trailing: Text(sin.address != null ? amountToString(sin.value) : '?'),
       );
     }).toList();
@@ -206,7 +208,7 @@ class TransactionState extends State<TransactionPage> {
     souts = soouts.map((sout) {
       return ListTile(
         leading: Icon(Icons.arrow_right),
-        title: Text(sout.address ?? ''),
+        title: Text(sout.address ?? (sout.orchard ? s.orchard : s.sapling)),
         subtitle: Text(sout.memo ?? ''),
         trailing: Text(sout.address != null ? amountToString(sout.value) : '?'),
       );
@@ -281,10 +283,6 @@ class TransactionState extends State<TransactionPage> {
     final n = aa.txs.items.length;
     if (idx < n - 1) idx += 1;
     setState(() {});
-  }
-
-  _addContact() async {
-    // await addContact(context, ContactT(address: tx.address));
   }
 }
 
