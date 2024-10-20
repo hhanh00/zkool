@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$SeedInfo {
   String get seed => throw _privateConstructorUsedError;
   int get index => throw _privateConstructorUsedError;
+  bool get scanTransparent => throw _privateConstructorUsedError;
 
   /// Create a copy of SeedInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -31,7 +32,7 @@ abstract class $SeedInfoCopyWith<$Res> {
   factory $SeedInfoCopyWith(SeedInfo value, $Res Function(SeedInfo) then) =
       _$SeedInfoCopyWithImpl<$Res, SeedInfo>;
   @useResult
-  $Res call({String seed, int index});
+  $Res call({String seed, int index, bool scanTransparent});
 }
 
 /// @nodoc
@@ -51,6 +52,7 @@ class _$SeedInfoCopyWithImpl<$Res, $Val extends SeedInfo>
   $Res call({
     Object? seed = null,
     Object? index = null,
+    Object? scanTransparent = null,
   }) {
     return _then(_value.copyWith(
       seed: null == seed
@@ -61,6 +63,10 @@ class _$SeedInfoCopyWithImpl<$Res, $Val extends SeedInfo>
           ? _value.index
           : index // ignore: cast_nullable_to_non_nullable
               as int,
+      scanTransparent: null == scanTransparent
+          ? _value.scanTransparent
+          : scanTransparent // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -73,7 +79,7 @@ abstract class _$$SeedInfoImplCopyWith<$Res>
       __$$SeedInfoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String seed, int index});
+  $Res call({String seed, int index, bool scanTransparent});
 }
 
 /// @nodoc
@@ -91,6 +97,7 @@ class __$$SeedInfoImplCopyWithImpl<$Res>
   $Res call({
     Object? seed = null,
     Object? index = null,
+    Object? scanTransparent = null,
   }) {
     return _then(_$SeedInfoImpl(
       seed: null == seed
@@ -101,6 +108,10 @@ class __$$SeedInfoImplCopyWithImpl<$Res>
           ? _value.index
           : index // ignore: cast_nullable_to_non_nullable
               as int,
+      scanTransparent: null == scanTransparent
+          ? _value.scanTransparent
+          : scanTransparent // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -108,16 +119,19 @@ class __$$SeedInfoImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$SeedInfoImpl implements _SeedInfo {
-  const _$SeedInfoImpl({required this.seed, required this.index});
+  const _$SeedInfoImpl(
+      {required this.seed, required this.index, required this.scanTransparent});
 
   @override
   final String seed;
   @override
   final int index;
+  @override
+  final bool scanTransparent;
 
   @override
   String toString() {
-    return 'SeedInfo(seed: $seed, index: $index)';
+    return 'SeedInfo(seed: $seed, index: $index, scanTransparent: $scanTransparent)';
   }
 
   @override
@@ -126,11 +140,13 @@ class _$SeedInfoImpl implements _SeedInfo {
         (other.runtimeType == runtimeType &&
             other is _$SeedInfoImpl &&
             (identical(other.seed, seed) || other.seed == seed) &&
-            (identical(other.index, index) || other.index == index));
+            (identical(other.index, index) || other.index == index) &&
+            (identical(other.scanTransparent, scanTransparent) ||
+                other.scanTransparent == scanTransparent));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, seed, index);
+  int get hashCode => Object.hash(runtimeType, seed, index, scanTransparent);
 
   /// Create a copy of SeedInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -143,12 +159,16 @@ class _$SeedInfoImpl implements _SeedInfo {
 
 abstract class _SeedInfo implements SeedInfo {
   const factory _SeedInfo(
-      {required final String seed, required final int index}) = _$SeedInfoImpl;
+      {required final String seed,
+      required final int index,
+      required final bool scanTransparent}) = _$SeedInfoImpl;
 
   @override
   String get seed;
   @override
   int get index;
+  @override
+  bool get scanTransparent;
 
   /// Create a copy of SeedInfo
   /// with the given fields replaced by the non-null parameter values.

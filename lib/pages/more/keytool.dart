@@ -89,7 +89,8 @@ class KeyToolFormState extends State<KeyToolFormPage>
             keys.add(await warp.deriveZip32Keys(
                 aa.coin, aa.id, account, addressIndex + i, false));
         }
-        GoRouter.of(context).push('/more/keytool/results', extra: keys);
+        final incAccount2 = incAccount ? 1 : 0;
+        GoRouter.of(context).push('/more/keytool/results?account=$incAccount2', extra: keys);
       });
     }
   }
@@ -97,7 +98,9 @@ class KeyToolFormState extends State<KeyToolFormPage>
 
 class KeyToolPage extends StatefulWidget {
   final List<Zip32KeysT> keys;
-  KeyToolPage(this.keys, {super.key});
+  final bool incAccount;
+
+  KeyToolPage(this.keys, {super.key, required this.incAccount});
 
   @override
   State<StatefulWidget> createState() => _KeyToolState();
@@ -130,6 +133,7 @@ class _KeyToolState extends State<KeyToolPage> with WithLoadingAnimation {
               items: keys,
               metadata: TableListKeyMetadata(
                   seed: seed,
+                  incAccount: widget.incAccount,
                   shielded: shielded,
                   accountIndex: account,
                   addressIndex: addrIndex,
@@ -141,6 +145,7 @@ class _KeyToolState extends State<KeyToolPage> with WithLoadingAnimation {
 class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
   final s = S.of(rootNavigatorKey.currentContext!);
   final String seed;
+  final bool incAccount;
   final coinIndex = coins[aa.coin].coinIndex;
   final int accountIndex;
   final int addressIndex;
@@ -149,6 +154,7 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
   final GlobalKey<FormBuilderState> formKey;
   TableListKeyMetadata(
       {required this.seed,
+      required this.incAccount,
       required this.shielded,
       required this.accountIndex,
       required this.addressIndex,
@@ -189,7 +195,8 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
                     Gap(8),
                     Panel(s.secretKey, text: key),
                     Gap(8),
-                    IconButton(
+                    // Show the add account button if the account # are incremented
+                    if (incAccount) IconButton(
                       onPressed: () => addSubAccount(
                         context,
                         seed,
@@ -242,5 +249,5 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
 
 void addSubAccount(BuildContext context, String seed, int index) {
   GoRouter.of(context).push('/more/account_manager/new',
-      extra: SeedInfo(seed: seed, index: index));
+      extra: SeedInfo(seed: seed, index: index, scanTransparent: false));
 }

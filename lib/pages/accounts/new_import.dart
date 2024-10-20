@@ -34,6 +34,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
   late List<FormBuilderFieldOption<int>> options;
   bool _restore = false;
   bool _transparentOnly = false;
+  bool _scanTransparent = true;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
     if (si != null) {
       _restore = true;
       _key = si.seed;
+      _scanTransparent = si.scanTransparent;
       accountIndexController.text = si.index.toString();
     }
     options = coins.map((c) {
@@ -166,7 +168,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
           if (!isNew) {
             try {
               final caps = warp.getAccountCapabilities(coin, account);
-              if (caps.transparent & 4 != 0) {
+              if (_scanTransparent && caps.transparent & 4 != 0) {
                 // has ext transparent key
                 await warp.scanTransparentAddresses(
                     coin, account, 0, defaultGapLimit);

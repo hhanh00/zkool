@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:binary/binary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -89,7 +90,7 @@ class ListUTXOPage extends StatefulWidget {
   late final List<InputTransparentT> utxos;
 
   ListUTXOPage() {
-    utxos = warp.listUtxos(aa.coin, aa.id, syncStatus.confirmHeight);
+    utxos = warp.listUtxos(aa.coin, aa.id, Int32.maxInt);
   }
 
   @override

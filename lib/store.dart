@@ -438,6 +438,7 @@ class SeedInfo with _$SeedInfo {
   const factory SeedInfo({
     required String seed,
     required int index,
+    required bool scanTransparent,
   }) = _SeedInfo;
 }
 

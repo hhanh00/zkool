@@ -329,7 +329,9 @@ final router = GoRouter(
                       GoRoute(
                         path: 'results',
                         builder: (context, state) =>
-                            KeyToolPage(state.extra as List<Zip32KeysT>),
+                            KeyToolPage(state.extra as List<Zip32KeysT>,
+                            incAccount: state.uri.queryParameters['account'] != '0'
+                            ),
                       ),
                     ],
                   ),
