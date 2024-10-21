@@ -132,8 +132,8 @@ class _MultiQRReaderState extends State<MultiQRReader> {
         final bc = fb.BufferContext.fromBytes(data);
         final packet = Packet.reader.read(bc, 0).unpack();
         packets.add(packet);
-        final decoded = await warp.mergeData(aa.coin, packets.toList());
-        if (decoded.isNotEmpty) {
+        final decoded = await tryWarpFn(context, () => warp.mergeData(aa.coin, packets.toList()), handled: false);
+        if (decoded != null && decoded.isNotEmpty) {
           widget.onChanged?.call(decoded);
         }
       }

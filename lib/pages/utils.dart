@@ -10,6 +10,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:binary/binary.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -783,4 +784,18 @@ DateTime toDate(int ts, {bool dateOnly = false}) {
 String reversedHex(Uint8List hex) {
   final r = hex.reversed.toList();
   return HEX.encode(r);
+}
+
+Future<T?> tryWarpFn<T>(BuildContext context, FutureOr<T> Function() f, { bool handled = true }) async {
+  try {
+    return await f();
+  }
+  on String catch (msg) {
+    final s = S.of(context);
+    await showMessageBox(context, s.error, msg, type: DialogType.error);
+    if (handled)
+      return null;
+    else
+      rethrow;
+  }
 }

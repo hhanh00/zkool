@@ -168,15 +168,20 @@ class _NewImportAccountState extends State<NewImportAccountPage>
           if (!isNew) {
             try {
               final caps = warp.getAccountCapabilities(coin, account);
-              if (_scanTransparent && caps.transparent & 4 != 0) {
-                // has ext transparent key
-                await warp.scanTransparentAddresses(
-                    coin, account, 0, defaultGapLimit);
-                await warp.scanTransparentAddresses(
-                    coin, account, 1, defaultGapLimit);
+              if (latestHeight != null) {
+                if (_scanTransparent && caps.transparent & 4 != 0) {
+                  // has ext transparent key
+                  await tryWarpFn(
+                      context,
+                      () => warp.scanTransparentAddresses(
+                          coin, account, 0, defaultGapLimit));
+                  await tryWarpFn(
+                      context,
+                      () => warp.scanTransparentAddresses(
+                          coin, account, 1, defaultGapLimit));
+                }
+                await tryWarpFn(context, () => warp.transparentSync(coin, account, latestHeight));
               }
-              if (latestHeight != null)
-                await warp.transparentSync(coin, account, latestHeight);
             } on String catch (msg) {
               await showSnackBar(msg); // non fatal
             }

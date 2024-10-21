@@ -152,8 +152,9 @@ abstract class _SyncStatus with Store {
 
   @action
   Future<void> updateBCHeight() async {
-    final lh = await warp.getBCHeight(aa.coin);
-    latestHeight = lh;
+    final lh = await warp.getBCHeightOrNull(aa.coin);
+    if (lh != null)
+      latestHeight = lh;
     syncedHeight = warp.getSyncHeight(aa.coin);
   }
 

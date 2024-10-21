@@ -57,7 +57,7 @@ class TransparentAddressesState extends State<TransparentAddressesPage> {
   onPress(TransparentAddressT a) async {
     final confirmed = await showConfirmDialog(context, s.updateTransparent, s.updateTransparentQuestion);
     if (confirmed) {
-      warp.changeAccountAddrIndex(aa.coin, aa.id, a.addrIndex);
+      tryWarpFn(context, () => warp.changeAccountAddrIndex(aa.coin, aa.id, a.addrIndex));
       await aa.reload();
     }
   }

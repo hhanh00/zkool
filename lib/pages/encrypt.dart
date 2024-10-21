@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get_it/get_it.dart';
@@ -88,7 +89,7 @@ class _EncryptDbState extends State<EncryptDbPage> with WithLoadingAnimation {
         for (var c in coins) {
           final newDbFile =
               dbFileByVersion(tempPath, c.dbRoot, appStore.dbVersion);
-          await warp.encryptDb(c.coin, passwd, newDbFile.path);
+          await tryWarpFn(context, () => warp.encryptDb(c.coin, passwd, newDbFile.path), handled: false);
         }
         final prefs = GetIt.I.get<SharedPreferences>();
         await prefs.setString('backup', tempPath);
