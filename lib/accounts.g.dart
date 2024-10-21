@@ -40,6 +40,20 @@ mixin _$AASequence on _AASequence, Store {
     });
   }
 
+  late final _$_AASequenceActionController =
+      ActionController(name: '_AASequence', context: context);
+
+  @override
+  void inc() {
+    final _$actionInfo =
+        _$_AASequenceActionController.startAction(name: '_AASequence.inc');
+    try {
+      return super.inc();
+    } finally {
+      _$_AASequenceActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''

@@ -47,6 +47,7 @@ class _HomeState extends State<HomePageInner> {
 
   @override
   void didUpdateWidget(covariant HomePageInner oldWidget) {
+    // Switch the account if the current coin does not match
     super.didUpdateWidget(oldWidget);
     final c = widget.coin;
     if (c != null && c != aa.coin) {

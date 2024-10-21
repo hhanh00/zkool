@@ -67,6 +67,9 @@ class SendPageState extends State<SendPage> {
 
   @override
   void didUpdateWidget(covariant SendPage oldWidget) {
+    // This changes the account if it does not match the coin
+    // i.e. when we reach this page via payment uri
+    // but the current account does not match the coin
     super.didUpdateWidget(oldWidget);
     final c = widget.coin;
     if (c != null && c != aa.coin) {

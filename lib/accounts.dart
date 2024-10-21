@@ -28,6 +28,11 @@ abstract class _AASequence with Store {
 
   @observable
   int settingsSeqno = 0;
+
+  @action
+  void inc() {
+    seqno = DateTime.now().microsecondsSinceEpoch;
+  }
 }
 
 @action
@@ -39,7 +44,7 @@ Future<void> setActiveAccount(int coin, int id) async {
   warp.mempoolSetAccount(coin, id);
   aa.updateDivisified();
   aa.update(MAXHEIGHT);
-  aaSequence.seqno = DateTime.now().microsecondsSinceEpoch;
+  aaSequence.inc();
 }
 
 class ActiveAccount extends _ActiveAccount with _$ActiveAccount {

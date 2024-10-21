@@ -1856,6 +1856,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Use Unique Change T. Addresses'**
   String get useUniqueChange;
+
+  /// No description provided for @showAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Private Accounts'**
+  String get showAccounts;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

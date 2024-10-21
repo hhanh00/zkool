@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -14,28 +15,63 @@ import '../input_widgets.dart';
 import '../utils.dart';
 import '../widgets.dart';
 
-class AccountManagerPage extends StatefulWidget {
+class AccountManagerPage extends StatelessWidget {
   final bool main;
   AccountManagerPage({required this.main});
+
+  @override
+  Widget build(BuildContext context) {
+    return Observer(builder: (context) {
+      aaSequence.seqno;
+      final accounts = getAllAccounts();
+      if (accounts.isEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          GoRouter.of(context).go('/welcome');
+        });
+        return SizedBox.shrink();
+      }
+
+      return AccountManager(
+          key: ValueKey(aaSequence.seqno), accounts, main: main);
+    });
+  }
+}
+
+class AccountManager extends StatefulWidget {
+  final bool main;
+  final List<AccountNameT> accounts;
+
+  AccountManager(this.accounts, {super.key, required this.main});
   @override
   State<StatefulWidget> createState() => _AccountManagerState();
 }
 
-class _AccountManagerState extends State<AccountManagerPage> {
-  late List<AccountNameT> accounts = getAllAccounts();
+class _AccountManagerState extends State<AccountManager> {
   late final s = S.of(context);
   int? selected;
+  bool showAll = false;
+  late var accounts =
+      widget.accounts.where((a) => showAll || !a.hidden).toList();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text(s.accountManager), actions: [
+          IconButton(
+              onPressed: showHidden,
+              icon: Icon(showAll ? Icons.visibility : Icons.visibility_off)),
           if (selected != null)
-            IconButton(onPressed: edit, icon: Icon(Icons.edit)),
+            IconButton(
+                onPressed: () => edit(accounts[selected!]),
+                icon: Icon(Icons.edit)),
           if (selected != null)
-            IconButton(onPressed: delete, icon: Icon(Icons.delete)),
+            IconButton(
+                onPressed: () => delete(accounts[selected!]),
+                icon: Icon(Icons.delete)),
           if (selected != null)
-            IconButton(onPressed: cold, icon: Icon(MdiIcons.snowflake)),
+            IconButton(
+                onPressed: () => cold(accounts[selected!]),
+                icon: Icon(MdiIcons.snowflake)),
           if (selected == null)
             IconButton(onPressed: add, icon: Icon(Icons.add)),
         ]),
@@ -43,19 +79,27 @@ class _AccountManagerState extends State<AccountManagerPage> {
           accounts,
           key: ValueKey(accounts),
           selected: selected,
-          onSelect: (v) => select(v!),
+          onSelect: (v) => select(accounts[v!]),
           onLongSelect: (v) => setState(() => selected = v),
+          onReorder: onReorder,
         ));
+  }
+
+  showHidden() async {
+    final confirmed = await authenticate(context, s.showAccounts);
+    if (confirmed)
+      setState(() {
+        showAll = !showAll;
+        accounts = widget.accounts.where((a) => showAll || !a.hidden).toList();
+      });
   }
 
   add() async {
     await GoRouter.of(context).push('/more/account_manager/new');
     _refresh();
-    setState(() {});
   }
 
-  select(int index) {
-    final a = accounts[index];
+  select(AccountNameT a) {
     if (widget.main) {
       Future(() async {
         await setActiveAccount(a.coin, a.id);
@@ -66,47 +110,42 @@ class _AccountManagerState extends State<AccountManagerPage> {
     GoRouter.of(context).pop<AccountNameT>(a);
   }
 
-  delete() async {
-    final a = accounts[selected!];
-    if (a.coin == aa.coin && a.id == aa.id) {
-      final other = accounts.firstWhere(
-          (a) => a.coin != aa.coin || a.id != aa.id,
-          orElse: () => AccountNameT());
-      setActiveAccount(other.coin, other.id);
-    }
-
+  delete(AccountNameT a) async {
     final confirmed = await showConfirmDialog(
         context, s.deleteAccount(a.name!), s.confirmDeleteAccount);
     if (confirmed) {
-      await warp.deleteAccount(a.coin, a.id);
-      _refresh();
-      contacts.fetchContacts();
-      if (accounts.isEmpty) {
-        GoRouter.of(context).go('/welcome');
-      } else {
-        selected = null;
-        setState(() {});
+      if (a.coin == aa.coin && a.id == aa.id) {
+        final other = widget.accounts.firstWhere(
+            (a) => (a.coin != aa.coin || a.id != aa.id) && !a.hidden,
+            orElse: () => AccountNameT());
+        setActiveAccount(other.coin, other.id);
       }
+
+      warp.deleteAccount(a.coin, a.id);
+      _refresh();
     }
   }
 
-  edit() async {
-    final a = accounts[selected!];
+  edit(AccountNameT a) async {
     await GoRouter.of(context).push('/account/edit', extra: a);
     _refresh();
-    setState(() {});
   }
 
-  cold() async {
-    final a = accounts[selected!];
+  onReorder(int from, int to) {
+    if (from < to) to -= 1;
+    final a = accounts.removeAt(from);
+    accounts.insert(to, a);
+    warp.reorderAccount(a.coin, a.id, to);
+    // do not refresh yet
+  }
+
+  cold(AccountNameT a) async {
     await GoRouter.of(context).push('/account/downgrade', extra: a);
     _refresh();
-    setState(() {});
   }
 
   _refresh() {
-    accounts = getAllAccounts();
-    setState(() {});
+    aaSequence.inc();
   }
 }
 
@@ -115,6 +154,7 @@ class AccountList extends StatelessWidget {
   final int? selected;
   final void Function(int?)? onSelect;
   final void Function(int?)? onLongSelect;
+  final void Function(int, int) onReorder;
 
   AccountList(
     this.accounts, {
@@ -122,15 +162,18 @@ class AccountList extends StatelessWidget {
     this.selected,
     this.onSelect,
     this.onLongSelect,
+    required this.onReorder,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return ReorderableListView.builder(
+        buildDefaultDragHandles: true,
         itemBuilder: (context, index) {
           final a = accounts[index];
           return AccountTile(
             a,
+            key: ValueKey(a.id),
             selected: index == selected,
             onPress: () => onSelect?.call(index),
             onLongPress: () {
@@ -139,7 +182,7 @@ class AccountList extends StatelessWidget {
             },
           );
         },
-        separatorBuilder: (context, index) => Divider(),
+        onReorder: onReorder,
         itemCount: accounts.length);
   }
 }
@@ -152,6 +195,7 @@ class AccountTile extends StatelessWidget {
   late final nameController = TextEditingController(text: a.name);
   AccountTile(
     this.a, {
+    super.key,
     this.onPress,
     this.onLongPress,
     required this.selected,
@@ -163,6 +207,7 @@ class AccountTile extends StatelessWidget {
     final c = coins[a.coin];
 
     return ListTile(
+      contentPadding: EdgeInsets.only(left: 16, right: 48),
       selected: selected,
       leading: CircleAvatar(backgroundImage: c.image),
       title: Text(a.name!, style: t.textTheme.headlineSmall),
@@ -186,6 +231,7 @@ class EditAccountState extends State<EditAccountPage> {
   final formKey = GlobalKey<FormBuilderState>();
   late final nameController = TextEditingController(text: widget.account.name);
   late int birth = widget.account.birth;
+  late bool hidden = widget.account.hidden;
 
   @override
   Widget build(BuildContext context) {
@@ -207,6 +253,12 @@ class EditAccountState extends State<EditAccountPage> {
               label: Text(s.birthHeight),
               onChanged: (v) => setState(() => birth = v!),
             ),
+            FormBuilderSwitch(
+              name: 'hidden',
+              title: Text(s.hidden),
+              initialValue: hidden,
+              onChanged: (v) => setState(() => hidden = v!),
+            ),
           ]),
         ),
       ),
@@ -214,10 +266,19 @@ class EditAccountState extends State<EditAccountPage> {
   }
 
   ok() async {
-    await warp.editAccountName(
+    warp.editAccountName(
         widget.account.coin, widget.account.id, nameController.text);
-    await warp.editAccountBirthHeight(
-        widget.account.coin, widget.account.id, birth);
+    warp.editAccountBirthHeight(widget.account.coin, widget.account.id, birth);
+    warp.editAccountHidden(widget.account.coin, widget.account.id, hidden);
+    if (hidden &&
+        widget.account.coin == aa.coin &&
+        widget.account.id == aa.id) {
+      // current account got hidden
+      final a = warp
+          .listAccounts(aa.coin)
+          .firstWhere((a) => !a.hidden, orElse: () => AccountNameT());
+      await setActiveAccount(a.coin, a.id);
+    }
     GoRouter.of(context).pop();
   }
 }
@@ -319,7 +380,6 @@ class DowngradeAccountState extends State<DowngradeAccountPage> {
   }
 
   downgrade() async {
-    logger.d(accountCaps);
     final confirmed =
         await showConfirmDialog(context, s.coldStorage, s.confirmWatchOnly);
     if (confirmed) {

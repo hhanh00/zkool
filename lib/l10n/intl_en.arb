@@ -291,5 +291,6 @@
 	"transparentOnly": "Transparent Only",
 	"mempoolMonitor": "Mempool Monitoring",
 	"mempoolRestart": "Changing the Mempool settings takes effect after restart",
-	"useUniqueChange": "Use Unique Change T. Addresses"
+	"useUniqueChange": "Use Unique Change T. Addresses",
+	"showAccounts": "Show Private Accounts"
 }

@@ -906,4 +906,7 @@ class SPt extends S {
 
   @override
   String get useUniqueChange => 'Use Unique Change T. Addresses';
+
+  @override
+  String get showAccounts => 'Show Private Accounts';
 }
