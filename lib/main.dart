@@ -61,7 +61,12 @@ Future<void> deleteOldDb() async {
   if (buildNumber != appSettings.buildNumber) {
     final prefs = GetIt.I.get<SharedPreferences>();
     final dbDir = Directory(appStore.dbDir);
-    dbDir.deleteSync(recursive: true);
+    for (var c in coins) {
+      for (var f in dbDir.listSync()) {
+        if (f.path.startsWith(c.dbRoot))
+          f.deleteSync();
+      }
+    }
     dbDir.createSync();
     appSettings.buildNumber = buildNumber;
     await appSettings.save(prefs);
