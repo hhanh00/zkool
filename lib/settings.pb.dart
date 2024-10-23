@@ -31,20 +31,21 @@ class AppSettings extends $pb.GeneratedMessage {
     $core.bool? protectOpen,
     $core.bool? noqrOffline,
     $core.bool? fullPrec,
+    $core.String? buildNumber,
     $core.String? backupEncKey,
     $core.int? developerMode,
     $core.int? minPrivacyLevel,
+    $core.bool? swapDisclaimerAccepted,
     $core.String? dbPasswd,
     $core.bool? advanced,
+    $core.String? language,
     $core.String? memo,
     ColorPalette? palette,
     $core.bool? disclaimer,
     $core.bool? customSend,
     CustomSendSettings? customSendSettings,
+    $core.bool? hideEmptyAccounts,
     $core.int? backgroundSync,
-    $core.String? language,
-    $core.bool? swapDisclaimerAccepted,
-    $core.String? buildNumber,
   }) {
     final $result = create();
     if (confirmations != null) {
@@ -92,6 +93,9 @@ class AppSettings extends $pb.GeneratedMessage {
     if (fullPrec != null) {
       $result.fullPrec = fullPrec;
     }
+    if (buildNumber != null) {
+      $result.buildNumber = buildNumber;
+    }
     if (backupEncKey != null) {
       $result.backupEncKey = backupEncKey;
     }
@@ -101,11 +105,17 @@ class AppSettings extends $pb.GeneratedMessage {
     if (minPrivacyLevel != null) {
       $result.minPrivacyLevel = minPrivacyLevel;
     }
+    if (swapDisclaimerAccepted != null) {
+      $result.swapDisclaimerAccepted = swapDisclaimerAccepted;
+    }
     if (dbPasswd != null) {
       $result.dbPasswd = dbPasswd;
     }
     if (advanced != null) {
       $result.advanced = advanced;
+    }
+    if (language != null) {
+      $result.language = language;
     }
     if (memo != null) {
       $result.memo = memo;
@@ -122,17 +132,11 @@ class AppSettings extends $pb.GeneratedMessage {
     if (customSendSettings != null) {
       $result.customSendSettings = customSendSettings;
     }
+    if (hideEmptyAccounts != null) {
+      $result.hideEmptyAccounts = hideEmptyAccounts;
+    }
     if (backgroundSync != null) {
       $result.backgroundSync = backgroundSync;
-    }
-    if (language != null) {
-      $result.language = language;
-    }
-    if (swapDisclaimerAccepted != null) {
-      $result.swapDisclaimerAccepted = swapDisclaimerAccepted;
-    }
-    if (buildNumber != null) {
-      $result.buildNumber = buildNumber;
     }
     return $result;
   }
@@ -156,20 +160,21 @@ class AppSettings extends $pb.GeneratedMessage {
     ..aOB(13, _omitFieldNames ? '' : 'protectOpen')
     ..aOB(14, _omitFieldNames ? '' : 'noqrOffline')
     ..aOB(15, _omitFieldNames ? '' : 'fullPrec')
+    ..aOS(16, _omitFieldNames ? '' : 'buildNumber', protoName: 'buildNumber')
     ..aOS(17, _omitFieldNames ? '' : 'backupEncKey')
     ..a<$core.int>(18, _omitFieldNames ? '' : 'developerMode', $pb.PbFieldType.OU3)
     ..a<$core.int>(19, _omitFieldNames ? '' : 'minPrivacyLevel', $pb.PbFieldType.OU3)
+    ..aOB(20, _omitFieldNames ? '' : 'swapDisclaimerAccepted', protoName: 'swapDisclaimerAccepted')
     ..aOS(21, _omitFieldNames ? '' : 'dbPasswd')
     ..aOB(22, _omitFieldNames ? '' : 'advanced')
+    ..aOS(23, _omitFieldNames ? '' : 'language')
     ..aOS(24, _omitFieldNames ? '' : 'memo')
     ..aOM<ColorPalette>(25, _omitFieldNames ? '' : 'palette', subBuilder: ColorPalette.create)
     ..aOB(26, _omitFieldNames ? '' : 'disclaimer')
     ..aOB(27, _omitFieldNames ? '' : 'customSend')
     ..aOM<CustomSendSettings>(28, _omitFieldNames ? '' : 'customSendSettings', subBuilder: CustomSendSettings.create)
+    ..aOB(29, _omitFieldNames ? '' : 'hideEmptyAccounts', protoName: 'hideEmptyAccounts')
     ..a<$core.int>(30, _omitFieldNames ? '' : 'backgroundSync', $pb.PbFieldType.OU3)
-    ..aOS(31, _omitFieldNames ? '' : 'language')
-    ..aOB(32, _omitFieldNames ? '' : 'swapDisclaimerAccepted', protoName: 'swapDisclaimerAccepted')
-    ..aOS(33, _omitFieldNames ? '' : 'buildNumber', protoName: 'buildNumber')
     ..hasRequiredFields = false
   ;
 
@@ -329,135 +334,144 @@ class AppSettings extends $pb.GeneratedMessage {
   @$pb.TagNumber(15)
   void clearFullPrec() => clearField(15);
 
+  @$pb.TagNumber(16)
+  $core.String get buildNumber => $_getSZ(15);
+  @$pb.TagNumber(16)
+  set buildNumber($core.String v) { $_setString(15, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasBuildNumber() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearBuildNumber() => clearField(16);
+
   @$pb.TagNumber(17)
-  $core.String get backupEncKey => $_getSZ(15);
+  $core.String get backupEncKey => $_getSZ(16);
   @$pb.TagNumber(17)
-  set backupEncKey($core.String v) { $_setString(15, v); }
+  set backupEncKey($core.String v) { $_setString(16, v); }
   @$pb.TagNumber(17)
-  $core.bool hasBackupEncKey() => $_has(15);
+  $core.bool hasBackupEncKey() => $_has(16);
   @$pb.TagNumber(17)
   void clearBackupEncKey() => clearField(17);
 
   @$pb.TagNumber(18)
-  $core.int get developerMode => $_getIZ(16);
+  $core.int get developerMode => $_getIZ(17);
   @$pb.TagNumber(18)
-  set developerMode($core.int v) { $_setUnsignedInt32(16, v); }
+  set developerMode($core.int v) { $_setUnsignedInt32(17, v); }
   @$pb.TagNumber(18)
-  $core.bool hasDeveloperMode() => $_has(16);
+  $core.bool hasDeveloperMode() => $_has(17);
   @$pb.TagNumber(18)
   void clearDeveloperMode() => clearField(18);
 
   @$pb.TagNumber(19)
-  $core.int get minPrivacyLevel => $_getIZ(17);
+  $core.int get minPrivacyLevel => $_getIZ(18);
   @$pb.TagNumber(19)
-  set minPrivacyLevel($core.int v) { $_setUnsignedInt32(17, v); }
+  set minPrivacyLevel($core.int v) { $_setUnsignedInt32(18, v); }
   @$pb.TagNumber(19)
-  $core.bool hasMinPrivacyLevel() => $_has(17);
+  $core.bool hasMinPrivacyLevel() => $_has(18);
   @$pb.TagNumber(19)
   void clearMinPrivacyLevel() => clearField(19);
 
+  @$pb.TagNumber(20)
+  $core.bool get swapDisclaimerAccepted => $_getBF(19);
+  @$pb.TagNumber(20)
+  set swapDisclaimerAccepted($core.bool v) { $_setBool(19, v); }
+  @$pb.TagNumber(20)
+  $core.bool hasSwapDisclaimerAccepted() => $_has(19);
+  @$pb.TagNumber(20)
+  void clearSwapDisclaimerAccepted() => clearField(20);
+
   @$pb.TagNumber(21)
-  $core.String get dbPasswd => $_getSZ(18);
+  $core.String get dbPasswd => $_getSZ(20);
   @$pb.TagNumber(21)
-  set dbPasswd($core.String v) { $_setString(18, v); }
+  set dbPasswd($core.String v) { $_setString(20, v); }
   @$pb.TagNumber(21)
-  $core.bool hasDbPasswd() => $_has(18);
+  $core.bool hasDbPasswd() => $_has(20);
   @$pb.TagNumber(21)
   void clearDbPasswd() => clearField(21);
 
   @$pb.TagNumber(22)
-  $core.bool get advanced => $_getBF(19);
+  $core.bool get advanced => $_getBF(21);
   @$pb.TagNumber(22)
-  set advanced($core.bool v) { $_setBool(19, v); }
+  set advanced($core.bool v) { $_setBool(21, v); }
   @$pb.TagNumber(22)
-  $core.bool hasAdvanced() => $_has(19);
+  $core.bool hasAdvanced() => $_has(21);
   @$pb.TagNumber(22)
   void clearAdvanced() => clearField(22);
 
+  @$pb.TagNumber(23)
+  $core.String get language => $_getSZ(22);
+  @$pb.TagNumber(23)
+  set language($core.String v) { $_setString(22, v); }
+  @$pb.TagNumber(23)
+  $core.bool hasLanguage() => $_has(22);
+  @$pb.TagNumber(23)
+  void clearLanguage() => clearField(23);
+
   @$pb.TagNumber(24)
-  $core.String get memo => $_getSZ(20);
+  $core.String get memo => $_getSZ(23);
   @$pb.TagNumber(24)
-  set memo($core.String v) { $_setString(20, v); }
+  set memo($core.String v) { $_setString(23, v); }
   @$pb.TagNumber(24)
-  $core.bool hasMemo() => $_has(20);
+  $core.bool hasMemo() => $_has(23);
   @$pb.TagNumber(24)
   void clearMemo() => clearField(24);
 
   @$pb.TagNumber(25)
-  ColorPalette get palette => $_getN(21);
+  ColorPalette get palette => $_getN(24);
   @$pb.TagNumber(25)
   set palette(ColorPalette v) { setField(25, v); }
   @$pb.TagNumber(25)
-  $core.bool hasPalette() => $_has(21);
+  $core.bool hasPalette() => $_has(24);
   @$pb.TagNumber(25)
   void clearPalette() => clearField(25);
   @$pb.TagNumber(25)
-  ColorPalette ensurePalette() => $_ensure(21);
+  ColorPalette ensurePalette() => $_ensure(24);
 
   @$pb.TagNumber(26)
-  $core.bool get disclaimer => $_getBF(22);
+  $core.bool get disclaimer => $_getBF(25);
   @$pb.TagNumber(26)
-  set disclaimer($core.bool v) { $_setBool(22, v); }
+  set disclaimer($core.bool v) { $_setBool(25, v); }
   @$pb.TagNumber(26)
-  $core.bool hasDisclaimer() => $_has(22);
+  $core.bool hasDisclaimer() => $_has(25);
   @$pb.TagNumber(26)
   void clearDisclaimer() => clearField(26);
 
   @$pb.TagNumber(27)
-  $core.bool get customSend => $_getBF(23);
+  $core.bool get customSend => $_getBF(26);
   @$pb.TagNumber(27)
-  set customSend($core.bool v) { $_setBool(23, v); }
+  set customSend($core.bool v) { $_setBool(26, v); }
   @$pb.TagNumber(27)
-  $core.bool hasCustomSend() => $_has(23);
+  $core.bool hasCustomSend() => $_has(26);
   @$pb.TagNumber(27)
   void clearCustomSend() => clearField(27);
 
   @$pb.TagNumber(28)
-  CustomSendSettings get customSendSettings => $_getN(24);
+  CustomSendSettings get customSendSettings => $_getN(27);
   @$pb.TagNumber(28)
   set customSendSettings(CustomSendSettings v) { setField(28, v); }
   @$pb.TagNumber(28)
-  $core.bool hasCustomSendSettings() => $_has(24);
+  $core.bool hasCustomSendSettings() => $_has(27);
   @$pb.TagNumber(28)
   void clearCustomSendSettings() => clearField(28);
   @$pb.TagNumber(28)
-  CustomSendSettings ensureCustomSendSettings() => $_ensure(24);
+  CustomSendSettings ensureCustomSendSettings() => $_ensure(27);
+
+  @$pb.TagNumber(29)
+  $core.bool get hideEmptyAccounts => $_getBF(28);
+  @$pb.TagNumber(29)
+  set hideEmptyAccounts($core.bool v) { $_setBool(28, v); }
+  @$pb.TagNumber(29)
+  $core.bool hasHideEmptyAccounts() => $_has(28);
+  @$pb.TagNumber(29)
+  void clearHideEmptyAccounts() => clearField(29);
 
   @$pb.TagNumber(30)
-  $core.int get backgroundSync => $_getIZ(25);
+  $core.int get backgroundSync => $_getIZ(29);
   @$pb.TagNumber(30)
-  set backgroundSync($core.int v) { $_setUnsignedInt32(25, v); }
+  set backgroundSync($core.int v) { $_setUnsignedInt32(29, v); }
   @$pb.TagNumber(30)
-  $core.bool hasBackgroundSync() => $_has(25);
+  $core.bool hasBackgroundSync() => $_has(29);
   @$pb.TagNumber(30)
   void clearBackgroundSync() => clearField(30);
-
-  @$pb.TagNumber(31)
-  $core.String get language => $_getSZ(26);
-  @$pb.TagNumber(31)
-  set language($core.String v) { $_setString(26, v); }
-  @$pb.TagNumber(31)
-  $core.bool hasLanguage() => $_has(26);
-  @$pb.TagNumber(31)
-  void clearLanguage() => clearField(31);
-
-  @$pb.TagNumber(32)
-  $core.bool get swapDisclaimerAccepted => $_getBF(27);
-  @$pb.TagNumber(32)
-  set swapDisclaimerAccepted($core.bool v) { $_setBool(27, v); }
-  @$pb.TagNumber(32)
-  $core.bool hasSwapDisclaimerAccepted() => $_has(27);
-  @$pb.TagNumber(32)
-  void clearSwapDisclaimerAccepted() => clearField(32);
-
-  @$pb.TagNumber(33)
-  $core.String get buildNumber => $_getSZ(28);
-  @$pb.TagNumber(33)
-  set buildNumber($core.String v) { $_setString(28, v); }
-  @$pb.TagNumber(33)
-  $core.bool hasBuildNumber() => $_has(28);
-  @$pb.TagNumber(33)
-  void clearBuildNumber() => clearField(33);
 }
 
 class CoinSettings extends $pb.GeneratedMessage {

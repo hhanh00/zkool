@@ -323,6 +323,10 @@ final router = GoRouter(
                     builder: (context, state) => PoolTransferPage(),
                   ),
                   GoRoute(
+                    path: 'batch_create',
+                    builder: (context, state) => BatchCreatePage(),
+                  ),
+                  GoRoute(
                     path: 'keytool',
                     builder: (context, state) => KeyToolFormPage(),
                     routes: [

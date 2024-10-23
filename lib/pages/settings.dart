@@ -117,6 +117,7 @@ class _SettingsState extends State<SettingsPage>
           servers: servers,
           warp: app.coinSettings.warpUrl,
           warpEndHeight: app.coinSettings.warpHeight);
+      aaSequence.inc();
       aaSequence.settingsSeqno = DateTime.now().millisecondsSinceEpoch;
       Future(() async {
         aa.currency = appSettings.currency;
@@ -168,6 +169,12 @@ class _GeneralState extends State<GeneralTab>
             title: Text(s.useZats),
             initialValue: widget.appSettings.fullPrec,
             onChanged: (v) => widget.appSettings.fullPrec = v!,
+          ),
+          FormBuilderSwitch(
+            name: 'hide_empty',
+            title: Text(s.hideEmptyAccounts),
+            initialValue: widget.appSettings.hideEmptyAccounts,
+            onChanged: (v) => widget.appSettings.hideEmptyAccounts = v!,
           ),
           FormBuilderSwitch(
             name: 'custom_send',

@@ -292,5 +292,10 @@
 	"mempoolMonitor": "Mempool Monitoring",
 	"mempoolRestart": "Changing the Mempool settings takes effect after restart",
 	"useUniqueChange": "Use Unique Change T. Addresses",
-	"showAccounts": "Show Private Accounts"
+	"showAccounts": "Show Private Accounts",
+	"batchCreate": "Batch Create Accounts",
+	"start": "Start",
+	"prefix": "Prefix",
+	"confirmBatchCreate": "Are you sure you want to create multiple accounts?",
+	"hideEmptyAccounts": "Hide empty accounts"
 }

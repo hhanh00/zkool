@@ -13,6 +13,7 @@ import '../../generated/intl/messages.dart';
 import '../../store.dart';
 import '../../tablelist.dart';
 import '../../pages/utils.dart';
+import '../accounts/new_import.dart';
 import '../widgets.dart';
 
 class KeyToolFormPage extends StatefulWidget {
@@ -90,7 +91,8 @@ class KeyToolFormState extends State<KeyToolFormPage>
                 aa.coin, aa.id, account, addressIndex + i, false));
         }
         final incAccount2 = incAccount ? 1 : 0;
-        GoRouter.of(context).push('/more/keytool/results?account=$incAccount2', extra: keys);
+        GoRouter.of(context)
+            .push('/more/keytool/results?account=$incAccount2', extra: keys);
       });
     }
   }
@@ -122,8 +124,7 @@ class _KeyToolState extends State<KeyToolPage> with WithLoadingAnimation {
           title: Text(s.keyTool),
           actions: [
             Switch(
-                value: shielded,
-                onChanged: (v) => setState(() => shielded = v))
+                value: shielded, onChanged: (v) => setState(() => shielded = v))
           ],
         ),
         body: wrapWithLoading(Padding(
@@ -196,14 +197,15 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
                     Panel(s.secretKey, text: key),
                     Gap(8),
                     // Show the add account button if the account # are incremented
-                    if (incAccount) IconButton(
-                      onPressed: () => addSubAccount(
-                        context,
-                        seed,
-                        idx,
+                    if (incAccount)
+                      IconButton(
+                        onPressed: () => addSubAccount(
+                          context,
+                          seed,
+                          idx,
+                        ),
+                        icon: Icon(Icons.add),
                       ),
-                      icon: Icon(Icons.add),
-                    ),
                   ],
                 )
               : ListTile(
@@ -250,4 +252,90 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
 void addSubAccount(BuildContext context, String seed, int index) {
   GoRouter.of(context).push('/more/account_manager/new',
       extra: SeedInfo(seed: seed, index: index, scanTransparent: false));
+}
+
+class BatchCreatePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => BatchCreateState();
+}
+
+class BatchCreateState extends State<BatchCreatePage> {
+  late final S s = S.of(context);
+  final formKey = GlobalKey<FormBuilderState>();
+  final prefixController = TextEditingController();
+  final startController = TextEditingController(text: '0');
+  final countController = TextEditingController(text: '10');
+  bool transparentOnly = false;
+  int birthHeight = warp.getActivationHeight(aa.coin);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(s.batchCreate),
+        actions: [IconButton(onPressed: onOk, icon: Icon(Icons.check))],
+      ),
+      body: FormBuilder(
+        key: formKey,
+        child: Column(
+          children: [
+            FormBuilderTextField(
+              name: 'prefix',
+              decoration: InputDecoration(label: Text(s.prefix)),
+              controller: prefixController,
+            ),
+            Gap(8),
+            FormBuilderTextField(
+              name: 'start',
+              decoration: InputDecoration(label: Text(s.start)),
+              controller: startController,
+              keyboardType: TextInputType.numberWithOptions(),
+              validator: FormBuilderValidators.integer(),
+            ),
+            Gap(8),
+            FormBuilderTextField(
+              name: 'count',
+              decoration: InputDecoration(label: Text(s.count)),
+              controller: countController,
+              keyboardType: TextInputType.numberWithOptions(),
+              validator: FormBuilderValidators.integer(),
+            ),
+            Gap(8),
+            HeightPicker(birthHeight,
+                name: 'birth_height',
+                label: Text(s.birthHeight),
+                onChanged: (v) => birthHeight = v!),
+            Gap(8),
+            FormBuilderSwitch(
+                name: 'transparent_only',
+                title: Text(s.transparentOnly),
+                onChanged: (v) => transparentOnly = v!)
+          ],
+        ),
+      ),
+    );
+  }
+
+  onOk() async {
+    final form = formKey.currentState!;
+    if (form.saveAndValidate()) {
+      final confirmed =
+          await showConfirmDialog(context, s.confirm, s.confirmBatchCreate);
+      if (confirmed) {
+        final prefix = prefixController.text;
+        final start = int.parse(startController.text);
+        final count = int.parse(countController.text);
+        for (var i = 0; i < count; i++) {
+          final accountIndex = start + i;
+          final name = '$prefix$accountIndex';
+          await tryWarpFn(
+              context,
+              () => createNewAccount(aa.coin, name, aa.seed!, accountIndex,
+                  birthHeight, transparentOnly, true, false, syncStatus.latestHeight));
+        }
+        aaSequence.inc();
+        GoRouter.of(context).pop();
+      }
+    }
+  }
 }

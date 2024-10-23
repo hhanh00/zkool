@@ -1,3 +1,4 @@
+import 'package:ZKool/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -12,6 +13,8 @@ import '../../accounts.dart';
 import '../../coin/coins.dart';
 import '../../generated/intl/messages.dart';
 import '../../pages/widgets.dart';
+
+const defaultGapLimit = 10;
 
 class NewImportAccountPage extends StatefulWidget {
   final bool first;
@@ -128,6 +131,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
                     Gap(8),
                     HeightPicker(
                       syncStatus.syncedHeight,
+                      name: 'birth_height',
                       label: Text(s.birthHeight),
                       onChanged: (h) => _birthHeight = h,
                     )
@@ -150,7 +154,6 @@ class _NewImportAccountState extends State<NewImportAccountPage>
   }
 
   _onOK() async {
-    const defaultGapLimit = 10;
     final form = formKey.currentState!;
     if (form.saveAndValidate()) {
       await load(() async {
@@ -160,35 +163,22 @@ class _NewImportAccountState extends State<NewImportAccountPage>
         final latestHeight = await warp.getBCHeightOrNull(coin);
         final birthHeight =
             _birthHeight ?? latestHeight ?? syncStatus.syncedHeight;
-        final account = await warp.createAccount(coin, nameController.text,
-            _key, index, birthHeight, _transparentOnly, isNew);
-        if (account < 0)
+        logger.d('createAccount 1');
+
+        final account = await createNewAccount(coin, nameController.text, _key,
+        index, birthHeight, _transparentOnly, _scanTransparent,
+        isNew, latestHeight);
+
+        if (account == null)
           form.fields['name']!.invalidate(s.thisAccountAlreadyExists);
         else {
-          if (!isNew) {
-            try {
-              final caps = warp.getAccountCapabilities(coin, account);
-              if (latestHeight != null) {
-                if (_scanTransparent && caps.transparent & 4 != 0) {
-                  // has ext transparent key
-                  await tryWarpFn(
-                      context,
-                      () => warp.scanTransparentAddresses(
-                          coin, account, 0, defaultGapLimit));
-                  await tryWarpFn(
-                      context,
-                      () => warp.scanTransparentAddresses(
-                          coin, account, 1, defaultGapLimit));
-                }
-                await tryWarpFn(context, () => warp.transparentSync(coin, account, latestHeight));
-              }
-            } on String catch (msg) {
-              await showSnackBar(msg); // non fatal
-            }
-          }
+          logger.d('createAccount 8');
           await setActiveAccount(coin, account);
+          logger.d('createAccount 9');
           await aa.save();
+          logger.d('createAccount 10');
           final accounts = warp.listAccounts(coin);
+          logger.d('createAccount 11');
           if (accounts.length == 1) {
             try {
               // First account of a coin is synced
@@ -225,4 +215,45 @@ class _NewImportAccountState extends State<NewImportAccountPage>
   //     formKey.currentState!.fields['key']!.invalidate(msg);
   //   }
   // }
+}
+
+Future<int?> createNewAccount(int coin, String name, String key, int index,
+    int birth, bool tOnly, bool tScan, bool isNew, int? bcHeight) async {
+  final context = rootNavigatorKey.currentContext!;
+  final account =
+      await warp.createAccount(coin, name, key, index, birth, tOnly, isNew);
+  logger.d('createAccount 2');
+  if (account < 0)
+    return null;
+  else {
+    if (!isNew) {
+      try {
+        logger.d('createAccount 3');
+        final caps = warp.getAccountCapabilities(coin, account);
+        logger.d('createAccount 4');
+        if (bcHeight != null) {
+          logger.d('createAccount 5');
+          if (tScan && caps.transparent & 4 != 0) {
+            // has ext transparent key
+            await tryWarpFn(
+                context,
+                () => warp.scanTransparentAddresses(
+                    coin, account, 0, defaultGapLimit));
+            await tryWarpFn(
+                context,
+                () => warp.scanTransparentAddresses(
+                    coin, account, 1, defaultGapLimit));
+          }
+          logger.d('createAccount 6');
+          await tryWarpFn(
+              context, () => warp.transparentSync(coin, account, bcHeight));
+          logger.d('createAccount 7');
+        }
+      } on String catch (msg) {
+        await showSnackBar(msg); // non fatal
+        return null;
+      }
+    }
+  }
+  return account;
 }

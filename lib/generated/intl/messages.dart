@@ -1862,6 +1862,36 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Show Private Accounts'**
   String get showAccounts;
+
+  /// No description provided for @batchCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch Create Accounts'**
+  String get batchCreate;
+
+  /// No description provided for @start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// No description provided for @prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefix'**
+  String get prefix;
+
+  /// No description provided for @confirmBatchCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to create multiple accounts?'**
+  String get confirmBatchCreate;
+
+  /// No description provided for @hideEmptyAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide empty accounts'**
+  String get hideEmptyAccounts;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

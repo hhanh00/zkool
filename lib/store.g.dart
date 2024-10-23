@@ -321,14 +321,6 @@ mixin _$SyncStatus on _SyncStatus, Store {
     return _$syncAsyncAction.run(() => super.sync(rescan, auto: auto));
   }
 
-  late final _$rescanAsyncAction =
-      AsyncAction('_SyncStatus.rescan', context: context);
-
-  @override
-  Future<void> rescan(int height) {
-    return _$rescanAsyncAction.run(() => super.rescan(height));
-  }
-
   late final _$_SyncStatusActionController =
       ActionController(name: '_SyncStatus', context: context);
 
@@ -349,6 +341,17 @@ mixin _$SyncStatus on _SyncStatus, Store {
         _$_SyncStatusActionController.startAction(name: '_SyncStatus.reset');
     try {
       return super.reset();
+    } finally {
+      _$_SyncStatusActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void resetToHeight(int height) {
+    final _$actionInfo = _$_SyncStatusActionController.startAction(
+        name: '_SyncStatus.resetToHeight');
+    try {
+      return super.resetToHeight(height);
     } finally {
       _$_SyncStatusActionController.endAction(_$actionInfo);
     }

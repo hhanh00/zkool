@@ -13,6 +13,7 @@ import '../../store.dart';
 import '../more/batch.dart';
 import '../widgets.dart';
 import '../utils.dart';
+import 'new_import.dart';
 
 class RescanPage extends StatefulWidget {
   @override
@@ -39,9 +40,12 @@ class RescanState extends State<RescanPage> with WithLoadingAnimation {
         appBar: AppBar(
           title: Text(s.rescan),
           actions: [
-            IconButton(onPressed: download, icon: Icon(Icons.download)),
-            IconButton(
-                onPressed: scanFromFile, icon: Icon(Icons.run_circle_outlined)),
+            if (!isMobile())
+              IconButton(onPressed: download, icon: Icon(Icons.download)),
+            if (!isMobile())
+              IconButton(
+                  onPressed: scanFromFile,
+                  icon: Icon(Icons.run_circle_outlined)),
             IconButton(onPressed: rescan, icon: Icon(Icons.check)),
           ],
         ),
@@ -52,6 +56,7 @@ class RescanState extends State<RescanPage> with WithLoadingAnimation {
                 child: Column(children: [
                   HeightPicker(
                     height,
+                    name: 'birth_height',
                     label: Text(s.rescanFrom),
                     onChanged: (h) => height = h!,
                   )
@@ -63,7 +68,10 @@ class RescanState extends State<RescanPage> with WithLoadingAnimation {
     if (form.validate()) {
       form.save();
       aa.reset(height);
-      Future(() => syncStatus.rescan(height));
+      await tryWarpFn(context, () => syncStatus.resetToHeight(height));
+      Future(() async {
+        await syncStatus.sync(true);
+      });
       GoRouter.of(context).pop();
     }
   }

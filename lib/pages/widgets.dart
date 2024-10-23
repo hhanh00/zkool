@@ -136,9 +136,11 @@ class LoadingWrapper extends StatelessWidget {
 
 class HeightPicker extends StatefulWidget {
   final int height;
+  final String name;
   final Widget? label;
   final void Function(int?)? onChanged;
-  HeightPicker(this.height, {super.key, this.onChanged, this.label});
+  HeightPicker(this.height, {super.key,
+    required this.name, this.onChanged, this.label});
 
   @override
   State<StatefulWidget> createState() => HeightPicketState();
@@ -156,7 +158,7 @@ class HeightPicketState extends State<HeightPicker> {
   Widget build(BuildContext context) {
     return FormBuilderField<int>(
         key: fieldKey,
-        name: 'amount_form',
+        name: widget.name,
         initialValue: widget.height,
         validator: (_) {
           final formState = formKey.currentState!;

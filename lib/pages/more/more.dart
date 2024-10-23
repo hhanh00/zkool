@@ -111,6 +111,12 @@ class MorePage extends StatelessWidget {
                 icon: FaIcon(FontAwesomeIcons.key),
                 text: s.keyTool,
                 secured: true),
+          if (aa.seed != null)
+            MoreTile(
+                url: '/more/batch_create',
+                icon: Icon(Icons.build),
+                text: s.batchCreate,
+                secured: true),
           MoreTile(
               url: '/more/about',
               icon: FaIcon(FontAwesomeIcons.circleInfo),

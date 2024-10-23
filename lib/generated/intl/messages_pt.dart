@@ -909,4 +909,19 @@ class SPt extends S {
 
   @override
   String get showAccounts => 'Show Private Accounts';
+
+  @override
+  String get batchCreate => 'Batch Create Accounts';
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get prefix => 'Prefix';
+
+  @override
+  String get confirmBatchCreate => 'Are you sure you want to create multiple accounts?';
+
+  @override
+  String get hideEmptyAccounts => 'Hide empty accounts';
 }

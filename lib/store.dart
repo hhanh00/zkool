@@ -239,11 +239,10 @@ abstract class _SyncStatus with Store {
   }
 
   @action
-  Future<void> rescan(int height) async {
+  void resetToHeight(int height) {
     warp.resetChain(aa.coin, height);
     _updateSyncedHeight();
-    paused = false;
-    await sync(true);
+    paused = true;
   }
 
   @action

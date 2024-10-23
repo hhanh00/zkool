@@ -7,6 +7,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
 
+import '../../appsettings.dart';
 import '../../store.dart';
 import '../../accounts.dart';
 import '../../coin/coins.dart';
@@ -50,8 +51,7 @@ class _AccountManagerState extends State<AccountManager> {
   late final s = S.of(context);
   int? selected;
   bool showAll = false;
-  late var accounts =
-      widget.accounts.where((a) => showAll || !a.hidden).toList();
+  late var accounts = getAccounts();
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +90,15 @@ class _AccountManagerState extends State<AccountManager> {
     if (confirmed)
       setState(() {
         showAll = !showAll;
-        accounts = widget.accounts.where((a) => showAll || !a.hidden).toList();
+        accounts = getAccounts();
       });
+  }
+
+  List<AccountNameT> getAccounts() {
+    final hideEmptyAccounts = appSettings.hideEmptyAccounts;
+    return widget.accounts.where((a) =>
+      (a.balance > 0 || !hideEmptyAccounts) &&
+      (showAll || !a.hidden)).toList();
   }
 
   add() async {
@@ -250,6 +257,7 @@ class EditAccountState extends State<EditAccountPage> {
                 controller: nameController),
             HeightPicker(
               birth,
+                name: 'birth_height',
               label: Text(s.birthHeight),
               onChanged: (v) => setState(() => birth = v!),
             ),
