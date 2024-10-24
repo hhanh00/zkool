@@ -30,26 +30,20 @@ class _SubmitTxState extends State<SubmitTxPage> {
   void initState() {
     super.initState();
     Future(() async {
-      try {
-        String json = jsonDecode(await warp.broadcast(aa.coin, widget.data));
-        txId = json;
-        final redirect = widget.data.redirect;
-        redirect?.let((r) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            GoRouter.of(context).pushReplacement(redirect);
-          });
-        });
-      } on FormatException catch (e) {
-        final s = GetIt.I.get<S>();
-        await AwesomeDialog(
-          context: context,
-          title: s.error,
-          desc: e.source,
-          dialogType: DialogType.error,
-          onDismissCallback: (_) => GoRouter.of(context).pop()
-        )..show();
+      while (true) {
+        final rep = await tryWarpFn(
+            context, () => warp.broadcast(aa.coin, widget.data));
+        if (!mounted) return;
+        if (rep != null) {
+          setState(() => txId = jsonDecode(rep));
+          final redirect = widget.data.redirect;
+          if (redirect != null)
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              GoRouter.of(context).pushReplacement(redirect);
+            });
+          break;
+        }
       }
-      setState(() {});
     });
   }
 

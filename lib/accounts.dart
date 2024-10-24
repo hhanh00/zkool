@@ -95,15 +95,12 @@ abstract class _ActiveAccount with Store {
   final String? seed;
   final bool external;
   final bool saved;
-  late final AccountSigningCapabilitiesT? _caps;
 
   _ActiveAccount(
       this.coin, this.id, this.name, this.seed, this.external, this.saved)
       : notes = Notes(coin, id),
         txs = Txs(coin, id),
         messages = Messages(coin, id) {
-    if (id != 0)
-      _caps = warp.getAccountCapabilities(coin, id);
   }
 
   @observable
@@ -137,11 +134,11 @@ abstract class _ActiveAccount with Store {
 
   @action
   void updateDivisified() {
-    if (id == 0 || (_caps != null && _caps.sapling == 0 && _caps.orchard == 0)) return;
-    try {
+    if (id == 0) return;
+    final caps = warp.getAccountCapabilities(coin, id);
+    if (caps.sapling == 0 && caps.orchard == 0)
       diversifiedAddress = warp.getAccountAddress(
           coin, id, now(), (coinSettings.uaType & 6) | 8);
-    } catch (e) {}
   }
 
   @action

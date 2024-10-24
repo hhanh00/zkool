@@ -326,9 +326,9 @@ class DowngradeAccountState extends State<DowngradeAccountPage> {
               FormBuilderCheckbox(
                   name: 'seed',
                   title: Text(s.seed),
-                  enabled: accountCaps.transparent == 3 &&
-                      accountCaps.sapling == 3 &&
-                      accountCaps.orchard == 3,
+                  enabled: accountCaps.transparent == 7 &&
+                      accountCaps.sapling == 7 &&
+                      accountCaps.orchard == 7,
                   initialValue: accountCaps.seed,
                   onChanged: (v) {
                     setState(() => accountCaps.seed = v!);
@@ -404,7 +404,7 @@ class DowngradeAccountState extends State<DowngradeAccountPage> {
 
   int _initialValue(int caps) {
     // from capabilities to highest bit mask
-    switch (caps) {
+    switch (caps & 3) {
       case 3:
         return 4;
       case 1:
@@ -417,7 +417,7 @@ class DowngradeAccountState extends State<DowngradeAccountPage> {
 
   int _available(int caps) {
     // from capabilities to bit mask available
-    switch (caps) {
+    switch (caps & 3) {
       case 3:
         return 7; // secret key -> no key + view + sk
       case 1:
