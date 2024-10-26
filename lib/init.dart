@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:get_it/get_it.dart';
+import 'package:glob/glob.dart';
 import 'package:tuple/tuple.dart';
 
 import 'accounts.dart';
@@ -131,31 +132,39 @@ class _AppState extends State<App> {
 }
 
 Future<String> upgradeDb(int coin, String password) async {
+  final context = rootNavigatorKey.currentContext!;
+  final S s = S.of(context);
   final c = coins[coin];
   final dbRoot = c.dbRoot; // for ex, zec
   final dbDir = appStore.dbDir;
 
+  var latestVersion = 0;
+  String? latestDbFile;
+  final dbFileRegex = RegExp("$dbRoot(\\d+)\\.db");
+  for (var file in Directory(dbDir).listSync()) {
+    final p = file.path;
+    final m = dbFileRegex.firstMatch(p);
+    if (m != null) {
+      final version = int.parse(m.group(1)!);
+      if (version > latestVersion) {
+        latestDbFile = p;
+        latestVersion = version;
+      }
+    }
+  }
   // copy zec.db to zec01.db
   final src = File(path.join(dbDir, "$dbRoot.db"));
   if (src.existsSync())
     src.copySync(File(path.join(dbDir, "${dbRoot}01.db")).path);
 
   final version = appStore.dbVersion;
-  final dbLatestVersionFile = dbFileByVersion(dbDir, dbRoot, version);
-  if (!dbLatestVersionFile.existsSync()) {
-    final latestDb = getDbFile(coin, dbDir, version);
-    if (latestDb == null) {
-      logger.d("No db file - create a new installation");
-      await warp.createDb(coin, dbLatestVersionFile.path, password);
-    } else {
-      for (var nn = latestDb.item1; nn < version; nn++) {
-        logger.d("Migrating from version $nn");
-        await warp.migrateDb(coin, nn, dbFileByVersion(dbDir, dbRoot, nn).path,
-            dbFileByVersion(dbDir, dbRoot, nn + 1).path, password);
-      }
-    }
+  if (latestDbFile != null && version != latestVersion) {
+    throw Exception(s.databaseVersionMismatch);
   }
-  return dbLatestVersionFile.path;
+  final versionString = version.toString().padLeft(2, '0');
+  final db = File(path.join(dbDir, "$dbRoot$versionString.db")).path;
+  await warp.createDb(coin, db, password, versionString);
+  return db;
 }
 
 File dbFileByVersion(String dbDir, String dbRoot, int n) {

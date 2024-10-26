@@ -24,41 +24,62 @@ class SplashPage extends StatefulWidget {
 
 class _SplashState extends State<SplashPage> {
   late final s = S.of(context);
-  final progressKey = GlobalKey<_LoadProgressState>();
 
-  @override
-  void initState() {
-    super.initState();
+  Stream<ProgressMessage> load() async* {
+    GetIt.I.registerSingleton<S>(S.of(context));
+    if (!appSettings.hasMemo()) appSettings.memo = s.sendFrom(APP_NAME);
+    yield (ProgressMessage(progress: 0.05, message: "Init Prover"));
+    _initProver();
+    yield (ProgressMessage(progress: 0.10, message: "Install Quick Action Handler"));
+    installQuickActions();
+    yield (ProgressMessage(progress: 0.20, message: "Connect to Db"));
+    await initCoinDb();
+    yield (ProgressMessage(progress: 0.30, message: "Run Mempool Monitor"));
+    runMempool();
+    yield (ProgressMessage(progress: 0.40, message: "Load Current Account"));
+    await _restoreActive();
+    yield (ProgressMessage(progress: 0.50, message: "Setup Background Sync"));
+    // _initForegroundTask();
+    _initBackgroundSync();
+    yield (ProgressMessage(progress: 0.60, message: "Setup Accelerator Handler"));
+    _initAccel();
+    yield (ProgressMessage(progress: 0.70, message: "Open Lock Screen"));
+    final protectOpen = appSettings.protectOpen;
+    if (protectOpen) {
+      await authBarrier(context);
+    }
+    yield (ProgressMessage(progress: 0.80, message: "Request Notification Permissions"));
+    await requestNotificationPermissions();
+    yield (ProgressMessage(progress: 0.90, message: "Get Market Price"));
+    marketPrice.run();
+    appStore.initialized = true;
+    final startURL = launchURL;
+    launchURL = null;
+    yield (ProgressMessage(progress: 1.0, message: "Finished"));
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future(() async {
-        GetIt.I.registerSingleton<S>(S.of(context));
-        if (!appSettings.hasMemo()) appSettings.memo = s.sendFrom(APP_NAME);
-        _initProver();
-        installQuickActions();
-        // await _setupMempool();
-        await initCoinDb();
-        runMempool();
-        await _restoreActive();
-        // _initForegroundTask();
-        _initBackgroundSync();
-        _initAccel();
-        final protectOpen = appSettings.protectOpen;
-        if (protectOpen) {
-          await authBarrier(context);
-        }
-        await requestNotificationPermissions();
-        marketPrice.run();
-        appStore.initialized = true;
-        final startURL = launchURL;
-        launchURL = null;
-        GoRouter.of(context).go(startURL ?? '/account');
-      });
+      GoRouter.of(context).go(startURL ?? '/account');
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return LoadProgress(key: progressKey);
+    return StreamBuilder<ProgressMessage>(
+      stream: load(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final pm = snapshot.data!;
+          return LoadProgress(
+            key: ValueKey(snapshot.data),
+            pm.progress,
+            pm.message,
+          );
+        }
+        else if (snapshot.hasError) {
+          showModalMessage(context, s.error, snapshot.error.toString());
+        }
+        return SizedBox.shrink();
+      },
+    );
   }
 
   // TODO
@@ -69,7 +90,6 @@ class _SplashState extends State<SplashPage> {
   // }
 
   void _initProver() async {
-    _setProgress(0.1, 'Initialize ZK Prover');
     final spend = await rootBundle.load('assets/sapling-spend.params');
     final output = await rootBundle.load('assets/sapling-output.params');
     warp.initProver(spend.buffer.asUint8List(), output.buffer.asUint8List());
@@ -78,7 +98,6 @@ class _SplashState extends State<SplashPage> {
   Future<void> initCoinDb() async {
     for (var c in coins) {
       final coin = c.coin;
-      _setProgress(0.5 + 0.1 * coin, 'Initializing ${c.ticker}');
       final path = await upgradeDb(coin, appStore.dbPassword);
       logger.i("Db path: $path");
       warp.setDbPathPassword(coin, path, appStore.dbPassword);
@@ -94,29 +113,21 @@ class _SplashState extends State<SplashPage> {
   void runMempool() {
     for (var c in coins) {
       final cs = CoinSettingsExtension.load(c.coin);
-      if (cs.mempool)
-        warp.mempoolRun(c.coin);
+      if (cs.mempool) warp.mempoolRun(c.coin);
     }
   }
 
   Future<void> _restoreActive() async {
-    _setProgress(0.8, 'Load Active Account');
     final prefs = GetIt.I.get<SharedPreferences>();
     final a = await ActiveAccount.fromPrefs(prefs);
-    print('_restoreActive ${a?.id}');
     if (a != null) {
       await setActiveAccount(a.coin, a.id);
       await aa.update(MAXHEIGHT);
-    } 
+    }
   }
 
   _initAccel() {
-    if (isMobile()) accelerometerEvents.listen(handleAccel);
-  }
-
-  void _setProgress(double progress, String message) {
-    print("$progress $message");
-    progressKey.currentState!.setValue(progress, message);
+    if (isMobile()) accelerometerEventStream().listen(handleAccel);
   }
 
   _initBackgroundSync() {
@@ -141,16 +152,10 @@ class _SplashState extends State<SplashPage> {
   }
 }
 
-class LoadProgress extends StatefulWidget {
-  LoadProgress({Key? key}) : super(key: key);
-
-  @override
-  State<LoadProgress> createState() => _LoadProgressState();
-}
-
-class _LoadProgressState extends State<LoadProgress> {
-  var _value = 0.0;
-  String _message = "";
+class LoadProgress extends StatelessWidget {
+  final double progress;
+  final String message;
+  LoadProgress(this.progress, this.message, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -168,17 +173,10 @@ class _LoadProgressState extends State<LoadProgress> {
                   Padding(padding: EdgeInsets.all(16)),
                   Text(s.loading, style: textTheme.headlineMedium),
                   Padding(padding: EdgeInsets.all(16)),
-                  LinearProgressIndicator(value: _value),
+                  LinearProgressIndicator(value: progress),
                   Padding(padding: EdgeInsets.all(8)),
-                  Text(_message, style: textTheme.labelMedium),
+                  Text(message, style: textTheme.labelMedium),
                 ]))));
-  }
-
-  void setValue(double v, String message) {
-    setState(() {
-      _value = v;
-      _message = message;
-    });
   }
 }
 

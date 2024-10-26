@@ -924,4 +924,10 @@ class SFr extends S {
 
   @override
   String get hideEmptyAccounts => 'Hide empty accounts';
+
+  @override
+  String get fatalError => 'Fatal Error';
+
+  @override
+  String get databaseVersionMismatch => 'Database Version Mismatch';
 }

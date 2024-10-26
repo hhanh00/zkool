@@ -1892,6 +1892,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Hide empty accounts'**
   String get hideEmptyAccounts;
+
+  /// No description provided for @fatalError.
+  ///
+  /// In en, this message translates to:
+  /// **'Fatal Error'**
+  String get fatalError;
+
+  /// No description provided for @databaseVersionMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Database Version Mismatch'**
+  String get databaseVersionMismatch;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

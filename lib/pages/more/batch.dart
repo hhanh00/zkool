@@ -146,15 +146,7 @@ class _BatchBackupState extends State<BatchBackupPage> {
             file.path!, tempDir, restoreKeyController.text);
         final prefs = GetIt.I.get<SharedPreferences>();
         await prefs.setString('backup', tempDir);
-        await AwesomeDialog(
-          context: context,
-          title: s.databaseRestored,
-          desc: s.pleaseQuitAndRestartTheAppNow,
-          dialogType: DialogType.warning,
-          dismissOnBackKeyPress: false,
-          dismissOnTouchOutside: false,
-        )
-          ..show();
+        await showModalMessage(context, s.databaseRestored, s.pleaseQuitAndRestartTheAppNow);
       } on String catch (e) {
         restoreFormKey.currentState!.fields['restore']!.invalidate(e);
       }

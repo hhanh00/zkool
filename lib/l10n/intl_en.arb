@@ -297,5 +297,7 @@
 	"start": "Start",
 	"prefix": "Prefix",
 	"confirmBatchCreate": "Are you sure you want to create multiple accounts?",
-	"hideEmptyAccounts": "Hide empty accounts"
+	"hideEmptyAccounts": "Hide empty accounts",
+	"fatalError": "Fatal Error",
+	"databaseVersionMismatch": "Database Version Mismatch"
 }

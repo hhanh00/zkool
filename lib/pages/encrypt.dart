@@ -95,16 +95,7 @@ class _EncryptDbState extends State<EncryptDbPage> with WithLoadingAnimation {
         await prefs.setString('backup', tempPath);
       });
 
-      await AwesomeDialog(
-        context: context,
-        dialogType: DialogType.warning,
-        title: s.restart,
-        desc: s.pleaseQuitAndRestartTheAppNow,
-        dismissOnTouchOutside: false,
-        dismissOnBackKeyPress: false,
-        onDismissCallback: (_) => GoRouter.of(context).pop(),
-      )
-        ..show();
+      await showModalMessage(context, s.restart, s.pleaseQuitAndRestartTheAppNow);
     }
   }
 }

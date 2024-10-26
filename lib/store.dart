@@ -434,6 +434,14 @@ class AccountBalanceSnapshot {
 }
 
 @freezed
+class ProgressMessage with _$ProgressMessage {
+  const factory ProgressMessage({
+    required double progress,
+    required String message,
+  }) = _ProgressMessage;
+}
+
+@freezed
 class SeedInfo with _$SeedInfo {
   const factory SeedInfo({
     required String seed,

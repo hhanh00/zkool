@@ -72,6 +72,19 @@ Future<void> showMessageBox(BuildContext context, String title, String content,
   ).show();
 }
 
+Future<void> showModalMessage(BuildContext context, String title, String content) async {
+  await AwesomeDialog(
+    context: context,
+    dialogType: DialogType.warning,
+    title: title,
+    desc: content,
+    autoDismiss: false,
+    dismissOnTouchOutside: false,
+    dismissOnBackKeyPress: false,
+    onDismissCallback: (_) {},
+  )..show();
+}
+
 mixin WithLoadingAnimation<T extends StatefulWidget> on State<T> {
   bool loading = false;
 
@@ -786,11 +799,11 @@ String reversedHex(Uint8List hex) {
   return HEX.encode(r);
 }
 
-Future<T?> tryWarpFn<T>(BuildContext context, FutureOr<T> Function() f, { bool handled = true }) async {
+Future<T?> tryWarpFn<T>(BuildContext context, FutureOr<T> Function() f,
+    {bool handled = true}) async {
   try {
     return await f();
-  }
-  on String catch (msg) {
+  } on String catch (msg) {
     final s = S.of(context);
     await showMessageBox(context, s.error, msg, type: DialogType.error);
     if (handled)

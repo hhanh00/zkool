@@ -15,6 +15,154 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
+mixin _$ProgressMessage {
+  double get progress => throw _privateConstructorUsedError;
+  String get message => throw _privateConstructorUsedError;
+
+  /// Create a copy of ProgressMessage
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ProgressMessageCopyWith<ProgressMessage> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProgressMessageCopyWith<$Res> {
+  factory $ProgressMessageCopyWith(
+          ProgressMessage value, $Res Function(ProgressMessage) then) =
+      _$ProgressMessageCopyWithImpl<$Res, ProgressMessage>;
+  @useResult
+  $Res call({double progress, String message});
+}
+
+/// @nodoc
+class _$ProgressMessageCopyWithImpl<$Res, $Val extends ProgressMessage>
+    implements $ProgressMessageCopyWith<$Res> {
+  _$ProgressMessageCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ProgressMessage
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? progress = null,
+    Object? message = null,
+  }) {
+    return _then(_value.copyWith(
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProgressMessageImplCopyWith<$Res>
+    implements $ProgressMessageCopyWith<$Res> {
+  factory _$$ProgressMessageImplCopyWith(_$ProgressMessageImpl value,
+          $Res Function(_$ProgressMessageImpl) then) =
+      __$$ProgressMessageImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({double progress, String message});
+}
+
+/// @nodoc
+class __$$ProgressMessageImplCopyWithImpl<$Res>
+    extends _$ProgressMessageCopyWithImpl<$Res, _$ProgressMessageImpl>
+    implements _$$ProgressMessageImplCopyWith<$Res> {
+  __$$ProgressMessageImplCopyWithImpl(
+      _$ProgressMessageImpl _value, $Res Function(_$ProgressMessageImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ProgressMessage
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? progress = null,
+    Object? message = null,
+  }) {
+    return _then(_$ProgressMessageImpl(
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ProgressMessageImpl implements _ProgressMessage {
+  const _$ProgressMessageImpl({required this.progress, required this.message});
+
+  @override
+  final double progress;
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'ProgressMessage(progress: $progress, message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProgressMessageImpl &&
+            (identical(other.progress, progress) ||
+                other.progress == progress) &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, progress, message);
+
+  /// Create a copy of ProgressMessage
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProgressMessageImplCopyWith<_$ProgressMessageImpl> get copyWith =>
+      __$$ProgressMessageImplCopyWithImpl<_$ProgressMessageImpl>(
+          this, _$identity);
+}
+
+abstract class _ProgressMessage implements ProgressMessage {
+  const factory _ProgressMessage(
+      {required final double progress,
+      required final String message}) = _$ProgressMessageImpl;
+
+  @override
+  double get progress;
+  @override
+  String get message;
+
+  /// Create a copy of ProgressMessage
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ProgressMessageImplCopyWith<_$ProgressMessageImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$SeedInfo {
   String get seed => throw _privateConstructorUsedError;
   int get index => throw _privateConstructorUsedError;
