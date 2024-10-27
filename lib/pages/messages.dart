@@ -68,7 +68,6 @@ class TableListMessageMetadata extends TableListItemMetadata<ZMessage> {
   DataRow toRow(BuildContext context, int index, ZMessage message) {
     final t = Theme.of(context);
     var style = t.textTheme.bodyMedium!;
-    logger.i(message);
     if (!message.read) style = style.copyWith(fontWeight: FontWeight.bold);
     final addressStyle = message.incoming
         ? style.apply(color: Colors.green)

@@ -18,7 +18,6 @@ class MorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final c = coins[aa.coin];
     final moreSections = [
       MoreSection(title: Text(s.account), tiles: [
         MoreTile(
@@ -38,17 +37,11 @@ class MorePage extends StatelessWidget {
             icon: FaIcon(FontAwesomeIcons.peopleArrows),
             text: s.multiPay,
             secured: appSettings.protectSend),
-        if (c.supportsUA)
-          MoreTile(
-              url: '/account/swap',
-              icon: FaIcon(FontAwesomeIcons.arrowRightArrowLeft),
-              text: s.swap,
-              secured: appSettings.protectSend),
-        if (syncStatus.latestHeight != null)
-          MoreTile(
-              url: '/more/vote',
-              icon: FaIcon(FontAwesomeIcons.personBooth),
-              text: s.vote),
+        MoreTile(
+            url: '/account/swap',
+            icon: FaIcon(FontAwesomeIcons.arrowRightArrowLeft),
+            text: s.swap,
+            secured: appSettings.protectSend),
       ]),
       MoreSection(title: Text(s.transparent), tiles: [
         MoreTile(

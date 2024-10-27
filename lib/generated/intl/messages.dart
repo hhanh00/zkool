@@ -1904,6 +1904,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Database Version Mismatch'**
   String get databaseVersionMismatch;
+
+  /// No description provided for @noTaddr.
+  ///
+  /// In en, this message translates to:
+  /// **'No Transparent Address'**
+  String get noTaddr;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

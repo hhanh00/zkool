@@ -299,5 +299,6 @@
 	"confirmBatchCreate": "Are you sure you want to create multiple accounts?",
 	"hideEmptyAccounts": "Hide empty accounts",
 	"fatalError": "Fatal Error",
-	"databaseVersionMismatch": "Database Version Mismatch"
+	"databaseVersionMismatch": "Database Version Mismatch",
+	"noTaddr": "No Transparent Address"
 }

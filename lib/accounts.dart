@@ -43,7 +43,7 @@ Future<void> setActiveAccount(int coin, int id) async {
   coinSettings.save(coin);
   warp.mempoolSetAccount(coin, id);
   aa.updateDivisified();
-  aa.update(MAXHEIGHT);
+  aa.update(null);
   aaSequence.inc();
 }
 
@@ -148,13 +148,14 @@ abstract class _ActiveAccount with Store {
       unconfirmedBalance = b;
   }
 
-  Future<void> update(int newHeight) async {
+  @action
+  Future<void> update(int? bcHeight) async {
     if (id == 0) return;
     updateDivisified();
 
-    notes.read(newHeight);
-    txs.read(newHeight);
-    messages.read(newHeight);
+    notes.read(bcHeight);
+    txs.read(bcHeight);
+    messages.read(bcHeight);
 
     currency = appSettings.currency;
 
@@ -188,9 +189,7 @@ abstract class _ActiveAccount with Store {
         (acc, v) => v,
         0.0);
 
-    runInAction(() {
-      if (newHeight != MAXHEIGHT) height = newHeight;
-    });
+    if (bcHeight != null) height = bcHeight;
   }
 }
 
@@ -207,8 +206,9 @@ abstract class _Notes with Store {
   List<Note> items = [];
   SortConfig2? order;
 
-  void read(int height) async {
-    final shieledNotes = await warp.listNotes(coin, id, height);
+  @action
+  Future<void> read(int? height) async {
+    final shieledNotes = await warp.listNotes(coin, id, MAXHEIGHT);
     items = shieledNotes.map((n) {
       final timestamp = DateTime.fromMillisecondsSinceEpoch(n.timestamp * 1000);
       return Note.from(height, n.idNote, n.height, timestamp, n.value / ZECUNIT,
@@ -256,26 +256,26 @@ abstract class _Txs with Store {
   List<Tx> items = [];
   SortConfig2? order;
 
-  void read(int height) async {
-    final shieldedTxs = await warp.listTransactions(coin, id, height);
-    runInAction(() {
-      items = shieldedTxs.map((tx) {
-        final timestamp =
-            DateTime.fromMillisecondsSinceEpoch(tx.timestamp * 1000);
-        final fullTxId = Uint8List.fromList(tx.txid!);
-        return Tx.from(
-            height,
-            tx.id,
-            tx.height,
-            timestamp,
-            centerTrim(reversedHex(fullTxId)),
-            fullTxId,
-            tx.amount,
-            tx.address,
-            tx.contact,
-            tx.memo ?? '');
-      }).toList();
-    });
+  @action
+  Future<void> read(int? height) async {
+    final shieldedTxs = await warp.listTransactions(coin, id, MAXHEIGHT);
+    items = shieldedTxs.map((tx) {
+      final timestamp =
+          DateTime.fromMillisecondsSinceEpoch(tx.timestamp * 1000);
+      final fullTxId = Uint8List.fromList(tx.txid!);
+      return Tx.from(
+          height,
+          tx.id,
+          tx.height,
+          timestamp,
+          centerTrim(reversedHex(fullTxId)),
+          fullTxId,
+          tx.amount,
+          tx.address,
+          tx.contact,
+          tx.memo ?? '');
+    }).toList();
+    items = items.sortedByNum((tx) => tx.height == 0 ? -MAXHEIGHT : -tx.height);
   }
 
   @action
@@ -304,32 +304,31 @@ abstract class _Messages with Store {
   List<ZMessage> items = [];
   SortConfig2? order;
 
-  void read(int height) async {
+  @action
+  Future<void> read(int? _height) async {
     final ms = await warp.listMessages(coin, id);
-    runInAction(() {
-      items = ms.map((m) {
-        final memo = m.memo ??
-            UserMemoT(
-              sender: '',
-              recipient: '',
-              subject: '',
-              body: '',
-            );
-        return ZMessage(
-            m.idMsg,
-            m.idTx,
-            m.incoming,
-            memo.sender,
-            memo.sender,
-            memo.recipient!,
-            m.contact ?? '',
-            memo.subject!,
-            memo.body!,
-            DateTime.fromMillisecondsSinceEpoch(m.timestamp * 1000),
-            m.height,
-            m.read);
-      }).toList();
-    });
+    items = ms.map((m) {
+      final memo = m.memo ??
+          UserMemoT(
+            sender: '',
+            recipient: '',
+            subject: '',
+            body: '',
+          );
+      return ZMessage(
+          m.idMsg,
+          m.idTx,
+          m.incoming,
+          memo.sender,
+          memo.sender,
+          memo.recipient!,
+          m.contact ?? '',
+          memo.subject!,
+          memo.body!,
+          DateTime.fromMillisecondsSinceEpoch(m.timestamp * 1000),
+          m.height,
+          m.read);
+    }).toList();
   }
 
   @action

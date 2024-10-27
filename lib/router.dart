@@ -6,6 +6,9 @@ import 'package:warp/warp.dart';
 import 'coin/coins.dart';
 import 'generated/intl/messages.dart';
 import 'init.dart';
+import 'pages/accounts/swap.dart';
+import 'pages/accounts/swap/history.dart';
+import 'pages/accounts/swap/stealthex.dart';
 import 'pages/more/cold.dart';
 import 'pages/more/transparent.dart';
 import 'pages/more/vote.dart';
@@ -85,25 +88,25 @@ final router = GoRouter(
                           builder: (context, state) =>
                               SendPage(null, single: false)),
                     ]),
-                // GoRoute(
-                //   path: 'swap',
-                //   builder: (context, state) => SwapPage(),
-                //   routes: [
-                //     GoRoute(
-                //         path: 'history',
-                //         builder: (context, state) => SwapHistoryPage(),
-                //     ),
-                //     // GoRoute(
-                //     //     path: 'stealthex',
-                //     //     builder: (context, state) => StealthExPage(),
-                //     //     routes: [
-                //     //       GoRoute(
-                //     //           path: 'details',
-                //     //           builder: (context, state) =>
-                //     //               StealthExSummaryPage(state.extra as SwapT)),
-                //     //     ]),
-                //   ],
-                // ),
+                GoRoute(
+                  path: 'swap',
+                  builder: (context, state) => SwapPage(),
+                  routes: [
+                    GoRoute(
+                        path: 'history',
+                        builder: (context, state) => SwapHistoryPage(),
+                    ),
+                    GoRoute(
+                        path: 'stealthex',
+                        builder: (context, state) => StealthExPage(),
+                        routes: [
+                          GoRoute(
+                              path: 'details',
+                              builder: (context, state) =>
+                                  StealthExSummaryPage(state.extra as SwapT)),
+                        ]),
+                  ],
+                ),
                 GoRoute(
                   path: 'txplan',
                   builder: (context, state) => TxPlanPage(

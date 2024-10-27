@@ -488,7 +488,7 @@ class Tx extends HasHeight {
     String? contact,
     String memo,
   ) {
-    final confirmations = latestHeight?.let((h) => h - height + 1);
+    final confirmations = height != 0 ? latestHeight?.let((h) => h - height + 1) : 0;
     return Tx(id, height, confirmations, timestamp, txid, fullTxId, value,
         address, contact, memo);
   }

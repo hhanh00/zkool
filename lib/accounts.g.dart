@@ -128,6 +128,14 @@ mixin _$ActiveAccount on _ActiveAccount, Store {
     });
   }
 
+  late final _$updateAsyncAction =
+      AsyncAction('_ActiveAccount.update', context: context);
+
+  @override
+  Future<void> update(int? bcHeight) {
+    return _$updateAsyncAction.run(() => super.update(bcHeight));
+  }
+
   late final _$_ActiveAccountActionController =
       ActionController(name: '_ActiveAccount', context: context);
 
@@ -191,6 +199,13 @@ mixin _$Notes on _Notes, Store {
     });
   }
 
+  late final _$readAsyncAction = AsyncAction('_Notes.read', context: context);
+
+  @override
+  Future<void> read(int? height) {
+    return _$readAsyncAction.run(() => super.read(height));
+  }
+
   late final _$_NotesActionController =
       ActionController(name: '_Notes', context: context);
 
@@ -240,6 +255,13 @@ mixin _$Txs on _Txs, Store {
     });
   }
 
+  late final _$readAsyncAction = AsyncAction('_Txs.read', context: context);
+
+  @override
+  Future<void> read(int? height) {
+    return _$readAsyncAction.run(() => super.read(height));
+  }
+
   late final _$_TxsActionController =
       ActionController(name: '_Txs', context: context);
 
@@ -286,6 +308,14 @@ mixin _$Messages on _Messages, Store {
     _$itemsAtom.reportWrite(value, super.items, () {
       super.items = value;
     });
+  }
+
+  late final _$readAsyncAction =
+      AsyncAction('_Messages.read', context: context);
+
+  @override
+  Future<void> read(int? _height) {
+    return _$readAsyncAction.run(() => super.read(_height));
   }
 
   late final _$_MessagesActionController =

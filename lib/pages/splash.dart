@@ -122,7 +122,7 @@ class _SplashState extends State<SplashPage> {
     final a = await ActiveAccount.fromPrefs(prefs);
     if (a != null) {
       await setActiveAccount(a.coin, a.id);
-      await aa.update(MAXHEIGHT);
+      await aa.update(null);
     }
   }
 

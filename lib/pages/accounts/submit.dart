@@ -35,6 +35,7 @@ class _SubmitTxState extends State<SubmitTxPage> {
             context, () => warp.broadcast(aa.coin, widget.data));
         if (!mounted) return;
         if (rep != null) {
+          aaSequence.inc();
           setState(() => txId = jsonDecode(rep));
           final redirect = widget.data.redirect;
           if (redirect != null)
@@ -112,7 +113,7 @@ class AnimatedQRExportState extends State<AnimatedQRExportPage> {
   @override
   void initState() {
     super.initState();
-    packets = warp.splitData(aa.coin, widget.data, 1);
+    packets = warp.splitData(widget.data, 1);
   }
 
   @override

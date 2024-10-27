@@ -930,4 +930,7 @@ class SFr extends S {
 
   @override
   String get databaseVersionMismatch => 'Database Version Mismatch';
+
+  @override
+  String get noTaddr => 'No Transparent Address';
 }
