@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:warp/data_fb_generated.dart';
@@ -15,82 +13,38 @@ import '../../generated/intl/messages.dart';
 import '../utils.dart';
 import '../widgets.dart';
 
-class SubmitTxPage extends StatefulWidget {
-  final TransactionBytesT data;
-  SubmitTxPage(this.data);
-  @override
-  State<StatefulWidget> createState() => _SubmitTxState();
-}
-
-class _SubmitTxState extends State<SubmitTxPage> {
-  String? txId;
-  String? error;
-
-  @override
-  void initState() {
-    super.initState();
-    Future(() async {
-      while (true) {
-        final rep = await tryWarpFn(
-            context, () => warp.broadcast(aa.coin, widget.data));
-        if (!mounted) return;
-        if (rep != null) {
-          aaSequence.inc();
-          setState(() => txId = jsonDecode(rep));
-          final redirect = widget.data.redirect;
-          if (redirect != null)
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              GoRouter.of(context).pushReplacement(redirect);
-            });
-          break;
-        }
-      }
-    });
-  }
+class SubmitTxPage extends StatelessWidget {
+  final String data;
+  final String? redirect;
+  SubmitTxPage(this.data, {super.key, this.redirect});
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final t = Theme.of(context);
+    final txId = jsonDecode(data);
+    aaSequence.inc();
+
     return Scaffold(
-      appBar: AppBar(
-          title: Text(txId != null
-              ? s.sent
-              : error != null
-                  ? s.sent_failed
-                  : s.sending),
-          actions: [
-            IconButton(onPressed: ok, icon: Icon(Icons.check)),
-          ]),
-      body: Center(
-          child: txId != null
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Jumbotron(txId!, title: s.txID),
-                    Gap(16),
-                    OutlinedButton(
-                        onPressed: _openTx, child: Text(s.openInExplorer))
-                  ],
-                )
-              : error != null
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Jumbotron(error!,
-                            title: s.error, severity: Severity.Error)
-                      ],
-                    )
-                  : LoadingAnimationWidget.beat(
-                      color: t.colorScheme.primary, size: 200)),
+      appBar: AppBar(title: Text(s.sent), actions: [
+        IconButton(onPressed: () => ok(context), icon: Icon(Icons.check)),
+      ]),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Jumbotron(txId, title: s.txID),
+          Gap(16),
+          OutlinedButton(
+              onPressed: () => openTx(txId), child: Text(s.openInExplorer))
+        ],
+      ),
     );
   }
 
-  _openTx() {
-    openTxInExplorer(txId!);
+  openTx(String txId) {
+    openTxInExplorer(txId);
   }
 
-  ok() {
+  ok(BuildContext context) {
     GoRouter.of(context).pop();
   }
 }

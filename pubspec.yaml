@@ -61,7 +61,6 @@ dependencies:
   timeago: ^3.5.0
   graphic: ^2.2.1
   loading_animation_widget: ^1.2.0
-  get_it: ^7.6.4
   rxdart: ^0.28.0
   bubble: ^1.2.1
   share_plus: ^10.0.2

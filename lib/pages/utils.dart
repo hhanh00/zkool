@@ -10,13 +10,11 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:binary/binary.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_palette/flutter_palette.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hex/hex.dart';
 import 'package:intl/intl.dart';
@@ -341,14 +339,16 @@ Future<bool> showConfirmDialog(
 
 double? tryParseNumber(String? sn) {
   if (sn == null || sn.isEmpty) return 0;
-  final s = GetIt.I.get<S>();
+  final context = rootNavigatorKey.currentContext!;
+  final S s = S.of(context);
   // There is no API to parse directly from intl string
   return NumberFormat.currency(locale: s.localeName).tryParse(sn)?.toDouble();
 }
 
 int decimalDigits(bool fullPrec) => fullPrec ? MAX_PRECISION : 3;
 String decimalFormat(double x, int decimalDigits, {String symbol = ''}) {
-  final s = GetIt.I.get<S>();
+  final context = rootNavigatorKey.currentContext!;
+  final S s = S.of(context);
   return NumberFormat.currency(
     locale: s.localeName,
     decimalDigits: decimalDigits,
@@ -730,7 +730,9 @@ extension PoolBalanceExtension on BalanceT {
 }
 
 String? isValidUA(int uaType) {
-  if (uaType == 1) return GetIt.I<S>().invalidAddress;
+  final context = rootNavigatorKey.currentContext!;
+  final S s = S.of(context);
+  if (uaType == 1) return s.invalidAddress;
   return null;
 }
 
@@ -780,7 +782,8 @@ extension TransactionSummaryExtension on TransactionSummaryT {
 }
 
 List<Text> poolLabels() {
-  final s = GetIt.I.get<S>();
+  final context = rootNavigatorKey.currentContext!;
+  final S s = S.of(context);
   return [
     Text(s.transparent, style: TextStyle(color: Colors.red)),
     Text(s.sapling, style: TextStyle(color: Colors.orange)),

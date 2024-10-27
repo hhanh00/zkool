@@ -26,7 +26,6 @@ class _SplashState extends State<SplashPage> {
   late final s = S.of(context);
 
   Stream<ProgressMessage> load() async* {
-    GetIt.I.registerSingleton<S>(S.of(context));
     if (!appSettings.hasMemo()) appSettings.memo = s.sendFrom(APP_NAME);
     yield (ProgressMessage(progress: 0.05, message: "Init Prover"));
     _initProver();

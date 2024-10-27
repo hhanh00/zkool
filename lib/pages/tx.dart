@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collection/collection.dart';
 import 'package:warp/data_fb_generated.dart';
@@ -12,6 +11,7 @@ import 'package:warp/warp.dart';
 import '../accounts.dart';
 import '../generated/intl/messages.dart';
 import '../appsettings.dart';
+import '../router.dart';
 import '../store.dart';
 import '../tablelist.dart';
 import 'avatar.dart';
@@ -170,7 +170,8 @@ class TransactionState extends State<TransactionPage> {
   @override
   void initState() {
     super.initState();
-    final s = GetIt.I.get<S>();
+    final context = rootNavigatorKey.currentContext!;
+    final S s = S.of(context);
     idx = widget.txIndex;
     details = warp.getTransactionDetails(aa.coin, tx.fullTxId);
     tins = details.tins?.map((tin) {

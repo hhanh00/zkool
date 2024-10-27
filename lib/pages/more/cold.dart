@@ -6,7 +6,9 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:warp/data_fb_generated.dart';
 import 'package:flat_buffers/flat_buffers.dart';
+import 'package:warp/warp.dart';
 
+import '../../accounts.dart';
 import '../../generated/intl/messages.dart';
 import '../../router.dart';
 import '../scan.dart';
@@ -80,7 +82,9 @@ class BroadcastTxPage extends AnimatedQRScanPage {
 
   @override
   Future<void> onData(BuildContext context, Uint8List data) async {
-    final tx = TransactionBytes(data);
-    GoRouter.of(context).go('/account/broadcast_tx', extra: tx.unpack());
+    final txBytes = TransactionBytes(data).unpack();
+    final results = await tryWarpFn(context, () async => await warp.broadcast(aa.coin, txBytes));
+    if (results != null)
+      GoRouter.of(context).go('/account/broadcast_tx', extra: results);
   }
 }

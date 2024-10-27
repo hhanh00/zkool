@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:ZKool/router.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:warp/data_fb_generated.dart';
@@ -125,22 +125,19 @@ abstract class _SyncStatus with Store {
       aa.updateDivisified();
       failed = false;
       syncInterval = 15; // normal interval
-      if (!connected)
-        aa.update(latestHeight!);
+      if (!connected) aa.update(latestHeight!);
       connected = true;
     } catch (e) {
       if (!failed) {
         syncInterval = 5; // first retry
         failed = true;
-      }
-      else {
+      } else {
         syncInterval = (syncInterval * 1.2).toInt(); // exp backoff
       }
       if (syncInterval > 10)
         connected = false; // notify when we tried a few times
       logger.d('Retry in $syncInterval seconds');
-    }
-    finally {
+    } finally {
       updating = false;
     }
     Timer(Duration(seconds: syncInterval), _update);
@@ -212,7 +209,8 @@ abstract class _SyncStatus with Store {
       if (aa.coin == coin && aa.id == account) {
         final lh = syncStatus.latestHeight!;
         final postBalance = warp.getBalance(coin, account, lh);
-        final s = GetIt.I.get<S>();
+        final context = rootNavigatorKey.currentContext!;
+        final S s = S.of(context);
         final ticker = coins[aa.coin].ticker;
         if (preBalance.total < postBalance.total) {
           final amount = amountToString(postBalance.total - preBalance.total);

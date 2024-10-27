@@ -121,7 +121,8 @@ Future<void> registerQuickActions() async {
 void installQuickActions() {
   if (!isMobile()) return;
   List<ShortcutItem> shortcuts = [];
-  final s = GetIt.I.get<S>();
+  final context = rootNavigatorKey.currentContext!;
+  final s = S.of(context);
   for (var c in coins) {
     final ticker = c.ticker;
     shortcuts.add(ShortcutItem(

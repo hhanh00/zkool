@@ -13,7 +13,6 @@ import '../../store.dart';
 import '../more/batch.dart';
 import '../widgets.dart';
 import '../utils.dart';
-import 'new_import.dart';
 
 class RescanPage extends StatefulWidget {
   @override

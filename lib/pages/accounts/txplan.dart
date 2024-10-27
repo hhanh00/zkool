@@ -121,10 +121,11 @@ class TxPlanState extends State<TxPlanPage> with WithLoadingAnimation {
                   trailing: Text(
                       amountToString(plan.fee, digits: MAX_PRECISION),
                       style: TextStyle(color: t.primaryColor))),
-              ElevatedButton.icon(onPressed: invalidPrivacy ? null : sendOrSign, 
-                label: Text(privacy),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: privacyColor, foregroundColor: fColor)),
+              ElevatedButton.icon(
+                  onPressed: invalidPrivacy ? null : sendOrSign,
+                  label: Text(privacy),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: privacyColor, foregroundColor: fColor)),
               Gap(16),
               if (invalidPrivacy)
                 Text(s.privacyLevelTooLow, style: t.textTheme.bodyLarge),
@@ -137,9 +138,19 @@ class TxPlanState extends State<TxPlanPage> with WithLoadingAnimation {
 
   send() async {
     await load(() async {
-      final txBytes =
-          await warp.sign(aa.coin, widget.plan, syncStatus.expirationHeight);
-      GoRouter.of(context).go('/${widget.tab}/broadcast_tx', extra: txBytes);
+      final results = await tryWarpFn(context, () async {
+        final txBytes =
+            await warp.sign(aa.coin, widget.plan, syncStatus.expirationHeight);
+        return await warp.broadcast(aa.coin, txBytes);
+      });
+      if (results != null) {
+        final redirect = widget.plan.redirect;
+        if (redirect != null)
+          GoRouter.of(context).go(redirect);
+        else
+          GoRouter.of(context)
+              .go('/${widget.tab}/broadcast_tx', extra: results);
+      }
     });
   }
 
@@ -147,8 +158,7 @@ class TxPlanState extends State<TxPlanPage> with WithLoadingAnimation {
     GoRouter.of(context).go('/account/export_raw_tx', extra: widget.plan);
   }
 
-  Future<void> sendOrSign() async =>
-      widget.signOnly ? sign() : await send();
+  Future<void> sendOrSign() async => widget.signOnly ? sign() : await send();
 
   sign() async {
     try {

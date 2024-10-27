@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:get_it/get_it.dart';
 import 'package:warp/warp.dart';
 
 import 'coin/coins.dart';
@@ -118,12 +117,12 @@ final router = GoRouter(
                 GoRoute(
                   path: 'broadcast_tx',
                   builder: (context, state) =>
-                      SubmitTxPage(state.extra as TransactionBytesT),
+                      SubmitTxPage(state.extra as String),
                 ),
                 GoRoute(
                     path: 'export_raw_tx',
                     builder: (context, state) {
-                      final s = GetIt.I.get<S>();
+                      final s = S.of(context);
                       final tx = state.extra as TransactionSummaryT;
                       return AnimatedQRExportPage(tx.toBin(),
                           title: s.rawTransaction, filename: 'tx.raw');
@@ -231,7 +230,7 @@ final router = GoRouter(
                   GoRoute(
                     path: 'broadcast_tx',
                     builder: (context, state) =>
-                        SubmitTxPage(state.extra as TransactionBytesT),
+                        SubmitTxPage(state.extra as String),
                   ),
                 ]),
           ],
@@ -345,7 +344,7 @@ final router = GoRouter(
                   GoRoute(
                     path: 'signed',
                     builder: (context, state) {
-                      final S s = GetIt.I.get<S>();
+                      final S s = S.of(context);
                       return AnimatedQRExportPage(state.extra as Uint8List,
                           title: s.signedTx, filename: 'tx.sgn');
                     },
@@ -373,7 +372,7 @@ final router = GoRouter(
                   GoRoute(
                     path: 'broadcast_tx',
                     builder: (context, state) =>
-                        SubmitTxPage(state.extra as TransactionBytesT),
+                        SubmitTxPage(state.extra as String),
                   ),
                 ]),
           ],

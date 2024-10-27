@@ -1,7 +1,6 @@
+import 'package:ZKool/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:get_it/get_it.dart';
-import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:warp/data_fb_generated.dart';
 
@@ -519,7 +518,8 @@ class ServerListPickerState extends State<ServerListPicker> {
 
 String? checkURI(String? v) {
   if (v == null) return null;
-  final S s = GetIt.I.get<S>();
+  final context = rootNavigatorKey.currentContext!;
+  final S s = S.of(context);
   final uri = Uri.tryParse(v);
   if (uri == null) return s.invalidURI;
   if (!uri.isAbsolute) return s.invalidURI;

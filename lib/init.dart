@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:get_it/get_it.dart';
-import 'package:glob/glob.dart';
 import 'package:tuple/tuple.dart';
 
 import 'accounts.dart';
