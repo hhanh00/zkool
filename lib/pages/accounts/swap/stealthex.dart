@@ -79,7 +79,6 @@ class StealthExState extends State<StealthExPage> with WithLoadingAnimation {
                       name: 'from',
                       initialValue: from,
                       onChanged: (v) => setState(() {
-                        logger.d('from onChanged');
                         toKey.currentState!.resetAmount();
                         quote = null;
                         from = v;
@@ -98,7 +97,6 @@ class StealthExState extends State<StealthExPage> with WithLoadingAnimation {
                       name: 'to',
                       initialValue: to,
                       onChanged: (v) => setState(() {
-                        logger.d('to onChanged $v');
                         if (to.currency != v.currency && v.amount != '0') {
                           toKey.currentState!.resetAmount();
                           quote = null;
@@ -126,7 +124,6 @@ class StealthExState extends State<StealthExPage> with WithLoadingAnimation {
                           final to = toKey.currentState!;
                           if (fromKey.currentState!.validate()) {
                             final a = Decimal.parse(from.value.amount);
-                            logger.d("$a ${from.value}");
                             getQuote(a, from.value.currency, to.value.currency);
                           }
                         },
@@ -178,12 +175,10 @@ class StealthExState extends State<StealthExPage> with WithLoadingAnimation {
     setState(() {
       if (rep.statusCode == 200) {
         final q = SwapQuote.fromJson(res);
-        logger.d(q);
         quote = q;
         toKey.currentState!.update(to.copyWith(amount: q.estimated_amount));
       } else {
         quote = null;
-        logger.e(res);
         final error = res['err']['details'] as String;
         fromKey.currentState!.invalidate(error);
       }
@@ -235,7 +230,6 @@ class StealthExSummaryState extends State<StealthExSummaryPage>
   @override
   Widget build(BuildContext context) {
     final swap = widget.swap;
-    logger.d(swap);
     final reversed = swap.fromCurrency != 'zec';
     return wrapWithLoading(
       Scaffold(
@@ -345,7 +339,8 @@ List<String> _currencies = [];
 
 Future<List<String>> getCurrencies() async {
   if (_currencies.isNotEmpty) return _currencies;
-  final rep = await http.get(Uri.parse('${SXbaseURL}/v2/pairs/ZEC?fixed=true'),
+  final url = '${SXbaseURL}/v2/pairs/zec';
+  final rep = await http.get(Uri.parse(url),
       headers: {"X-SX-API-KEY": SXapiId, "Content-Type": "application/json"});
   if (rep.statusCode != 200) throw Exception(rep.body);
   _currencies = (jsonDecode(rep.body) as List<dynamic>)
@@ -375,26 +370,18 @@ Future<SwapT> createExchange(String rateId, String from, String to,
     headers: {"X-SX-API-KEY": SXapiId, "Content-Type": "application/json"},
     body: jsonEncode(requestData),
   );
-  logger.d(requestData);
   if (rep.statusCode != 201) {
     final err = jsonDecode(rep.body)['err']['details'] as String;
     throw err;
   }
 
   final repBody = jsonDecode(rep.body)['data'];
-  logger.d(repBody);
   final resp = SwapResponse.fromJson(repBody);
   final currencies = repBody['currencies'];
   final fromJson = currencies[resp.currency_from] as Map<String, dynamic>;
   final toJson = currencies[resp.currency_to] as Map<String, dynamic>;
   final fromDetails = SwapLeg.fromJson(fromJson);
   final toDetails = SwapLeg.fromJson(toJson);
-
-  logger.d(resp);
-  logger.d(fromDetails);
-  logger.d(toDetails);
-
-  logger.d(rep.body);
 
   final swap = SwapT(
     provider: 'SX',
