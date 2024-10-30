@@ -1,8 +1,10 @@
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:warp/warp.dart';
 
@@ -111,25 +113,27 @@ class MessageBubble extends StatelessWidget {
     return GestureDetector(
         onTap: () => select(context),
         child: Bubble(
-          nip: message.incoming ? BubbleNip.leftTop : BubbleNip.rightTop,
-          color: message.incoming
-              ? t.colorScheme.inversePrimary
-              : t.colorScheme.secondaryContainer,
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Stack(children: [
-              Text(owner, style: t.textTheme.labelMedium),
-              Align(child: Text(message.subject, style: t.textTheme.bodyLarge)),
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(date, style: t.textTheme.labelMedium)),
-            ]),
-            Gap(8),
-            Text(
-              message.body,
-            ),
-          ]),
-        ));
+            nip: message.incoming ? BubbleNip.leftTop : BubbleNip.rightTop,
+            color: message.incoming
+                ? t.colorScheme.inversePrimary
+                : t.colorScheme.secondaryContainer,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Stack(children: [
+                Text(owner, style: t.textTheme.labelMedium),
+                Align(
+                    child: Text(message.subject, style: t.textTheme.bodyLarge)),
+                Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(date, style: t.textTheme.labelMedium)),
+              ]),
+              Gap(8),
+              MarkdownBody(
+                  data: message.body,
+                  onTapLink: (_1, href, _2) => href?.let((href) => launchUrl(
+                      Uri.parse(href),
+                      mode: LaunchMode.inAppWebView))),
+            ])));
   }
 
   select(BuildContext context) {

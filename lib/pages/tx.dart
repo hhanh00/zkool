@@ -1,10 +1,13 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collection/collection.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
 
@@ -32,11 +35,19 @@ class TxPageState extends State<TxPage> {
           aaSequence.seqno;
           aaSequence.settingsSeqno;
           syncStatus.changed;
+
+          final txs = warp.listUnconfirmedTxs(aa.coin, aa.id).map((tx) {
+            final txid = Uint8List.fromList(tx.txid!);
+            return Tx(0, 0, 0, DateTime.now(), centerTrim(reversedHex(txid)),
+                txid, tx.value, null, null, "");
+          }).toList();
+          txs.addAll(aa.txs.items);
+
           return TableListPage(
             listKey: PageStorageKey('txs'),
             padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
             view: appSettings.txView,
-            items: aa.txs.items,
+            items: txs,
             metadata: TableListTxMetadata(),
           );
         },
@@ -95,8 +106,8 @@ class TableListTxMetadata extends TableListItemMetadata<Tx> {
           DataCell(Text(amountToString(tx.value),
               style: style, textAlign: TextAlign.left)),
           DataCell(Text("${tx.txId}")),
-          DataCell(Text("$a")),
-          DataCell(Text("$m")),
+          DataCell(Text(a)),
+          DataCell(Text(m)),
         ],
         onSelectChanged: (_) => gotoTx(context, index));
   }
@@ -178,7 +189,6 @@ class TransactionState extends State<TransactionPage> {
       return ListTile(
         leading: Icon(Icons.arrow_left),
         title: Text(tin.address!),
-        // subtitle: Text('$txid:${tin.vout}'),
         trailing: Text(amountToString(tin.value)),
       );
     }).toList();

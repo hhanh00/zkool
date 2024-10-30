@@ -216,13 +216,13 @@ class TableListKeyMetadata extends TableListItemMetadata<Zip32KeysT> {
   @override
   DataRow toRow(BuildContext context, int index, Zip32KeysT item) {
     final idx = shielded ? accountIndex + index : addressIndex + index;
-    final address = shielded ? item.zaddress! : item.taddress!;
+    final address = shielded ? item.zaddress : item.taddress;
     final key = shielded ? item.zsk! : item.tsk!;
 
     return DataRow.byIndex(index: index, cells: [
       DataCell(Text(idx.toString())),
       DataCell(Text(path(item))),
-      DataCell(Text(address)),
+      DataCell(Text(address ?? s.na)),
       DataCell(Text(key)),
     ]);
   }
