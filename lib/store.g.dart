@@ -264,39 +264,6 @@ mixin _$SyncStatus on _SyncStatus, Store {
     });
   }
 
-  late final _$downloadedSizeAtom =
-      Atom(name: '_SyncStatus.downloadedSize', context: context);
-
-  @override
-  int get downloadedSize {
-    _$downloadedSizeAtom.reportRead();
-    return super.downloadedSize;
-  }
-
-  @override
-  set downloadedSize(int value) {
-    _$downloadedSizeAtom.reportWrite(value, super.downloadedSize, () {
-      super.downloadedSize = value;
-    });
-  }
-
-  late final _$trialDecryptionCountAtom =
-      Atom(name: '_SyncStatus.trialDecryptionCount', context: context);
-
-  @override
-  int get trialDecryptionCount {
-    _$trialDecryptionCountAtom.reportRead();
-    return super.trialDecryptionCount;
-  }
-
-  @override
-  set trialDecryptionCount(int value) {
-    _$trialDecryptionCountAtom.reportWrite(value, super.trialDecryptionCount,
-        () {
-      super.trialDecryptionCount = value;
-    });
-  }
-
   late final _$_updateAsyncAction =
       AsyncAction('_SyncStatus._update', context: context);
 
@@ -389,8 +356,6 @@ timestamp: ${timestamp},
 syncing: ${syncing},
 paused: ${paused},
 reloadSeqno: ${reloadSeqno},
-downloadedSize: ${downloadedSize},
-trialDecryptionCount: ${trialDecryptionCount},
 changed: ${changed},
 expirationHeight: ${expirationHeight}
     ''';

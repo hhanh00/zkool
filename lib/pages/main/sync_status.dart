@@ -29,14 +29,9 @@ class SyncStatusState extends State<SyncStatusWidget> {
     if (syncStatus.isSynced) return syncedHeight.toString();
 
     final timestamp = syncStatus.timestamp?.let(timeago.format) ?? s.na;
-    final downloadedSize = syncStatus.downloadedSize;
-    final trialDecryptionCount = syncStatus.trialDecryptionCount;
 
-    final remaining = syncStatus.eta.remaining;
-    final percent = syncStatus.eta.progress;
-    final downloadedSize2 = NumberFormat.compact().format(downloadedSize);
-    final trialDecryptionCount2 =
-        NumberFormat.compact().format(trialDecryptionCount);
+    final remaining = syncStatus.eta.remaining ?? 0;
+    final percent = syncStatus.eta.progress ?? 0;
 
     switch (display) {
       case 0:
@@ -45,15 +40,11 @@ class SyncStatusState extends State<SyncStatusWidget> {
         final m = syncStatus.isRescan ? s.rescan : s.catchup;
         return '$m $percent %';
       case 2:
-        return remaining != null ? '$remaining...' : '';
+        return '$remaining...';
       case 3:
         return timestamp;
       case 4:
         return '${syncStatus.eta.timeRemaining}';
-      case 5:
-        return '\u{2193} $downloadedSize2';
-      case 6:
-        return '\u{2192} $trialDecryptionCount2';
     }
     throw Exception('Unreachable');
   }
@@ -73,7 +64,7 @@ class SyncStatusState extends State<SyncStatusWidget> {
         child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: Container(
-                color: t.colorScheme.background,
+                color: t.colorScheme.surface,
                 padding: EdgeInsets.all(8),
                 child: Text(text, style: syncStyle))));
     final value = syncStatus.eta.progress?.let((x) => x.toDouble() / 100.0);
@@ -96,7 +87,7 @@ class SyncStatusState extends State<SyncStatusWidget> {
   _onSync() {
     if (syncStatus.syncing) {
       setState(() {
-        display = (display + 1) % 7;
+        display = (display + 1) % 5;
       });
     } else {
       if (syncStatus.paused)

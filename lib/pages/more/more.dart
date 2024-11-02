@@ -8,9 +8,7 @@ import 'package:settings_ui/settings_ui.dart';
 
 import '../../appsettings.dart';
 import '../../accounts.dart';
-import '../../coin/coins.dart';
 import '../../generated/intl/messages.dart';
-import '../../store.dart';
 import '../utils.dart';
 import '../widgets.dart';
 

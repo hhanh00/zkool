@@ -63,6 +63,7 @@ dependencies:
   loading_animation_widget: ^1.2.0
   rxdart: ^0.28.0
   bubble: ^1.2.1
+  flutter_advanced_switch: ^3.1.0
   share_plus: ^10.0.2
   path_provider: ^2.0.3
   file_picker: ^8.1.2

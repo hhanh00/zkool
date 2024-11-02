@@ -64,12 +64,6 @@ abstract class _SyncStatus with Store {
   @observable
   int reloadSeqno = 0;
 
-  @observable
-  int downloadedSize = 0;
-
-  @observable
-  int trialDecryptionCount = 0;
-
   @computed
   int get changed {
     connected;
@@ -252,9 +246,7 @@ abstract class _SyncStatus with Store {
 
   @action
   void setProgress(ProgressT progress) {
-    trialDecryptionCount = progress.trialDecryptions;
     syncedHeight = progress.height;
-    downloadedSize = progress.downloaded;
     if (progress.timestamp > 0)
       timestamp =
           DateTime.fromMillisecondsSinceEpoch(progress.timestamp * 1000);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
@@ -123,8 +124,15 @@ class _KeyToolState extends State<KeyToolPage> with WithLoadingAnimation {
         appBar: AppBar(
           title: Text(s.keyTool),
           actions: [
-            Switch(
-                value: shielded, onChanged: (v) => setState(() => shielded = v))
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: AdvancedSwitch(
+                activeChild: Text('S'),
+                inactiveChild: Text('T'),
+                initialValue: shielded,
+                onChanged: (v) => setState(() => shielded = v),
+              ),
+            )
           ],
         ),
         body: wrapWithLoading(Padding(
@@ -330,8 +338,16 @@ class BatchCreateState extends State<BatchCreatePage> {
           final name = '$prefix$accountIndex';
           await tryWarpFn(
               context,
-              () => createNewAccount(aa.coin, name, aa.seed!, accountIndex,
-                  birthHeight, transparentOnly, true, false, syncStatus.latestHeight));
+              () => createNewAccount(
+                  aa.coin,
+                  name,
+                  aa.seed!,
+                  accountIndex,
+                  birthHeight,
+                  transparentOnly,
+                  true,
+                  false,
+                  syncStatus.latestHeight));
         }
         aaSequence.inc();
         GoRouter.of(context).pop();

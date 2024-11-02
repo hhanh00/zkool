@@ -2,12 +2,10 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collection/collection.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
 
