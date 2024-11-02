@@ -246,12 +246,14 @@ class AmountPickerState extends State<AmountPicker> {
               decoration: InputDecoration(
                   label: Text(coin.ticker), errorText: field.errorText),
               controller: zController,
+              keyboardType: TextInputType.numberWithOptions(),
             ),
             if (widget.showFiat)
               FormBuilderTextField(
                 name: '_amount_fiat',
                 decoration: InputDecoration(label: Text(appSettings.currency)),
                 controller: fController,
+                keyboardType: TextInputType.numberWithOptions(),
               ),
             if (widget.showSlider && widget.maxAmount != null)
               Slider(
