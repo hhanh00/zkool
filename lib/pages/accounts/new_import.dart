@@ -14,7 +14,7 @@ import '../../coin/coins.dart';
 import '../../generated/intl/messages.dart';
 import '../../pages/widgets.dart';
 
-const defaultGapLimit = 10;
+const defaultGapLimit = 2;
 
 class NewImportAccountPage extends StatefulWidget {
   final bool first;
