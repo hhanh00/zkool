@@ -1,3 +1,4 @@
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:get_it/get_it.dart';
@@ -37,13 +38,16 @@ abstract class _AASequence with Store {
 
 @action
 Future<void> setActiveAccount(int coin, int id) async {
-  aa = ActiveAccount.fromId(coin, id);
+  final account = ActiveAccount.fromId(coin, id);
+  await Isolate.run(() async {
+    account.updateDivisified();
+    account.update(null);
+  });
+  aa = account;
   coinSettings = await CoinSettingsExtension.load(coin);
   coinSettings.account = id;
   coinSettings.save(coin);
   warp.mempoolSetAccount(coin, id);
-  aa.updateDivisified();
-  aa.update(null);
   aaSequence.inc();
 }
 
