@@ -34,18 +34,11 @@ class TxPageState extends State<TxPage> {
           aaSequence.settingsSeqno;
           syncStatus.changed;
 
-          final txs = warp.listUnconfirmedTxs(aa.coin, aa.id).map((tx) {
-            final txid = Uint8List.fromList(tx.txid!);
-            return Tx(0, 0, 0, DateTime.now(), centerTrim(reversedHex(txid)),
-                txid, tx.value, null, null, "");
-          }).toList();
-          txs.addAll(aa.txs.items);
-
           return TableListPage(
             listKey: PageStorageKey('txs'),
             padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
             view: appSettings.txView,
-            items: txs,
+            items: aa.txs.items,
             metadata: TableListTxMetadata(),
           );
         },
@@ -295,5 +288,7 @@ class TransactionState extends State<TransactionPage> {
 }
 
 void gotoTx(BuildContext context, int index) {
+  final tx = aa.txs.items[index];
+  if (tx.height == 0) return;
   GoRouter.of(context).push('/history/details?index=$index');
 }

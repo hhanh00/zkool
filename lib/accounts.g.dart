@@ -128,14 +128,6 @@ mixin _$ActiveAccount on _ActiveAccount, Store {
     });
   }
 
-  late final _$updateAsyncAction =
-      AsyncAction('_ActiveAccount.update', context: context);
-
-  @override
-  Future<void> update(int? bcHeight) {
-    return _$updateAsyncAction.run(() => super.update(bcHeight));
-  }
-
   late final _$_ActiveAccountActionController =
       ActionController(name: '_ActiveAccount', context: context);
 
@@ -167,6 +159,28 @@ mixin _$ActiveAccount on _ActiveAccount, Store {
         name: '_ActiveAccount.updateUnconfirmedBalance');
     try {
       return super.updateUnconfirmedBalance();
+    } finally {
+      _$_ActiveAccountActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateTxs(int? bcHeight) {
+    final _$actionInfo = _$_ActiveAccountActionController.startAction(
+        name: '_ActiveAccount.updateTxs');
+    try {
+      return super.updateTxs(bcHeight);
+    } finally {
+      _$_ActiveAccountActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void update(int? bcHeight) {
+    final _$actionInfo = _$_ActiveAccountActionController.startAction(
+        name: '_ActiveAccount.update');
+    try {
+      return super.update(bcHeight);
     } finally {
       _$_ActiveAccountActionController.endAction(_$actionInfo);
     }
@@ -253,13 +267,6 @@ mixin _$Txs on _Txs, Store {
     _$itemsAtom.reportWrite(value, super.items, () {
       super.items = value;
     });
-  }
-
-  late final _$readAsyncAction = AsyncAction('_Txs.read', context: context);
-
-  @override
-  Future<void> read(int? height) {
-    return _$readAsyncAction.run(() => super.read(height));
   }
 
   late final _$_TxsActionController =

@@ -199,7 +199,7 @@ abstract class _SyncStatus with Store {
         await warp.retrieveTransactionDetails(aa.coin);
       }
       contacts.fetchContacts();
-      await aa.update(syncedHeight);
+      aa.update(syncedHeight);
       if (aa.coin == coin && aa.id == account) {
         final lh = syncStatus.latestHeight!;
         final postBalance = warp.getBalance(coin, account, lh);

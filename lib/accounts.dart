@@ -144,18 +144,39 @@ abstract class _ActiveAccount with Store {
   @action
   void updateUnconfirmedBalance() {
     final b = warp.getUnconfirmedBalance(coin, id);
-    if (b != unconfirmedBalance)
+    if (b != unconfirmedBalance) {
       unconfirmedBalance = b;
+      updateTxs(null);
+      aaSequence.inc();
+    }
   }
 
   @action
-  Future<void> update(int? bcHeight) async {
+  void updateTxs(int? bcHeight) {
+    txs.read(bcHeight);
+    final unconfirmedTx = warp.listUnconfirmedTxs(aa.coin, aa.id).map((tx) {
+      final txid = Uint8List.fromList(tx.txid!);
+      return Tx(0, 0, 0, DateTime.now(), centerTrim(reversedHex(txid)), txid,
+          tx.value, null, null, "");
+    }).toList();
+    txs.items.insertAll(0, unconfirmedTx);
+  }
+
+  var cachedBcHeight = 0;
+
+  @action
+  void update(int? bcHeight) {
     if (id == 0) return;
     updateDivisified();
 
+    if (bcHeight != null && bcHeight == cachedBcHeight) return;
+
+    if (bcHeight != null)
+      cachedBcHeight = bcHeight;
+
     notes.read(bcHeight);
-    txs.read(bcHeight);
     messages.read(bcHeight);
+    updateTxs(bcHeight);
 
     currency = appSettings.currency;
 
@@ -164,7 +185,7 @@ abstract class _ActiveAccount with Store {
     final start =
         today.add(Duration(days: -365)).millisecondsSinceEpoch ~/ 1000;
     final end = today.millisecondsSinceEpoch ~/ 1000;
-    spendings = await warp.getSpendings(coin, id, start);
+    spendings = warp.getSpendings(coin, id, start);
 
     List<AccountBalance> abs = [];
     final balance = warp.getBalance(aa.coin, aa.id, syncStatus.confirmHeight);
@@ -256,9 +277,8 @@ abstract class _Txs with Store {
   List<Tx> items = [];
   SortConfig2? order;
 
-  @action
-  Future<void> read(int? height) async {
-    final shieldedTxs = await warp.listTransactions(coin, id, MAXHEIGHT);
+  void read(int? height) {
+    final shieldedTxs = warp.listTransactions(coin, id, MAXHEIGHT);
     items = shieldedTxs.map((tx) {
       final timestamp =
           DateTime.fromMillisecondsSinceEpoch(tx.timestamp * 1000);
@@ -353,7 +373,10 @@ Tuple2<SortConfig2?, List<T>> _sort<T extends HasHeight>(
 
   final o = order;
   if (o == null)
-    items = items.sortedByNum((n) => -n.height);
+    items = items.sortedByNum((n) {
+      final h = n.height == 0 ? MAXHEIGHT : n.height;
+      return -h;
+    });
   else {
     items = items.sortedBy((a, b) {
       final ra = reflector.reflect(a);
