@@ -147,7 +147,6 @@ abstract class _ActiveAccount with Store {
     if (b != unconfirmedBalance) {
       unconfirmedBalance = b;
       updateTxs(null);
-      aaSequence.inc();
     }
   }
 
