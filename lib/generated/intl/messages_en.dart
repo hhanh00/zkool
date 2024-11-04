@@ -942,4 +942,7 @@ class SEn extends S {
 
   @override
   String get immature => 'Immature';
+
+  @override
+  String get checkpointPurgeConfirm => 'Are you sure you want to cleanup checkpoints?';
 }

@@ -111,11 +111,6 @@ class RewindState extends State<RewindPage> {
   DateTime? dateSelected;
   List<Tuple2<int, DateTime>>? checkpointDates;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<List<Tuple2<int, DateTime>>> initialize() async {
     final checkpoints = await warp.listCheckpoints(aa.coin);
     return checkpoints
@@ -127,6 +122,7 @@ class RewindState extends State<RewindPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(s.rewind), actions: [
+        IconButton(onPressed: _onPurge, icon: Icon(Icons.cleaning_services)),
         calendar
             ? IconButton(
                 onPressed: () => setState(() => calendar = false),
@@ -179,6 +175,16 @@ class RewindState extends State<RewindPage> {
     setState(() {
       dateSelected = dt;
     });
+  }
+
+  _onPurge() async {
+    final confirmed = await showConfirmDialog(context, s.confirm, s.checkpointPurgeConfirm);
+    if (confirmed) {
+      final minHeight = syncStatus.syncedHeight - 200;
+      warp.purgeCheckpoints(aa.coin, minHeight.max(0));
+      checkpointDates = await initialize();
+      setState(() {});
+    }
   }
 
   rewind(List<Tuple2<int, DateTime>>? checkpointDates) async {

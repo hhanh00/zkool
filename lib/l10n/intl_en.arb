@@ -303,5 +303,6 @@
 	"noTaddr": "No Transparent Address",
 	"total": "Total",
 	"unconfirmedSpent": "Unconfirmed Spent & Change",
-	"immature": "Immature"
+	"immature": "Immature",
+	"checkpointPurgeConfirm": "Are you sure you want to cleanup checkpoints?"
 }

@@ -1928,6 +1928,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Immature'**
   String get immature;
+
+  /// No description provided for @checkpointPurgeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cleanup checkpoints?'**
+  String get checkpointPurgeConfirm;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
