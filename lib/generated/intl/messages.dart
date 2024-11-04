@@ -1910,6 +1910,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'No Transparent Address'**
   String get noTaddr;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @unconfirmedSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Unconfirmed Spent & Change'**
+  String get unconfirmedSpent;
+
+  /// No description provided for @immature.
+  ///
+  /// In en, this message translates to:
+  /// **'Immature'**
+  String get immature;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -933,4 +933,13 @@ class SFr extends S {
 
   @override
   String get noTaddr => 'No Transparent Address';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get unconfirmedSpent => 'Unconfirmed Spent & Change';
+
+  @override
+  String get immature => 'Immature';
 }

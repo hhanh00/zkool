@@ -16,6 +16,7 @@ import '../../generated/intl/messages.dart';
 import '../../store.dart';
 import '../input_widgets.dart';
 import '../utils.dart';
+import '../widgets.dart';
 
 const MAX_NOTES = 25;
 
@@ -65,6 +66,8 @@ class _PoolTransferState extends State<PoolTransferPage>
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     children: [
+                      SpendableWidget(),
+                      Gap(16),
                       SegmentedPicker(
                         from,
                         name: 'from',

@@ -1,3 +1,4 @@
+import 'package:ZKool/pages/widgets.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -116,6 +117,8 @@ class SendPageState extends State<SendPage> {
                     validator: (v) => addressValidatorTex(v, transparentOnly),
                     onChanged: onAddressChanged,
                     onSaved: (v) => v?.let((v) => address = v)),
+                Gap(8),
+                if (custom) SpendableWidget(),
                 Gap(8),
                 SegmentedPicker(toRecvAvailable,
                     key: ValueKey(toRecvAvailable),

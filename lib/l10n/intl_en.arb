@@ -300,5 +300,8 @@
 	"hideEmptyAccounts": "Hide empty accounts",
 	"fatalError": "Fatal Error",
 	"databaseVersionMismatch": "Database Version Mismatch",
-	"noTaddr": "No Transparent Address"
+	"noTaddr": "No Transparent Address",
+	"total": "Total",
+	"unconfirmedSpent": "Unconfirmed Spent & Change",
+	"immature": "Immature"
 }

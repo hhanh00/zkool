@@ -139,8 +139,8 @@ class HeightPicker extends StatefulWidget {
   final String name;
   final Widget? label;
   final void Function(int?)? onChanged;
-  HeightPicker(this.height, {super.key,
-    required this.name, this.onChanged, this.label});
+  HeightPicker(this.height,
+      {super.key, required this.name, this.onChanged, this.label});
 
   @override
   State<StatefulWidget> createState() => HeightPicketState();
@@ -408,6 +408,42 @@ class MessageContentWidget extends StatelessWidget {
       if (m != null && m.subject != m.body)
         Text("${m.body}", style: theme.textTheme.bodySmall),
     ]);
+  }
+}
+
+class SpendableWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final S s = S.of(context);
+    final spendable =
+        warp.getSpendableBalance(aa.coin, aa.id, syncStatus.confirmHeight);
+    return Card(
+      child: Table(
+        border: TableBorder.all(),
+        columnWidths: const <int, TableColumnWidth>{
+          0: IntrinsicColumnWidth(),
+          1: FlexColumnWidth(),
+        },
+        children: [
+          TableRow(children: [
+            Text(s.total),
+            Text(amountToString(spendable.total + spendable.unconfirmed), textAlign: TextAlign.right),
+          ]),
+          TableRow(children: [
+            Text(s.unconfirmedSpent),
+            Text(amountToString(-spendable.unconfirmed), textAlign: TextAlign.right),
+          ]),
+          TableRow(children: [
+            Text(s.immature),
+            Text(amountToString(-spendable.immature), textAlign: TextAlign.right),
+          ]),
+          TableRow(children: [
+            Text(s.spendable),
+            Text(amountToString(spendable.total - spendable.immature), textAlign: TextAlign.right),
+          ]),
+        ],
+      ),
+    );
   }
 }
 
