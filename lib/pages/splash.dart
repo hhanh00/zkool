@@ -54,6 +54,8 @@ class _SplashState extends State<SplashPage> {
     appStore.initialized = true;
     final startURL = launchURL;
     launchURL = null;
+    yield (ProgressMessage(progress: 0.95, message: "Start Autosync"));
+    syncStatus.runAutoSync();
     yield (ProgressMessage(progress: 1.0, message: "Finished"));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       GoRouter.of(context).go(startURL ?? '/account');
@@ -121,7 +123,8 @@ class _SplashState extends State<SplashPage> {
     final a = await ActiveAccount.fromPrefs(prefs);
     if (a != null) {
       await setActiveAccount(a.coin, a.id);
-      aa.update(null);
+      aa.initialize();
+      aaSequence.onAccountChanged();
     }
   }
 

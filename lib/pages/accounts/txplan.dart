@@ -144,12 +144,14 @@ class TxPlanState extends State<TxPlanPage> with WithLoadingAnimation {
         return await warp.broadcast(aa.coin, txBytes);
       });
       if (results != null) {
-        final redirect = widget.plan.redirect;
-        if (redirect != null)
-          GoRouter.of(context).go(redirect);
-        else
-          GoRouter.of(context)
-              .go('/${widget.tab}/broadcast_tx', extra: results);
+        final router = GoRouter.of(context);
+        final message = widget.plan.message;
+        if (message != null) {
+          await showSnackBar(message);
+          router.pop();
+        } else {
+          router.go('/${widget.tab}/broadcast_tx', extra: results);
+        }
       }
     });
   }

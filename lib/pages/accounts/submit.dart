@@ -21,7 +21,6 @@ class SubmitTxPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final txId = jsonDecode(data);
-    aaSequence.inc();
 
     return Scaffold(
       appBar: AppBar(title: Text(s.sent), actions: [

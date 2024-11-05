@@ -117,12 +117,10 @@ class _SettingsState extends State<SettingsPage>
           servers: servers,
           warp: app.coinSettings.warpUrl,
           warpEndHeight: app.coinSettings.warpHeight);
-      aaSequence.inc();
-      aaSequence.settingsSeqno = DateTime.now().millisecondsSinceEpoch;
       Future(() async {
-        aa.currency = appSettings.currency;
         marketPrice.updateNow();
       });
+      aaSequence.onSettingsChanged();
       GoRouter.of(context).pop();
     }
   }
@@ -507,7 +505,6 @@ class _CoinState extends State<CoinTab> with AutomaticKeepAliveClientMixin {
     return FormBuilder(
         key: formKey,
         child: Column(children: [
-          if (aa.hasUA)
             FormBuilderSwitch(
               name: 'spam',
               title: Text(s.antispamFilter),
@@ -601,7 +598,6 @@ class _CoinState extends State<CoinTab> with AutomaticKeepAliveClientMixin {
                   )),
             ],
           ),
-          if (aa.hasUA)
             FieldUA(
               widget.coinSettings.uaType,
               onChanged: (v) => widget.coinSettings.uaType = v!,
@@ -615,9 +611,8 @@ class _CoinState extends State<CoinTab> with AutomaticKeepAliveClientMixin {
             onChanged: (v) => widget.coinSettings.replyUa = v!,
             label: s.replyUA,
             name: 'reply_address',
-            radio: !aa.hasUA,
+            radio: false,
           ),
-          if (aa.hasUA)
             FieldUA(
               widget.coinSettings.receipientPools,
               onChanged: (v) => widget.coinSettings.receipientPools = v!,
@@ -821,7 +816,7 @@ class FieldUA extends StatelessWidget {
                       value: 1,
                       label: Text(s.sapling,
                           overflow: TextOverflow.ellipsis, style: small)),
-                if (aa.hasUA && pools & 4 != 0)
+                if (pools & 4 != 0)
                   ButtonSegment(
                       value: 2,
                       label: Text(s.orchard,

@@ -349,7 +349,7 @@ class BatchCreateState extends State<BatchCreatePage> {
                   false,
                   syncStatus.latestHeight));
         }
-        aaSequence.inc();
+        aaSequence.onAccountListChanged();
         GoRouter.of(context).pop();
       }
     }

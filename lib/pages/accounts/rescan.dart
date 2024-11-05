@@ -66,12 +66,17 @@ class RescanState extends State<RescanPage> with WithLoadingAnimation {
     final form = formKey.currentState!;
     if (form.validate()) {
       form.save();
-      aa.reset(height);
-      await tryWarpFn(context, () => syncStatus.resetToHeight(height));
-      Future(() async {
-        await syncStatus.sync(true);
-      });
-      GoRouter.of(context).pop();
+      final confirmed =
+          await showConfirmDialog(context, s.confirm, s.confirmRescanFrom(height));
+      if (confirmed) {
+        Future(() async {
+          await tryWarpFn(context, () => syncStatus.resetToHeight(height));
+          aaSequence.onAccountDataChanged();
+          aaSequence.onSyncProgressChanged();
+          await syncStatus.sync(true);
+        });
+        GoRouter.of(context).pop();
+      }
     }
   }
 
@@ -178,7 +183,8 @@ class RewindState extends State<RewindPage> {
   }
 
   _onPurge() async {
-    final confirmed = await showConfirmDialog(context, s.confirm, s.checkpointPurgeConfirm);
+    final confirmed =
+        await showConfirmDialog(context, s.confirm, s.checkpointPurgeConfirm);
     if (confirmed) {
       final minHeight = syncStatus.syncedHeight - 200;
       warp.purgeCheckpoints(aa.coin, minHeight.max(0));
@@ -195,7 +201,9 @@ class RewindState extends State<RewindPage> {
     if (!confirmed) return;
     Future(() async {
       await warp.rewindTo(aa.coin, height);
-      await aa.reload();
+      aa.initialize();
+      aaSequence.onAccountDataChanged();
+      aaSequence.onSyncProgressChanged();
       await syncStatus.sync(true);
     });
     GoRouter.of(context).pop();

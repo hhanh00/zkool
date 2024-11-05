@@ -30,9 +30,7 @@ class TxPageState extends State<TxPage> {
     return SortSetting(
       child: Observer(
         builder: (context) {
-          aaSequence.seqno;
-          aaSequence.settingsSeqno;
-          syncStatus.changed;
+          aaSequence.txsSeqno;
 
           return TableListPage(
             listKey: PageStorageKey('txs'),

@@ -21,7 +21,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
-      final key = ValueKey(aaSequence.seqno);
+      aaSequence.settingsSeqno;
+      final key = ValueKey(aaSequence.accountSeqno);
       return HomePageInner(key: key, coin: coin);
     });
   }
@@ -75,8 +76,7 @@ class _HomeState extends State<HomePageInner> {
         child: Center(
           child: Observer(
             builder: (context) {
-              syncStatus.changed;
-              aaSequence.seqno;
+              aaSequence.syncSeqno;
               final balance = warp.getBalance(aa.coin, aa.id, MAXHEIGHT);
 
               return Column(

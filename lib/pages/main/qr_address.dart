@@ -47,7 +47,7 @@ class AddressCarouselState extends State<AddressCarousel> {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
-      aa.diversifiedAddress;
+      aaSequence.divAddressSeqno;
 
       if (aa.id == 0) return SizedBox.shrink();
       final theme = Theme.of(context);

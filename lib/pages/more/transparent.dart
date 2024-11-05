@@ -58,7 +58,8 @@ class TransparentAddressesState extends State<TransparentAddressesPage> {
     final confirmed = await showConfirmDialog(context, s.updateTransparent, s.updateTransparentQuestion);
     if (confirmed) {
       tryWarpFn(context, () => warp.changeAccountAddrIndex(aa.coin, aa.id, a.addrIndex));
-      await aa.reload();
+      aa.initialize();
+      aaSequence.onAccountChanged();
     }
   }
 
@@ -70,8 +71,7 @@ class TransparentAddressesState extends State<TransparentAddressesPage> {
       warp.newTransparentAddress(aa.coin, aa.id, 0);
       setState(() {
         addresses = warp.listTransparentAddresses(aa.coin, aa.id);
-        runInAction(
-            () => aaSequence.seqno = DateTime.now().microsecondsSinceEpoch);
+        aaSequence.onAccountChanged();
       });
     } on String catch (msg) {
       await showMessageBox(context, s.error, msg, type: DialogType.error);
@@ -167,7 +167,8 @@ class ScanTransparentAddressesState extends State<ScanTransparentAddressesPage>
       await warp.scanTransparentAddresses(aa.coin, aa.id, 0, gapLimit);
       await warp.scanTransparentAddresses(aa.coin, aa.id, 1, gapLimit);
       await warp.transparentSync(aa.coin, aa.id, syncStatus.syncedHeight);
-      await aa.reload();
+      aa.initialize();
+      aaSequence.onAccountChanged();
       GoRouter.of(context).pop();
     });
   }

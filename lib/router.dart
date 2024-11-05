@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:warp/warp.dart';
 
 import 'coin/coins.dart';
@@ -92,8 +93,8 @@ final router = GoRouter(
                   builder: (context, state) => SwapPage(),
                   routes: [
                     GoRoute(
-                        path: 'history',
-                        builder: (context, state) => SwapHistoryPage(),
+                      path: 'history',
+                      builder: (context, state) => SwapHistoryPage(),
                     ),
                     GoRoute(
                         path: 'stealthex',
@@ -334,10 +335,10 @@ final router = GoRouter(
                     routes: [
                       GoRoute(
                         path: 'results',
-                        builder: (context, state) =>
-                            KeyToolPage(state.extra as List<Zip32KeysT>,
-                            incAccount: state.uri.queryParameters['account'] != '0'
-                            ),
+                        builder: (context, state) => KeyToolPage(
+                            state.extra as List<Zip32KeysT>,
+                            incAccount:
+                                state.uri.queryParameters['account'] != '0'),
                       ),
                     ],
                   ),
@@ -481,7 +482,11 @@ class _ScaffoldBar extends State<ScaffoldBar> {
         onPopInvoked: _onPop,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(aa.name),
+            title: Observer(builder: (context) {
+              aaSequence.accountListSeqno;
+              aaSequence.accountSeqno;
+              return Text(aa.name);
+            }),
             centerTitle: true,
             actions: [
               IconButton(onPressed: help, icon: Icon(Icons.help)),

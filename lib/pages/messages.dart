@@ -23,9 +23,8 @@ class MessagePage extends StatelessWidget {
     return SortSetting(
       child: Observer(
         builder: (context) {
-          aaSequence.seqno;
-          aaSequence.settingsSeqno;
-          syncStatus.changed;
+          aaSequence.txsSeqno;
+
           return TableListPage(
             listKey: PageStorageKey('messages'),
             padding: EdgeInsets.fromLTRB(16, 8, 16, 8),

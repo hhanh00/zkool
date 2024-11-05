@@ -36,52 +36,19 @@ Timer? syncTimer;
 
 var syncStatus = SyncStatus();
 
-class SyncStatus = _SyncStatus with _$SyncStatus;
-
-abstract class _SyncStatus with Store {
+class SyncStatus {
   int startSyncedHeight = 0;
   bool isRescan = false;
   ETA eta = ETA();
 
-  @observable
-  bool connected = true;
-
-  @observable
-  int syncedHeight = 0;
-
-  @observable
-  int? latestHeight;
-
-  @observable
-  DateTime? timestamp;
-
-  @observable
-  bool syncing = false;
-
-  @observable
-  bool paused = false;
-
-  @observable
-  int reloadSeqno = 0;
-
-  @computed
-  int get changed {
-    connected;
-    syncedHeight;
-    latestHeight;
-    syncing;
-    paused;
-    reloadSeqno;
-    return DateTime.now().microsecondsSinceEpoch;
-  }
-
-  @computed
   int get expirationHeight => confirmHeight + 100;
 
-  @action
-  void reload() {
-    reloadSeqno += 1;
-  }
+  bool connected = true;
+  int syncedHeight = warp.getSyncHeight(aa.coin);
+  int? latestHeight;
+  DateTime? timestamp;
+  bool syncing = false;
+  bool paused = false;
 
   bool get isSynced {
     final sh = syncedHeight;
@@ -95,7 +62,8 @@ abstract class _SyncStatus with Store {
     return max(ch, 0);
   }
 
-  @action
+  int get latestOrSyncedHeight => latestHeight ?? syncedHeight;
+
   void reset() {
     isRescan = false;
     syncedHeight = warp.getSyncHeight(aa.coin);
@@ -107,19 +75,20 @@ abstract class _SyncStatus with Store {
   bool failed = false;
   int syncInterval = 0;
 
-  @action
   Future<void> _update() async {
+    if (aa.id == 0) return; // no account, do not sync
+
     aa.updateUnconfirmedBalance();
+    aa.updateDivisified();
 
     if (updating) return;
     try {
       updating = true;
       await updateBCHeight();
       await sync(false, auto: true);
-      aa.updateDivisified();
       failed = false;
       syncInterval = 15; // normal interval
-      if (!connected) aa.update(latestHeight!);
+      if (!connected) aa.update(latestOrSyncedHeight);
       connected = true;
     } catch (e) {
       if (!failed) {
@@ -141,14 +110,8 @@ abstract class _SyncStatus with Store {
     Timer(Duration(seconds: syncInterval), _update);
   }
 
-  @action
   Future<void> updateBCHeight() async {
-    final lh = await warp.getBCHeightOrNull(aa.coin);
-    if (lh != null) {
-      aa.update(lh);
-      latestHeight = lh;
-    }
-    syncedHeight = warp.getSyncHeight(aa.coin);
+    latestHeight = await warp.getBCHeightOrNull(aa.coin) ?? latestHeight;
   }
 
   Future<void> syncToHeight(int coin, int endHeight, ETA eta) async {
@@ -159,18 +122,18 @@ abstract class _SyncStatus with Store {
       height = warp.getSyncHeight(aa.coin);
       eta.checkpoint(height, DateTime.now());
       aa.update(height);
-      runInAction(() {
-        syncedHeight = height;
-      });
+      syncedHeight = height;
     }
   }
 
-  @action
   Future<void> sync(bool rescan, {bool auto = false}) async {
+    logger.i('sync R:$rescan P:$paused S:$syncing');
+    if (rescan) paused = false;
     if (paused) return;
     if (syncing) return;
     try {
       await updateBCHeight();
+      syncedHeight = warp.getSyncHeight(aa.coin);
       final lh = latestHeight;
       if (lh == null) return;
       // don't auto sync more than 1 month of data
@@ -182,7 +145,6 @@ abstract class _SyncStatus with Store {
       syncing = true;
       isRescan = rescan;
       WakelockPlus.enable();
-      _updateSyncedHeight();
       startSyncedHeight = syncedHeight;
 
       int coin = aa.coin;
@@ -232,29 +194,23 @@ abstract class _SyncStatus with Store {
     }
   }
 
-  @action
   void resetToHeight(int height) {
     warp.resetChain(aa.coin, height);
-    _updateSyncedHeight();
+    syncedHeight = warp.getSyncHeight(aa.coin);
     paused = true;
   }
 
-  @action
   void setPause(bool v) {
     paused = v;
   }
 
-  @action
   void setProgress(ProgressT progress) {
     syncedHeight = progress.height;
     if (progress.timestamp > 0)
       timestamp =
           DateTime.fromMillisecondsSinceEpoch(progress.timestamp * 1000);
     eta.checkpoint(syncedHeight, DateTime.now());
-  }
-
-  void _updateSyncedHeight() {
-    syncedHeight = warp.getSyncHeight(aa.coin);
+    aaSequence.onSyncProgressChanged();
   }
 }
 
@@ -350,11 +306,11 @@ abstract class _MarketPrice with Store {
       coin = aa.coin;
       currency = c.currency;
       fiat = appSettings.currency;
-      runInAction(() => price = null);
+      price = null;
     }
     if (currency != null && fiat != null) {
       final p = await getFxRate(currency!, fiat!);
-      runInAction(() => price = p);
+      price = p;
     }
   }
 
@@ -382,17 +338,13 @@ abstract class _MarketPrice with Store {
 
 var contacts = ContactStore();
 
-class ContactStore = _ContactStore with _$ContactStore;
-
-abstract class _ContactStore with Store {
-  @observable
+class ContactStore {
   List<ContactCardT> contacts = [];
 
   void fetchContacts() async {
     final cs = await warp.listContacts(aa.coin);
-    runInAction(() {
-      contacts = cs;
-    });
+    contacts = cs;
+    aaSequence.onContactsChanged();
   }
 
   void add(ContactCardT c) {
@@ -400,7 +352,6 @@ abstract class _ContactStore with Store {
     fetchContacts();
   }
 
-  @action
   void remove(ContactCardT c) {
     contacts.removeWhere((contact) => contact.id == c.id);
     warp.deleteContact(aa.coin, c.id);

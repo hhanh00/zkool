@@ -35,9 +35,7 @@ class BalanceState extends State<BalanceWidget> {
             : t.colorScheme.primary;
 
     return Observer(builder: (context) {
-      aaSequence.settingsSeqno;
-      aa.height;
-      aa.currency;
+      aaSequence.balanceSeqno;
       appStore.flat;
       marketPrice.price;
 
@@ -96,9 +94,10 @@ class UnconfirmedBalance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
+      aaSequence.balanceSeqno;
       appStore.flat;
-      final amount = aa.unconfirmedBalance;
 
+      final amount = aa.unconfirmedBalance;
       final hideBalance = isHidden(appStore.flat);
       if (amount == 0 || hideBalance) return SizedBox.shrink();
 

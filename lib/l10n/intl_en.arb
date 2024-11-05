@@ -304,5 +304,6 @@
 	"total": "Total",
 	"unconfirmedSpent": "Unconfirmed Spent & Change",
 	"immature": "Immature",
-	"checkpointPurgeConfirm": "Are you sure you want to cleanup checkpoints?"
+	"checkpointPurgeConfirm": "Are you sure you want to cleanup checkpoints?",
+	"contactsSaved": "Contacts Saved"
 }

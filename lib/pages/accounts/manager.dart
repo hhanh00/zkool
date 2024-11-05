@@ -23,7 +23,8 @@ class AccountManagerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
-      aaSequence.seqno;
+      aaSequence.accountListSeqno;
+
       final accounts = getAllAccounts();
       if (accounts.isEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -33,7 +34,7 @@ class AccountManagerPage extends StatelessWidget {
       }
 
       return AccountManager(
-          key: ValueKey(aaSequence.seqno), accounts, main: main);
+          key: ValueKey(aaSequence.accountListSeqno), accounts, main: main);
     });
   }
 }
@@ -135,6 +136,8 @@ class _AccountManagerState extends State<AccountManager> {
 
   edit(AccountNameT a) async {
     await GoRouter.of(context).push('/account/edit', extra: a);
+    aaSequence.onAccountChanged();
+    aa.initialize();
     _refresh();
   }
 
@@ -152,7 +155,7 @@ class _AccountManagerState extends State<AccountManager> {
   }
 
   _refresh() {
-    aaSequence.inc();
+    aaSequence.onAccountListChanged();
   }
 }
 
@@ -394,7 +397,8 @@ class DowngradeAccountState extends State<DowngradeAccountPage> {
       try {
         await warp.downgradeAccount(
             widget.account.coin, widget.account.id, accountCaps);
-        await aa.reload();
+        aa.initialize();
+        aaSequence.onAccountChanged();
         GoRouter.of(context).pop();
       } on String catch (e) {
         await showMessageBox(context, s.error, e);

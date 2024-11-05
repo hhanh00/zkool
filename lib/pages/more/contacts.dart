@@ -73,7 +73,7 @@ class _ContactsState extends State<ContactsPage> {
           aa.coin,
           aa.id,
           syncStatus.confirmHeight,
-          '/contacts_saved?coin=${aa.coin}&account=${aa.id}');
+          s.contactsSaved);
       GoRouter.of(context).push('/account/txplan?tab=contacts', extra: txPlan);
     } on String catch (m) {
       await showMessageBox(context, s.error, m, type: DialogType.error);
@@ -117,6 +117,8 @@ class ContactListState extends State<ContactList> {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
+      aaSequence.contactsSeqno;
+
       final c = contacts.contacts;
       return ListView.separated(
         itemBuilder: (context, index) => ContactItem(

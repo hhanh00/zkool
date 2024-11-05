@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../../accounts.dart';
 import '../../generated/intl/messages.dart';
 import '../../store.dart';
 import '../utils.dart';
@@ -12,12 +14,6 @@ class SyncStatusWidget extends StatefulWidget {
 
 class SyncStatusState extends State<SyncStatusWidget> {
   var display = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    syncStatus.runAutoSync();
-  }
 
   String getSyncText(int syncedHeight) {
     final s = S.of(context);
@@ -68,20 +64,24 @@ class SyncStatusState extends State<SyncStatusWidget> {
                 padding: EdgeInsets.all(8),
                 child: Text(text, style: syncStyle))));
     final value = syncStatus.eta.progress?.let((x) => x.toDouble() / 100.0);
-    return SizedBox(
-      height: 50,
-      child: Stack(
-        children: <Widget>[
-          if (value != null)
-            SizedBox.expand(
-              child: LinearProgressIndicator(
-                value: value,
+    return Observer(builder: (context) {
+      aaSequence.syncProgressSeqno;
+
+      return SizedBox(
+        height: 50,
+        child: Stack(
+          children: <Widget>[
+            if (value != null)
+              SizedBox.expand(
+                child: LinearProgressIndicator(
+                  value: value,
+                ),
               ),
-            ),
-          Center(child: inner),
-        ],
-      ),
-    );
+            Center(child: inner),
+          ],
+        ),
+      );
+    });
   }
 
   _onSync() {
@@ -90,9 +90,11 @@ class SyncStatusState extends State<SyncStatusWidget> {
         display = (display + 1) % 5;
       });
     } else {
-      if (syncStatus.paused)
+      Future(() async {
         syncStatus.setPause(false);
-      Future(() => syncStatus.sync(false));
+        aaSequence.onSyncProgressChanged();
+        await syncStatus.sync(true);
+      });
     }
   }
 }

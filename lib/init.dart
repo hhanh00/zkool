@@ -93,6 +93,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
       aaSequence.settingsSeqno;
+
       final scheme = FlexScheme.values.byName(appSettings.palette.name);
       final baseTheme = appSettings.palette.dark
           ? FlexThemeData.dark(scheme: scheme)

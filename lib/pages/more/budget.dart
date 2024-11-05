@@ -30,7 +30,8 @@ class _BudgetState extends State<BudgetPage> {
     return Scaffold(
         appBar: AppBar(title: Text(s.budget)),
         body: Observer(builder: (context) {
-          syncStatus.syncedHeight;
+          aaSequence.syncSeqno;
+
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
