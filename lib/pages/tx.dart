@@ -173,7 +173,7 @@ class TransactionState extends State<TransactionPage> {
     final context = rootNavigatorKey.currentContext!;
     final S s = S.of(context);
     idx = widget.txIndex;
-    details = warp.getTransactionDetails(aa.coin, tx.fullTxId);
+    details = warp.getTransactionDetails(aa.coin, aa.id, tx.fullTxId);
     tins = details.tins?.map((tin) {
       return ListTile(
         leading: Icon(Icons.arrow_left),

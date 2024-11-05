@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:gap/gap.dart';
 import 'package:warp/warp.dart';
 
 import 'coin/coins.dart';
@@ -485,7 +486,13 @@ class _ScaffoldBar extends State<ScaffoldBar> {
             title: Observer(builder: (context) {
               aaSequence.accountListSeqno;
               aaSequence.accountSeqno;
-              return Text(aa.name);
+              appStore.connected;
+              return appStore.connected ? Text(aa.name) :
+              Text.rich(TextSpan(children: [
+                TextSpan(text: aa.name),
+                WidgetSpan(child: SizedBox(width: 8)),
+                WidgetSpan(child: Icon(Icons.link_off))
+              ]));
             }),
             centerTitle: true,
             actions: [

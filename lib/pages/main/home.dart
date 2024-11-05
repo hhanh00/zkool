@@ -41,12 +41,6 @@ class _HomeState extends State<HomePageInner> {
   final formKey = GlobalKey<FormBuilderState>();
 
   @override
-  void initState() {
-    super.initState();
-    syncStatus.updateBCHeight();
-  }
-
-  @override
   void didUpdateWidget(covariant HomePageInner oldWidget) {
     // Switch the account if the current coin does not match
     super.didUpdateWidget(oldWidget);

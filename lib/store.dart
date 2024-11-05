@@ -29,6 +29,9 @@ abstract class _AppStore with Store {
   String dbPassword = '';
 
   @observable
+  bool connected = false;
+
+  @observable
   bool flat = false;
 }
 
@@ -43,9 +46,8 @@ class SyncStatus {
 
   int get expirationHeight => confirmHeight + 100;
 
-  bool connected = true;
   int syncedHeight = warp.getSyncHeight(aa.coin);
-  int? latestHeight;
+  late int latestHeight = syncedHeight;
   DateTime? timestamp;
   bool syncing = false;
   bool paused = false;
@@ -53,16 +55,14 @@ class SyncStatus {
   bool get isSynced {
     final sh = syncedHeight;
     final lh = latestHeight;
-    return lh != null && sh >= lh;
+    return sh >= lh;
   }
 
   int get confirmHeight {
-    final lh = latestHeight ?? syncedHeight;
+    final lh = latestHeight;
     final ch = lh - appSettings.anchorOffset + 1;
     return max(ch, 0);
   }
-
-  int get latestOrSyncedHeight => latestHeight ?? syncedHeight;
 
   void reset() {
     isRescan = false;
@@ -72,46 +72,49 @@ class SyncStatus {
   }
 
   bool updating = false;
-  bool failed = false;
+  bool success = false;
+  int retry = 0;
   int syncInterval = 0;
 
   Future<void> _update() async {
-    if (aa.id == 0) return; // no account, do not sync
-
-    aa.updateUnconfirmedBalance();
-    aa.updateDivisified();
-
-    if (updating) return;
     try {
+      if (aa.id == 0) return; // no account, do not sync
+
+      aa.updateUnconfirmedBalance();
+      aa.updateDivisified();
+
+      if (updating) return;
       updating = true;
-      await updateBCHeight();
+      final lh = await warp.getBCHeightOrNull(aa.coin);
+      if (lh == null) return;
+      latestHeight = lh;
       await sync(false, auto: true);
-      failed = false;
+      success = true;
+      retry = 0;
       syncInterval = 15; // normal interval
-      if (!connected) aa.update(latestOrSyncedHeight);
-      connected = true;
-    } catch (e) {
-      if (!failed) {
-        syncInterval = 5; // first retry
-        failed = true;
-      } else {
-        syncInterval = (syncInterval * 1.2).toInt(); // exp backoff
-      }
-      if (syncInterval > 10)
-        connected = false; // notify when we tried a few times
-      logger.d('Retry in $syncInterval seconds');
+      aa.update(latestHeight);
+      appStore.connected = true;
+    } on String catch (e) {
+      await showSnackBar(e);
     } finally {
+      if (!success) {
+        syncInterval = retry == 0 ? 5 : (syncInterval * 1.2).toInt(); // exp backoff
+        retry += 1;
+      }
+      if (retry == 3) {
+        final context = rootNavigatorKey.currentContext!;
+        final S s = S.of(context);
+        await showSnackBar(s.connectionError);
+      }
+      logger.i('Resync in $syncInterval seconds');
+
       updating = false;
+      Timer(Duration(seconds: syncInterval), _update);
     }
-    Timer(Duration(seconds: syncInterval), _update);
   }
 
   void runAutoSync() {
     Timer(Duration(seconds: syncInterval), _update);
-  }
-
-  Future<void> updateBCHeight() async {
-    latestHeight = await warp.getBCHeightOrNull(aa.coin) ?? latestHeight;
   }
 
   Future<void> syncToHeight(int coin, int endHeight, ETA eta) async {
@@ -132,10 +135,9 @@ class SyncStatus {
     if (paused) return;
     if (syncing) return;
     try {
-      await updateBCHeight();
-      syncedHeight = warp.getSyncHeight(aa.coin);
-      final lh = latestHeight;
+      final lh = await warp.getBCHeightOrNull(aa.coin);
       if (lh == null) return;
+      syncedHeight = warp.getSyncHeight(aa.coin);
       // don't auto sync more than 1 month of data
       if (!rescan && auto && lh - syncedHeight > 30 * 24 * 60 * 4 / 5) {
         paused = true;

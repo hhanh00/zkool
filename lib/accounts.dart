@@ -189,7 +189,7 @@ class ActiveAccount {
     saved = backup.saved;
 
     updateDivisified();
-    final h = syncStatus.latestOrSyncedHeight;
+    final h = syncStatus.latestHeight;
     notes.read(h);
     updateTxs(h);
     messages.read();
@@ -215,7 +215,7 @@ class ActiveAccount {
     final b = warp.getUnconfirmedBalance(coin, id);
     if (b != unconfirmedBalance) {
       unconfirmedBalance = b;
-      updateTxs(syncStatus.latestOrSyncedHeight);
+      updateTxs(syncStatus.latestHeight);
       aaSequence.onBalanceChanged();
     }
   }

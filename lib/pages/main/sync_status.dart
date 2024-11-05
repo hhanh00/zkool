@@ -17,7 +17,6 @@ class SyncStatusState extends State<SyncStatusWidget> {
 
   String getSyncText(int syncedHeight) {
     final s = S.of(context);
-    if (!syncStatus.connected) return s.connectionError;
     final latestHeight = syncStatus.latestHeight;
     if (latestHeight == null) return '';
 
