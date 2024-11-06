@@ -112,8 +112,9 @@ class _AccountManagerState extends State<AccountManager> {
       Future(() async {
         await setActiveAccount(a.coin, a.id);
         await aa.save();
+        aa.initialize();
+        aaSequence.onAccountChanged();
       });
-      aa.update(syncStatus.syncedHeight);
     }
     GoRouter.of(context).pop<AccountNameT>(a);
   }

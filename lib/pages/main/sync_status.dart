@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../accounts.dart';
@@ -18,12 +17,14 @@ class SyncStatusState extends State<SyncStatusWidget> {
   String getSyncText(int syncedHeight) {
     final s = S.of(context);
     final latestHeight = syncStatus.latestHeight;
-    if (latestHeight == null) return '';
 
     if (syncStatus.paused) return s.syncPaused;
-    if (syncStatus.isSynced) return syncedHeight.toString();
-
-    final timestamp = syncStatus.timestamp?.let(timeago.format) ?? s.na;
+    if (syncStatus.isSynced) {
+      final sh = syncStatus.syncedHeight;
+      final timestamp = sh.timestamp;
+      final ts = timeago.format(toDate(timestamp));
+      return '${sh.height} - $ts';
+    }
 
     final remaining = syncStatus.eta.remaining ?? 0;
     final percent = syncStatus.eta.progress ?? 0;
@@ -37,8 +38,6 @@ class SyncStatusState extends State<SyncStatusWidget> {
       case 2:
         return '$remaining...';
       case 3:
-        return timestamp;
-      case 4:
         return '${syncStatus.eta.timeRemaining}';
     }
     throw Exception('Unreachable');
@@ -49,7 +48,7 @@ class SyncStatusState extends State<SyncStatusWidget> {
     final t = Theme.of(context);
 
     final syncedHeight = syncStatus.syncedHeight;
-    final text = getSyncText(syncedHeight);
+    final text = getSyncText(syncedHeight.height);
     final syncing = syncStatus.syncing;
     final syncStyle = syncing
         ? t.textTheme.bodySmall!
@@ -86,7 +85,7 @@ class SyncStatusState extends State<SyncStatusWidget> {
   _onSync() {
     if (syncStatus.syncing) {
       setState(() {
-        display = (display + 1) % 5;
+        display = (display + 1) % 4;
       });
     } else {
       Future(() async {

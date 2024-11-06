@@ -281,7 +281,7 @@ class StealthExSummaryState extends State<StealthExSummaryPage>
           recipients: [recipient],
           srcPools: 1,
           senderPayFees: true,
-          height: syncStatus.syncedHeight,
+          height: syncStatus.confirmHeight,
           expiration: syncStatus.expirationHeight,
           useChange: true,
         );

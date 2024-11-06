@@ -46,16 +46,15 @@ class SyncStatus {
 
   int get expirationHeight => confirmHeight + 100;
 
-  int syncedHeight = warp.getSyncHeight(aa.coin);
-  late int latestHeight = syncedHeight;
-  DateTime? timestamp;
+  CheckpointT syncedHeight = warp.getSyncHeight(aa.coin);
+  late int latestHeight = syncedHeight.height;
   bool syncing = false;
   bool paused = false;
 
   bool get isSynced {
     final sh = syncedHeight;
     final lh = latestHeight;
-    return sh >= lh;
+    return sh.height >= lh;
   }
 
   int get confirmHeight {
@@ -118,14 +117,14 @@ class SyncStatus {
   }
 
   Future<void> syncToHeight(int coin, int endHeight, ETA eta) async {
-    var height = warp.getSyncHeight(coin);
-    while (height < endHeight) {
+    var sh = warp.getSyncHeight(coin);
+    while (sh.height < endHeight) {
       if (aa.coin != coin) break;
       await WarpSync.synchronize(aa.coin, endHeight);
-      height = warp.getSyncHeight(aa.coin);
-      eta.checkpoint(height, DateTime.now());
-      aa.update(height);
-      syncedHeight = height;
+      sh = warp.getSyncHeight(aa.coin);
+      eta.checkpoint(sh.height, DateTime.now());
+      aa.update(sh.height);
+      syncedHeight = sh;
     }
   }
 
@@ -138,8 +137,9 @@ class SyncStatus {
       final lh = await warp.getBCHeightOrNull(aa.coin);
       if (lh == null) return;
       syncedHeight = warp.getSyncHeight(aa.coin);
+      final sh = syncedHeight.height;
       // don't auto sync more than 1 month of data
-      if (!rescan && auto && lh - syncedHeight > 30 * 24 * 60 * 4 / 5) {
+      if (!rescan && auto && lh - sh > 30 * 24 * 60 * 4 / 5) {
         paused = true;
         return;
       }
@@ -147,12 +147,12 @@ class SyncStatus {
       syncing = true;
       isRescan = rescan;
       WakelockPlus.enable();
-      startSyncedHeight = syncedHeight;
+      startSyncedHeight = sh;
 
       int coin = aa.coin;
       int account = aa.id;
       eta.begin(lh);
-      eta.checkpoint(syncedHeight, DateTime.now());
+      eta.checkpoint(sh, DateTime.now());
       final preBalance = warp.getBalance(coin, account, lh);
       // This may take a long time
       await syncToHeight(coin, confirmHeight, eta);
@@ -163,7 +163,7 @@ class SyncStatus {
         await warp.retrieveTransactionDetails(aa.coin);
       }
       contacts.fetchContacts();
-      aa.update(syncedHeight);
+      aa.update(sh);
       if (aa.coin == coin && aa.id == account) {
         final lh = syncStatus.latestHeight!;
         final postBalance = warp.getBalance(coin, account, lh);
@@ -204,15 +204,6 @@ class SyncStatus {
 
   void setPause(bool v) {
     paused = v;
-  }
-
-  void setProgress(ProgressT progress) {
-    syncedHeight = progress.height;
-    if (progress.timestamp > 0)
-      timestamp =
-          DateTime.fromMillisecondsSinceEpoch(progress.timestamp * 1000);
-    eta.checkpoint(syncedHeight, DateTime.now());
-    aaSequence.onSyncProgressChanged();
   }
 }
 

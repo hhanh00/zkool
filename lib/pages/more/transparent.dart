@@ -166,7 +166,7 @@ class ScanTransparentAddressesState extends State<ScanTransparentAddressesPage>
     load(() async {
       await warp.scanTransparentAddresses(aa.coin, aa.id, 0, gapLimit);
       await warp.scanTransparentAddresses(aa.coin, aa.id, 1, gapLimit);
-      await warp.transparentSync(aa.coin, aa.id, syncStatus.syncedHeight);
+      await warp.transparentSync(aa.coin, aa.id, syncStatus.syncedHeight.height);
       aa.initialize();
       aaSequence.onAccountChanged();
       GoRouter.of(context).pop();

@@ -130,7 +130,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
                     ),
                     Gap(8),
                     HeightPicker(
-                      syncStatus.syncedHeight,
+                      syncStatus.syncedHeight.height,
                       name: 'birth_height',
                       label: Text(s.birthHeight),
                       onChanged: (h) => _birthHeight = h,
@@ -162,7 +162,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
         if (isNew) _key = await warp.generateSeed();
         final latestHeight = await warp.getBCHeightOrNull(coin);
         final birthHeight =
-            _birthHeight ?? latestHeight ?? syncStatus.syncedHeight;
+            _birthHeight ?? latestHeight ?? syncStatus.syncedHeight.height;
         logger.d('createAccount 1');
 
         final account = await createNewAccount(coin, nameController.text, _key,

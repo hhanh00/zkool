@@ -184,7 +184,7 @@ class SendPageState extends State<SendPage> {
     if (check == AddressType.paymentURI) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final p = warp.parsePaymentURI(aa.coin, address,
-            syncStatus.syncedHeight, syncStatus.expirationHeight);
+            syncStatus.syncedHeight.height, syncStatus.expirationHeight);
         if (p.recipients!.length == 1)
           GoRouter.of(context).go('/account/send', extra: p);
         else

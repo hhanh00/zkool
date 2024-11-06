@@ -186,7 +186,7 @@ class RewindState extends State<RewindPage> {
     final confirmed =
         await showConfirmDialog(context, s.confirm, s.checkpointPurgeConfirm);
     if (confirmed) {
-      final minHeight = syncStatus.syncedHeight - 200;
+      final minHeight = syncStatus.syncedHeight.height - 200;
       warp.purgeCheckpoints(aa.coin, minHeight.max(0));
       checkpointDates = await initialize();
       setState(() {});
