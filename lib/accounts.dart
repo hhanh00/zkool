@@ -1,6 +1,6 @@
-import 'dart:isolate';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuple/tuple.dart';
@@ -107,8 +107,8 @@ abstract class _AASequence with Store {
   void onMessagesChanged() {
     messagesSeqno = DateTime.now().microsecondsSinceEpoch;
   }
-  @action
 
+  @action
   void onContactsChanged() {
     contactsSeqno = DateTime.now().microsecondsSinceEpoch;
   }
@@ -142,6 +142,7 @@ class ActiveAccount {
   String name = '';
   String? seed;
   bool saved = false;
+  AccountNameT account;
 
   Notes notes;
   Txs txs;
@@ -153,22 +154,21 @@ class ActiveAccount {
   List<SpendingT> spendings = [];
   List<TimeSeriesPoint<double>> accountBalances = [];
 
-  ActiveAccount(
-      this.coin, this.id)
+  ActiveAccount(this.coin, this.id)
       : notes = Notes(coin, id),
         txs = Txs(coin, id),
-        messages = Messages(coin, id) {
-  }
+        messages = Messages(coin, id),
+        account = AccountNameT() {}
 
   static Future<ActiveAccount?> fromPrefs(SharedPreferences prefs) async {
     final coin = prefs.getInt('coin') ?? 0;
     var id = prefs.getInt('account') ?? 0;
-    final accounts = await warp.listAccounts(coin);
+    final accounts = warp.listAccounts(coin);
     final a =
         accounts.singleWhere((a) => a.id == id, orElse: () => AccountNameT());
     if (a.id != 0) return ActiveAccount.fromId(coin, id);
     for (var c in coins) {
-      final accounts = await warp.listAccounts(coin);
+      final accounts = warp.listAccounts(coin);
       if (accounts.isNotEmpty)
         return ActiveAccount.fromId(c.coin, accounts[0].id);
     }
@@ -183,6 +183,8 @@ class ActiveAccount {
   void initialize() {
     if (id == 0) return;
     final backup = warp.getBackup(coin, id);
+    final accounts = warp.listAccounts(coin);
+    account = accounts.firstWhere((a) => a.id == id);
     // TODO: Ledger -> c.supportsLedger && !isMobile() && WarpApi.ledgerHasAccount(coin, id);`
     name = backup.name!;
     seed = backup.seed;
@@ -194,6 +196,10 @@ class ActiveAccount {
     updateTxs(h);
     messages.read();
   }
+
+  ImageProvider resolveIcon() => account.icon != null
+      ? MemoryImage(Uint8List.fromList(account.icon!)) as ImageProvider
+      : coins[coin].image;
 
   Future<void> save() async {
     final prefs = GetIt.I.get<SharedPreferences>();

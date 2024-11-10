@@ -2274,3 +2274,253 @@ abstract class _Servers implements Servers {
   _$$ServersImplCopyWith<_$ServersImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+/// @nodoc
+mixin _$Account {
+  int get coin => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  int get birth => throw _privateConstructorUsedError;
+  ImageProvider<Object>? get icon => throw _privateConstructorUsedError;
+  int get balance => throw _privateConstructorUsedError;
+  bool get hidden => throw _privateConstructorUsedError;
+
+  /// Create a copy of Account
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $AccountCopyWith<Account> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AccountCopyWith<$Res> {
+  factory $AccountCopyWith(Account value, $Res Function(Account) then) =
+      _$AccountCopyWithImpl<$Res, Account>;
+  @useResult
+  $Res call(
+      {int coin,
+      int id,
+      String name,
+      int birth,
+      ImageProvider<Object>? icon,
+      int balance,
+      bool hidden});
+}
+
+/// @nodoc
+class _$AccountCopyWithImpl<$Res, $Val extends Account>
+    implements $AccountCopyWith<$Res> {
+  _$AccountCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Account
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? coin = null,
+    Object? id = null,
+    Object? name = null,
+    Object? birth = null,
+    Object? icon = freezed,
+    Object? balance = null,
+    Object? hidden = null,
+  }) {
+    return _then(_value.copyWith(
+      coin: null == coin
+          ? _value.coin
+          : coin // ignore: cast_nullable_to_non_nullable
+              as int,
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      birth: null == birth
+          ? _value.birth
+          : birth // ignore: cast_nullable_to_non_nullable
+              as int,
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as ImageProvider<Object>?,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as int,
+      hidden: null == hidden
+          ? _value.hidden
+          : hidden // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AccountImplCopyWith<$Res> implements $AccountCopyWith<$Res> {
+  factory _$$AccountImplCopyWith(
+          _$AccountImpl value, $Res Function(_$AccountImpl) then) =
+      __$$AccountImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int coin,
+      int id,
+      String name,
+      int birth,
+      ImageProvider<Object>? icon,
+      int balance,
+      bool hidden});
+}
+
+/// @nodoc
+class __$$AccountImplCopyWithImpl<$Res>
+    extends _$AccountCopyWithImpl<$Res, _$AccountImpl>
+    implements _$$AccountImplCopyWith<$Res> {
+  __$$AccountImplCopyWithImpl(
+      _$AccountImpl _value, $Res Function(_$AccountImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Account
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? coin = null,
+    Object? id = null,
+    Object? name = null,
+    Object? birth = null,
+    Object? icon = freezed,
+    Object? balance = null,
+    Object? hidden = null,
+  }) {
+    return _then(_$AccountImpl(
+      coin: null == coin
+          ? _value.coin
+          : coin // ignore: cast_nullable_to_non_nullable
+              as int,
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      birth: null == birth
+          ? _value.birth
+          : birth // ignore: cast_nullable_to_non_nullable
+              as int,
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as ImageProvider<Object>?,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as int,
+      hidden: null == hidden
+          ? _value.hidden
+          : hidden // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AccountImpl implements _Account {
+  const _$AccountImpl(
+      {required this.coin,
+      required this.id,
+      required this.name,
+      required this.birth,
+      required this.icon,
+      required this.balance,
+      required this.hidden});
+
+  @override
+  final int coin;
+  @override
+  final int id;
+  @override
+  final String name;
+  @override
+  final int birth;
+  @override
+  final ImageProvider<Object>? icon;
+  @override
+  final int balance;
+  @override
+  final bool hidden;
+
+  @override
+  String toString() {
+    return 'Account(coin: $coin, id: $id, name: $name, birth: $birth, icon: $icon, balance: $balance, hidden: $hidden)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AccountImpl &&
+            (identical(other.coin, coin) || other.coin == coin) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.birth, birth) || other.birth == birth) &&
+            (identical(other.icon, icon) || other.icon == icon) &&
+            (identical(other.balance, balance) || other.balance == balance) &&
+            (identical(other.hidden, hidden) || other.hidden == hidden));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, coin, id, name, birth, icon, balance, hidden);
+
+  /// Create a copy of Account
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AccountImplCopyWith<_$AccountImpl> get copyWith =>
+      __$$AccountImplCopyWithImpl<_$AccountImpl>(this, _$identity);
+}
+
+abstract class _Account implements Account {
+  const factory _Account(
+      {required final int coin,
+      required final int id,
+      required final String name,
+      required final int birth,
+      required final ImageProvider<Object>? icon,
+      required final int balance,
+      required final bool hidden}) = _$AccountImpl;
+
+  @override
+  int get coin;
+  @override
+  int get id;
+  @override
+  String get name;
+  @override
+  int get birth;
+  @override
+  ImageProvider<Object>? get icon;
+  @override
+  int get balance;
+  @override
+  bool get hidden;
+
+  /// Create a copy of Account
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AccountImplCopyWith<_$AccountImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

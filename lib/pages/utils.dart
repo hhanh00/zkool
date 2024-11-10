@@ -17,6 +17,7 @@ import 'package:flutter_palette/flutter_palette.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hex/hex.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:logger/logger.dart';
@@ -70,7 +71,8 @@ Future<void> showMessageBox(BuildContext context, String title, String content,
   ).show();
 }
 
-Future<void> showModalMessage(BuildContext context, String title, String content) async {
+Future<void> showModalMessage(
+    BuildContext context, String title, String content) async {
   await AwesomeDialog(
     context: context,
     dialogType: DialogType.warning,
@@ -80,7 +82,8 @@ Future<void> showModalMessage(BuildContext context, String title, String content
     dismissOnTouchOutside: false,
     dismissOnBackKeyPress: false,
     onDismissCallback: (_) {},
-  )..show();
+  )
+    ..show();
 }
 
 mixin WithLoadingAnimation<T extends StatefulWidget> on State<T> {
@@ -267,6 +270,25 @@ Future<FilePickerResult?> pickFile() async {
   }
   final result = await FilePicker.platform.pickFiles();
   return result;
+}
+
+Future<MemoryImage?> pickImage(BuildContext context) async {
+  final picker = ImagePicker();
+  try {
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
+    logger.i(pickedFile);
+    if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+      final imageBytes = await imageFile.readAsBytes();
+      return MemoryImage(imageBytes);
+    }
+  } catch (e) {
+    final S s = S.of(context);
+    await showMessageBox(context, s.error, e.toString(),
+        type: DialogType.error);
+  }
+  return null;
 }
 
 Future<void> saveFileBinary(
@@ -488,7 +510,8 @@ class Tx extends HasHeight {
     String? contact,
     String memo,
   ) {
-    final confirmations = height != 0 ? latestHeight?.let((h) => h - height + 1) : 0;
+    final confirmations =
+        height != 0 ? latestHeight?.let((h) => h - height + 1) : 0;
     return Tx(id, height, confirmations, timestamp, txid, fullTxId, value,
         address, contact, memo);
   }
@@ -698,11 +721,27 @@ class PoolBitSet {
   static int fromSet(Set<int> poolSet) => poolSet.map((p) => 1 << p).sum;
 }
 
-List<AccountNameT> getAllAccounts() {
-  var accounts = <AccountNameT>[];
+List<Account> getAllAccounts() {
+  var accounts = <Account>[];
   for (var coin in coins) {
     final a = warp.listAccounts(coin.coin);
-    accounts.addAll(a);
+    final a2 = a.map(
+      (a) {
+        final icon = a.icon;
+        final image =
+            icon?.let((icon) => MemoryImage(Uint8List.fromList(icon)));
+        return Account(
+          coin: a.coin,
+          id: a.id,
+          name: a.name!,
+          birth: a.birth,
+          icon: image,
+          balance: a.balance,
+          hidden: a.hidden,
+        );
+      },
+    );
+    accounts.addAll(a2);
   }
   return accounts;
 }

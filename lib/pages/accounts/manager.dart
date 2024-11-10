@@ -8,10 +8,10 @@ import 'package:warp/data_fb_generated.dart';
 import 'package:warp/warp.dart';
 
 import '../../appsettings.dart';
-import '../../store.dart';
 import '../../accounts.dart';
 import '../../coin/coins.dart';
 import '../../generated/intl/messages.dart';
+import '../../store.dart';
 import '../input_widgets.dart';
 import '../utils.dart';
 import '../widgets.dart';
@@ -41,7 +41,7 @@ class AccountManagerPage extends StatelessWidget {
 
 class AccountManager extends StatefulWidget {
   final bool main;
-  final List<AccountNameT> accounts;
+  final List<Account> accounts;
 
   AccountManager(this.accounts, {super.key, required this.main});
   @override
@@ -95,11 +95,12 @@ class _AccountManagerState extends State<AccountManager> {
       });
   }
 
-  List<AccountNameT> getAccounts() {
+  List<Account> getAccounts() {
     final hideEmptyAccounts = appSettings.hideEmptyAccounts;
-    return widget.accounts.where((a) =>
-      (a.balance > 0 || !hideEmptyAccounts) &&
-      (showAll || !a.hidden)).toList();
+    return widget.accounts
+        .where((a) =>
+            (a.balance > 0 || !hideEmptyAccounts) && (showAll || !a.hidden))
+        .toList();
   }
 
   add() async {
@@ -107,7 +108,7 @@ class _AccountManagerState extends State<AccountManager> {
     _refresh();
   }
 
-  select(AccountNameT a) {
+  select(Account a) {
     if (widget.main) {
       Future(() async {
         await setActiveAccount(a.coin, a.id);
@@ -116,18 +117,25 @@ class _AccountManagerState extends State<AccountManager> {
         aaSequence.onAccountChanged();
       });
     }
-    GoRouter.of(context).pop<AccountNameT>(a);
+    GoRouter.of(context).pop<Account>(a);
   }
 
-  delete(AccountNameT a) async {
+  delete(Account a) async {
     final confirmed = await showConfirmDialog(
         context, s.deleteAccount(a.name!), s.confirmDeleteAccount);
     if (confirmed) {
       if (a.coin == aa.coin && a.id == aa.id) {
         final other = widget.accounts.firstWhere(
             (a) => (a.coin != aa.coin || a.id != aa.id) && !a.hidden,
-            orElse: () => AccountNameT());
-        setActiveAccount(other.coin, other.id);
+            orElse: () => Account(
+                coin: a.coin,
+                id: 0,
+                name: '',
+                balance: 0,
+                birth: 0,
+                hidden: false,
+                icon: AssetImage('assets/icon.png')));
+        if (other.id != 0) setActiveAccount(other.coin, other.id);
       }
 
       warp.deleteAccount(a.coin, a.id);
@@ -135,7 +143,7 @@ class _AccountManagerState extends State<AccountManager> {
     }
   }
 
-  edit(AccountNameT a) async {
+  edit(Account a) async {
     await GoRouter.of(context).push('/account/edit', extra: a);
     aaSequence.onAccountChanged();
     aa.initialize();
@@ -150,7 +158,7 @@ class _AccountManagerState extends State<AccountManager> {
     // do not refresh yet
   }
 
-  cold(AccountNameT a) async {
+  cold(Account a) async {
     await GoRouter.of(context).push('/account/downgrade', extra: a);
     _refresh();
   }
@@ -161,7 +169,7 @@ class _AccountManagerState extends State<AccountManager> {
 }
 
 class AccountList extends StatelessWidget {
-  final List<AccountNameT> accounts;
+  final List<Account> accounts;
   final int? selected;
   final void Function(int?)? onSelect;
   final void Function(int?)? onLongSelect;
@@ -199,7 +207,7 @@ class AccountList extends StatelessWidget {
 }
 
 class AccountTile extends StatelessWidget {
-  final AccountNameT a;
+  final Account a;
   final void Function()? onPress;
   final void Function()? onLongPress;
   final bool selected;
@@ -216,12 +224,13 @@ class AccountTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context);
     final c = coins[a.coin];
+    final icon = a.icon ?? c.image;
 
     return ListTile(
       contentPadding: EdgeInsets.only(left: 16, right: 48),
       selected: selected,
-      leading: CircleAvatar(backgroundImage: c.image),
-      title: Text(a.name!, style: t.textTheme.headlineSmall),
+      leading: CircleAvatar(backgroundImage: icon),
+      title: Text(a.name, style: t.textTheme.headlineSmall),
       trailing: Text(amountToString(a.balance)),
       onTap: onPress,
       onLongPress: onLongPress,
@@ -231,7 +240,7 @@ class AccountTile extends StatelessWidget {
 }
 
 class EditAccountPage extends StatefulWidget {
-  final AccountNameT account;
+  final Account account;
   EditAccountPage(this.account, {super.key});
   @override
   State<StatefulWidget> createState() => EditAccountState();
@@ -243,9 +252,12 @@ class EditAccountState extends State<EditAccountPage> {
   late final nameController = TextEditingController(text: widget.account.name);
   late int birth = widget.account.birth;
   late bool hidden = widget.account.hidden;
+  MemoryImage? icon;
 
   @override
   Widget build(BuildContext context) {
+    final icon2 = icon ?? aa.resolveIcon();
+
     return Scaffold(
       appBar: AppBar(
           title: Text(s.editAccount),
@@ -259,9 +271,11 @@ class EditAccountState extends State<EditAccountPage> {
                 name: 'name',
                 decoration: InputDecoration(label: Text(s.name)),
                 controller: nameController),
+            GestureDetector(
+                onTap: _onEditIcon, child: Image(image: icon2, height: 64)),
             HeightPicker(
               birth,
-                name: 'birth_height',
+              name: 'birth_height',
               label: Text(s.birthHeight),
               onChanged: (v) => setState(() => birth = v!),
             ),
@@ -277,11 +291,18 @@ class EditAccountState extends State<EditAccountPage> {
     );
   }
 
+  _onEditIcon() async {
+    final icon2 = await pickImage(context);
+    if (icon2 != null) setState(() => icon = icon2);
+  }
+
   ok() async {
     warp.editAccountName(
         widget.account.coin, widget.account.id, nameController.text);
     warp.editAccountBirthHeight(widget.account.coin, widget.account.id, birth);
     warp.editAccountHidden(widget.account.coin, widget.account.id, hidden);
+    if (icon != null)
+      warp.editAccountIcon(widget.account.coin, widget.account.id, icon!.bytes);
     if (hidden &&
         widget.account.coin == aa.coin &&
         widget.account.id == aa.id) {

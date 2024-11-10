@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:ZKool/router.dart';
+import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -97,7 +98,8 @@ class SyncStatus {
       await showSnackBar(e);
     } finally {
       if (!success) {
-        syncInterval = retry == 0 ? 5 : (syncInterval * 1.2).toInt(); // exp backoff
+        syncInterval =
+            retry == 0 ? 5 : (syncInterval * 1.2).toInt(); // exp backoff
         retry += 1;
       }
       if (retry == 3) {
@@ -493,4 +495,17 @@ class Servers with _$Servers {
     required List<Server> available,
     required List<String> selected,
   }) = _Servers;
+}
+
+@freezed
+class Account with _$Account {
+  const factory Account({
+    required int coin,
+    required int id,
+    required String name,
+    required int birth,
+    required ImageProvider? icon,
+    required int balance,
+    required bool hidden,
+  }) = _Account;
 }

@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:ZKool/router.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:warp/warp.dart';
 
 import '../../store.dart';
@@ -33,6 +37,7 @@ class _NewImportAccountState extends State<NewImportAccountPage>
   final nameController = TextEditingController();
   String _key = '';
   final accountIndexController = TextEditingController(text: '0');
+  MemoryImage? icon;
   int? _birthHeight;
   late List<FormBuilderFieldOption<int>> options;
   bool _restore = false;
@@ -62,6 +67,8 @@ class _NewImportAccountState extends State<NewImportAccountPage>
 
   @override
   Widget build(BuildContext context) {
+    final ImageProvider icon2 =
+        icon != null ? icon! as ImageProvider : coins[coin].image;
     return wrapWithLoading(Scaffold(
       appBar: AppBar(
         title: Text(s.newAccount),
@@ -77,7 +84,16 @@ class _NewImportAccountState extends State<NewImportAccountPage>
             key: formKey,
             child: Column(
               children: [
-                Image.asset('assets/icon.png', height: 128),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image(
+                      image: icon2,
+                      height: 64,
+                    ),
+                    IconButton(onPressed: _editIcon, icon: Icon(Icons.edit)),
+                  ],
+                ),
                 Gap(16),
                 FormBuilderTextField(
                     name: 'name',
@@ -165,9 +181,17 @@ class _NewImportAccountState extends State<NewImportAccountPage>
             _birthHeight ?? latestHeight ?? syncStatus.syncedHeight.height;
         logger.d('createAccount 1');
 
-        final account = await createNewAccount(coin, nameController.text, _key,
-        index, birthHeight, _transparentOnly, _scanTransparent,
-        isNew, latestHeight);
+        final account = await createNewAccount(
+            coin,
+            nameController.text,
+            _key,
+            index,
+            birthHeight,
+            _transparentOnly,
+            _scanTransparent,
+            isNew,
+            latestHeight,
+            icon);
 
         if (account == null)
           form.fields['name']!.invalidate(s.thisAccountAlreadyExists);
@@ -206,6 +230,11 @@ class _NewImportAccountState extends State<NewImportAccountPage>
     GoRouter.of(context).push('/settings');
   }
 
+  _editIcon() async {
+    final icon2 = await pickImage(context);
+    if (icon2 != null) setState(() => icon = icon2);
+  }
+
   // _importLedger() async {
   //   try {
   //     final account =
@@ -217,8 +246,17 @@ class _NewImportAccountState extends State<NewImportAccountPage>
   // }
 }
 
-Future<int?> createNewAccount(int coin, String name, String key, int index,
-    int birth, bool tOnly, bool tScan, bool isNew, int? bcHeight) async {
+Future<int?> createNewAccount(
+    int coin,
+    String name,
+    String key,
+    int index,
+    int birth,
+    bool tOnly,
+    bool tScan,
+    bool isNew,
+    int? bcHeight,
+    MemoryImage? icon) async {
   final context = rootNavigatorKey.currentContext!;
   final account =
       await warp.createAccount(coin, name, key, index, birth, tOnly, isNew);
@@ -226,6 +264,7 @@ Future<int?> createNewAccount(int coin, String name, String key, int index,
   if (account < 0)
     return null;
   else {
+    icon?.let((icon) => warp.editAccountIcon(coin, account, icon.bytes));
     if (!isNew) {
       try {
         logger.d('createAccount 3');

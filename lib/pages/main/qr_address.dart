@@ -65,9 +65,13 @@ class AddressCarouselState extends State<AddressCarousel> {
       for (var mask in addressAvailable) {
         final address = warp.getAccountAddress(aa.coin, aa.id, now(), mask);
         if (address.isNotEmpty) {
+          final icon = aa.account.icon;
+          final icon2 =
+              icon?.let((icon) => MemoryImage(Uint8List.fromList(icon)));
           final qr = QRAddressWidget(address, mask,
               amount: widget.amount,
               memo: widget.memo,
+              icon: icon2,
               onQRPressed: widget.onQRPressed);
           addressEnabled.add(Tuple3(mask, qr, qr.uri));
         }
@@ -135,6 +139,7 @@ class QRAddressWidget extends StatefulWidget {
   final int? amount;
   final String? memo;
   late final String uri;
+  final MemoryImage? icon;
   final void Function()? onQRPressed;
 
   QRAddressWidget(
@@ -143,6 +148,7 @@ class QRAddressWidget extends StatefulWidget {
     super.key,
     this.amount,
     this.memo,
+    this.icon,
     this.onQRPressed,
   }) {
     final a = amount ?? 0;
@@ -165,7 +171,7 @@ class _QRAddressState extends State<QRAddressWidget> {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
-    final image = coins[aa.coin].image;
+    final image = aa.resolveIcon();
 
     return Column(children: [
       QrImage(

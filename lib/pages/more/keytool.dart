@@ -347,7 +347,8 @@ class BatchCreateState extends State<BatchCreatePage> {
                   transparentOnly,
                   true,
                   false,
-                  syncStatus.latestHeight));
+                  syncStatus.latestHeight,
+                  null));
         }
         aaSequence.onAccountListChanged();
         GoRouter.of(context).pop();

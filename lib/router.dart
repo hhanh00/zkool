@@ -177,7 +177,7 @@ final router = GoRouter(
                 GoRoute(
                   path: 'edit',
                   builder: (context, state) =>
-                      EditAccountPage(state.extra as AccountNameT),
+                      EditAccountPage(state.extra as Account),
                 ),
                 GoRoute(
                   path: 'downgrade',
@@ -487,12 +487,13 @@ class _ScaffoldBar extends State<ScaffoldBar> {
               aaSequence.accountListSeqno;
               aaSequence.accountSeqno;
               appStore.connected;
-              return appStore.connected ? Text(aa.name) :
-              Text.rich(TextSpan(children: [
-                TextSpan(text: aa.name),
-                WidgetSpan(child: SizedBox(width: 8)),
-                WidgetSpan(child: Icon(Icons.link_off))
-              ]));
+              return appStore.connected
+                  ? Text(aa.name)
+                  : Text.rich(TextSpan(children: [
+                      TextSpan(text: aa.name),
+                      WidgetSpan(child: SizedBox(width: 8)),
+                      WidgetSpan(child: Icon(Icons.link_off))
+                    ]));
             }),
             centerTitle: true,
             actions: [
