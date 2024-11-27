@@ -274,7 +274,7 @@ Widget AccountsBookButton(
   return IconButton(
     onPressed: () async {
       final account = await GoRouter.of(context)
-          .push<AccountNameT>('/account/send/accounts');
+          .push<Account>('/account/send/accounts');
       if (account != null) {
         final address = warp.getAccountAddress(aa.coin, account.id, now(), 7);
         setter(field, address);
